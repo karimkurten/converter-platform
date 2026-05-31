@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Convertly — Unit Converter',
-    short_name: 'Convertly',
-    description: 'Free online unit converter. 500+ conversions, works offline.',
-    start_url: '/',
+    name: 'ConvertNow — Unit Converter',
+    short_name: 'ConvertNow',
+    description: 'Free online unit converter at ConvertNow.ca. 500+ conversions, works offline.',
+    start_url: 'https://convertnow.ca',
     display: 'standalone',
     background_color: '#ffffff',
     theme_color: '#0c8ee7',

@@ -7,8 +7,8 @@ import { buildMetadata } from '@/lib/seo';
 import './globals.css';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Convertly — Free Online Unit Converter',
-  description: 'Fast, free unit converter for length, weight, temperature, currency, area, volume, speed, time, and 500+ conversions. Instant results with formulas.',
+  title: 'ConvertNow — Free Online Unit Converter',
+  description: 'Fast, free unit converter at ConvertNow.ca. 500+ conversions including length, weight, temperature, currency, and more.',
   path: '/',
   keywords: ['unit converter', 'online converter', 'measurement converter', 'free converter', 'length converter', 'weight converter', 'temperature converter', 'currency converter'],
 });

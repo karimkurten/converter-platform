@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { CATEGORIES } from '@/lib/converters';
 
 export const metadata: Metadata = {
-  title: '404 — Page Not Found | Convertly',
+  title: '404 — Page Not Found | ConvertNow',
   description: 'The page you were looking for could not be found.',
 };
 

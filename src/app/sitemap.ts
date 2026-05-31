@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { CATEGORIES, getAllConverterPaths } from '@/lib/converters';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertly.io';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertnow.ca';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

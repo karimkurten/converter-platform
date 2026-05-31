@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Terms of Service — Convertly',
-  description: 'Convertly terms of service. Rules governing use of the Convertly unit converter.',
+  title: 'Terms of Service — ConvertNow',
+  description: 'ConvertNow terms of service. Rules governing use of the ConvertNow unit converter.',
   path: '/terms',
 });
 
@@ -20,28 +20,28 @@ export default function TermsPage() {
         <div className="space-y-8 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
           <Section title="1. Acceptance">
             <p>
-              By using Convertly (&quot;the Service&quot;), you agree to these Terms of Service. If you do not agree,
+              By using ConvertNow (&quot;the Service&quot;), you agree to these Terms of Service. If you do not agree,
               please do not use the Service.
             </p>
           </Section>
 
           <Section title="2. Description of Service">
             <p>
-              Convertly provides free online unit conversion tools for personal and commercial use. The Service
+              ConvertNow provides free online unit conversion tools for personal and commercial use. The Service
               is provided &quot;as is&quot; without warranties of any kind, express or implied.
             </p>
           </Section>
 
           <Section title="3. Accuracy Disclaimer">
             <p>
-              While we strive for accuracy in all conversions, Convertly is provided for informational purposes
-              only. Do not rely on Convertly for critical applications such as medical dosing, engineering
+              While we strive for accuracy in all conversions, ConvertNow is provided for informational purposes
+              only. Do not rely on ConvertNow for critical applications such as medical dosing, engineering
               specifications, or financial transactions without independent verification.
             </p>
           </Section>
 
           <Section title="4. Permitted Use">
-            <p>You may use Convertly for any lawful purpose, including:</p>
+            <p>You may use ConvertNow for any lawful purpose, including:</p>
             <ul className="mt-2 space-y-1 list-disc list-inside">
               <li>Personal unit conversions</li>
               <li>Educational purposes</li>
@@ -60,21 +60,21 @@ export default function TermsPage() {
 
           <Section title="6. Advertising">
             <p>
-              Convertly displays advertisements via Google AdSense. These ads support the free operation of
+              ConvertNow displays advertisements via Google AdSense. These ads support the free operation of
               the Service. By using the Service, you acknowledge and accept the presence of advertising.
             </p>
           </Section>
 
           <Section title="7. Intellectual Property">
             <p>
-              The Convertly name, logo, and code are proprietary. Conversion formulas and scientific
+              The ConvertNow name, logo, and code are proprietary. Conversion formulas and scientific
               constants are in the public domain. Our implementation and design are protected.
             </p>
           </Section>
 
           <Section title="8. Limitation of Liability">
             <p>
-              To the maximum extent permitted by law, Convertly shall not be liable for any indirect,
+              To the maximum extent permitted by law, ConvertNow shall not be liable for any indirect,
               incidental, or consequential damages arising from use of the Service.
             </p>
           </Section>

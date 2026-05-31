@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Offline — Convertly',
+  title: 'Offline — ConvertNow',
   description: 'You are offline. Please reconnect to access converters.',
   robots: { index: false, follow: false },
 };

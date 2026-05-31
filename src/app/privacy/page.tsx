@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Privacy Policy — Convertly',
-  description: 'Convertly privacy policy. Learn how we handle your data.',
+  title: 'Privacy Policy — ConvertNow',
+  description: 'ConvertNow privacy policy. Learn how we handle your data.',
   path: '/privacy',
   noIndex: false,
 });
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         <div className="space-y-8 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
           <Section title="1. Information We Collect">
             <p>
-              Convertly collects minimal data to operate and improve the service. We use Google Analytics 4 to
+              ConvertNow collects minimal data to operate and improve the service. We use Google Analytics 4 to
               collect anonymous usage data including page views, session duration, and general location
               (country/city level). We do not collect personal identifying information.
             </p>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
 
           <Section title="3. Advertising">
             <p>
-              Convertly is supported by advertising through Google AdSense. Google may use cookies to serve
+              ConvertNow is supported by advertising through Google AdSense. Google may use cookies to serve
               ads based on your browsing history. You can opt out of personalized advertising at{' '}
               <a href="https://adssettings.google.com" className="text-brand-500 hover:underline" target="_blank" rel="noopener noreferrer">
                 adssettings.google.com
@@ -79,7 +79,7 @@ export default function PrivacyPage() {
 
           <Section title="7. Children's Privacy">
             <p>
-              Convertly does not knowingly collect data from children under 13. The site is a general-purpose
+              ConvertNow does not knowingly collect data from children under 13. The site is a general-purpose
               utility tool with no registration or age gate.
             </p>
           </Section>
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
           <Section title="9. Changes to This Policy">
             <p>
               We may update this policy. Changes will be posted on this page with an updated date.
-              Continued use of Convertly after changes constitutes acceptance.
+              Continued use of ConvertNow after changes constitutes acceptance.
             </p>
           </Section>
         </div>

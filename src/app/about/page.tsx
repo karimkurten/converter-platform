@@ -4,8 +4,8 @@ import { buildMetadata } from '@/lib/seo';
 import { CATEGORIES } from '@/lib/converters';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'About Convertly — Free Online Unit Converter',
-  description: 'Learn about Convertly, the fast and free online unit converter supporting 500+ conversions across 13 categories.',
+  title: 'About ConvertNow — Free Online Unit Converter',
+  description: 'Learn about ConvertNow, the fast and free online unit converter supporting 500+ conversions across 13 categories.',
   path: '/about',
 });
 
@@ -22,8 +22,8 @@ export default function AboutPage() {
             Built for speed.<br />Designed for accuracy.
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-            Convertly is a free, fast, and accurate online unit converter. We built it because existing converters
-            were slow, cluttered, or required sign-up. Convertly is none of those things.
+            ConvertNow is a free, fast, and accurate online unit converter. We built it because existing converters
+            were slow, cluttered, or required sign-up. ConvertNow is none of those things.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">What We Offer</h2>
             <p>
-              Convertly supports over 500 unit conversions across 13 categories including length, weight,
+              ConvertNow supports over 500 unit conversions across 13 categories including length, weight,
               temperature, currency, area, volume, speed, time, and digital storage. Every converter shows
               the formula used, so you always know exactly how the calculation works.
             </p>
@@ -73,7 +73,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">PWA & Offline Support</h2>
             <p>
-              Convertly is a Progressive Web App (PWA). You can install it on your device from your browser
+              ConvertNow is a Progressive Web App (PWA). You can install it on your device from your browser
               and use it offline. Most unit converters work without an internet connection — only live
               currency rates require connectivity.
             </p>

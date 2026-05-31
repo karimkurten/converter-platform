@@ -14,7 +14,7 @@ export default function Footer() {
               <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white font-black text-sm">
                 C
               </div>
-              <span className="font-bold text-lg text-gray-900 dark:text-white">Convertly</span>
+              <span className="font-bold text-lg text-gray-900 dark:text-white">ConvertNow</span>
             </Link>
             <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
               Free online unit converter. Fast, accurate, and works offline.
@@ -79,7 +79,7 @@ export default function Footer() {
 
         <div className="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-400">
-            © {year} Convertly. All rights reserved.
+            © {year} ConvertNow.ca. All rights reserved.
           </p>
           <p className="text-sm text-gray-400">
             Fast · Accurate · Free · No Signup Required

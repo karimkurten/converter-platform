@@ -54,10 +54,10 @@ export function buildShareUrl(
 // ─── Local storage helpers ─────────────────────────────────────────────────────
 
 export const STORAGE_KEYS = {
-  RECENT: 'convertly_recent',
-  FAVORITES: 'convertly_favorites',
-  THEME: 'convertly_theme',
-  PRECISION: 'convertly_precision',
+  RECENT: 'convertnow_recent',
+  FAVORITES: 'convertnow_favorites',
+  THEME: 'convertnow_theme',
+  PRECISION: 'convertnow_precision',
 } as const;
 
 export function getRecentConverters(): string[] {

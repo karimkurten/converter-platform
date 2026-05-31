@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import type { BreadcrumbItem, FAQItem, Converter, ConverterCategory } from '@/types';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertly.io';
-const SITE_NAME = 'Convertly';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertnow.ca';
+const SITE_NAME = 'ConvertNow';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 // ─── Base Metadata ─────────────────────────────────────────────────────────────
@@ -108,7 +108,7 @@ export function buildWebsiteSchema() {
     '@type': 'WebSite',
     name: SITE_NAME,
     url: SITE_URL,
-    description: 'Free online unit converter. Convert length, weight, temperature, currency, area, volume, speed, and more.',
+    description: 'Free online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, and more.',
     potentialAction: {
       '@type': 'SearchAction',
       target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },

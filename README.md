@@ -1,6 +1,6 @@
-# Convertly — Production-Ready Unit Converter Platform
+# ConvertNow — Production-Ready Unit Converter Platform
 
-A fast, SEO-optimized, monetization-ready unit converter built with Next.js 15, TypeScript, and Tailwind CSS.
+ConvertNow.ca — a fast, SEO-optimized, monetization-ready unit converter built with Next.js 15, TypeScript, and Tailwind CSS.
 
 ---
 
@@ -8,7 +8,7 @@ A fast, SEO-optimized, monetization-ready unit converter built with Next.js 15, 
 
 ```bash
 # 1. Clone / download the project
-cd converter-platform
+cd convertnow
 
 # 2. Install dependencies
 npm install
@@ -16,6 +16,7 @@ npm install
 # 3. Set up environment variables
 cp .env.example .env.local
 # Edit .env.local with your values (see Environment Variables section)
+# Set NEXT_PUBLIC_SITE_URL=https://convertnow.ca for production
 
 # 4. Run development server
 npm run dev
@@ -293,7 +294,7 @@ npm run type-check   # TypeScript type check
 1. Go to [search.google.com/search-console](https://search.google.com/search-console)
 2. Add property → verify via HTML tag → get code
 3. Add to `NEXT_PUBLIC_GSC_VERIFICATION`
-4. Submit sitemap: `https://yoursite.com/sitemap.xml`
+4. Submit sitemap: `https://convertnow.ca/sitemap.xml`
 
 ### Microsoft Clarity
 1. Go to [clarity.microsoft.com](https://clarity.microsoft.com)

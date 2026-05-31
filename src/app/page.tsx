@@ -7,8 +7,8 @@ import HeroSearch from '@/components/home/HeroSearch';
 import AdUnit from '@/components/ads/AdUnit';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Convertly — Free Online Unit Converter | 500+ Conversions',
-  description: 'Free, fast online unit converter. Convert length, weight, temperature, currency, area, volume, speed, time, and 500+ units instantly. No signup required.',
+  title: 'ConvertNow — Free Online Unit Converter | 500+ Conversions',
+  description: 'Free, fast online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, time, and 500+ units instantly. No signup required.',
   path: '/',
   keywords: [
     'unit converter', 'online converter', 'free converter', 'unit conversion',
@@ -31,12 +31,12 @@ export default function HomePage() {
       a: 'Yes. All conversions use standard, internationally-recognized formulas and constants for maximum accuracy.',
     },
     {
-      q: 'Does Convertly work offline?',
-      a: 'Yes! Convertly is a Progressive Web App (PWA). Once loaded, most converters work offline. Install it from your browser for the best experience.',
+      q: 'Does ConvertNow work offline?',
+      a: 'Yes! ConvertNow is a Progressive Web App (PWA). Once loaded, most converters work offline. Install it from your browser for the best experience.',
     },
     {
       q: 'How many unit conversions are supported?',
-      a: 'Convertly supports 500+ unit conversions across 13 categories including length, weight, temperature, currency, area, volume, speed, time, digital storage, and more.',
+      a: 'ConvertNow supports 500+ unit conversions across 13 categories including length, weight, temperature, currency, area, volume, speed, time, digital storage, and more.',
     },
     {
       q: 'Are live exchange rates used for currency conversion?',
@@ -176,7 +176,7 @@ export default function HomePage() {
             </h2>
             <div className="prose prose-gray dark:prose-invert max-w-none text-sm leading-relaxed space-y-3 text-gray-600 dark:text-gray-400">
               <p>
-                Convertly is a free, fast, and accurate online unit converter supporting 500+ unit conversions
+                ConvertNow is a free, fast, and accurate online unit converter supporting 500+ unit conversions
                 across 13 categories. Whether you need to convert <Link href="/length/kilometer-to-mile" className="text-brand-500 hover:underline">kilometers to miles</Link>,{' '}
                 <Link href="/weight/kilogram-to-pound" className="text-brand-500 hover:underline">kilograms to pounds</Link>, or{' '}
                 <Link href="/temperature/celsius-to-fahrenheit" className="text-brand-500 hover:underline">Celsius to Fahrenheit</Link>,

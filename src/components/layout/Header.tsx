@@ -86,7 +86,7 @@ export default function Header() {
               C
             </div>
             <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight">
-              Convertly
+              ConvertNow
             </span>
           </Link>
 
