@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ──────────────────────────────────────────────────── */
+:root {
+  --font-outfit: 'Outfit', system-ui, sans-serif;
+
+  /* Brand */
+  --brand-50: #f0f7ff;
+  --brand-100: #e0effe;
+  --brand-500: #0c8ee7;
+  --brand-600: #006fc5;
+  --brand-700: #0058a0;
+
+  /* Surfaces */
+  --surface-bg: #ffffff;
+  --surface-subtle: #f8fafc;
+  --surface-muted: #f1f5f9;
+  --surface-border: #e2e8f0;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.dark {
+  --surface-bg: #0a0f1e;
+  --surface-subtle: #0f1629;
+  --surface-muted: #151e33;
+  --surface-border: #1e2d4a;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────────── */
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-outfit);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Typography ──────────────────────────────────────────────────────────────── */
+
+@layer base {
+  h1 { @apply text-3xl font-bold tracking-tight lg:text-4xl; }
+  h2 { @apply text-2xl font-semibold tracking-tight; }
+  h3 { @apply text-xl font-semibold; }
+  h4 { @apply text-lg font-medium; }
+}
+
+/* ─── Components ──────────────────────────────────────────────────────────────── */
+
+@layer components {
+  /* Card */
+  .card {
+    @apply bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Input */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700
+           bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+           text-lg font-medium
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           transition-all duration-200
+           placeholder:text-gray-400;
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm
+           bg-brand-500 hover:bg-brand-600 text-white
+           transition-all duration-200 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm
+           bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700
+           text-gray-700 dark:text-gray-300
+           transition-all duration-200 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-gray-300;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
+           text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800
+           transition-colors duration-150;
+  }
+
+  /* Converter card */
+  .converter-card {
+    @apply card p-6 lg:p-8;
+    box-shadow: 0 8px 32px rgba(12,142,231,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  /* Section */
+  .section {
+    @apply py-12 lg:py-16;
+  }
+
+  .container-lg {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-md {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.35s ease forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.35s ease forwards;
+  }
+
+  .animate-pop {
+    animation: pop 0.25s cubic-bezier(0.68,-0.55,0.27,1.55) forwards;
+  }
+
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ─── Converter specific ──────────────────────────────────────────────────────── */
+
+.result-glow {
+  animation: resultGlow 0.3s ease;
+}
+
+@keyframes resultGlow {
+  0% { background-color: rgba(12, 142, 231, 0.15); }
+  100% { background-color: transparent; }
+}
+
+/* ─── Ad containers ───────────────────────────────────────────────────────────── */
+
+.ad-container {
+  @apply flex items-center justify-center overflow-hidden rounded-xl;
+  contain: layout style;
+}
+
+.ad-label {
+  @apply text-xs text-gray-400 dark:text-gray-600 text-center mb-1 uppercase tracking-wider font-medium;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-700 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-600; }
+
+/* ─── Selection ───────────────────────────────────────────────────────────────── */
+
+::selection {
+  background-color: rgba(12, 142, 231, 0.2);
+  color: inherit;
+}
+
+/* ─── Focus visible ───────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid #0c8ee7;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Number inputs ───────────────────────────────────────────────────────────── */
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] { -moz-appearance: textfield; }
+
+/* ─── Print ───────────────────────────────────────────────────────────────────── */
+
+@media print {
+  .no-print { display: none !important; }
+}
