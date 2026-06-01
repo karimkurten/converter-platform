@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { searchConverters } from '@/lib/converters';
+import { Analytics } from '@/lib/analytics';
 
 export default function HeroSearch() {
   const [query, setQuery] = useState('');
@@ -20,6 +21,7 @@ export default function HeroSearch() {
     }
     const t = setTimeout(() => {
       setResults(searchConverters(query, 8));
+      Analytics.trackSearch(query);
     }, 150);
     return () => clearTimeout(t);
   }, [query]);

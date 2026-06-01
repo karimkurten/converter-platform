@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { buildMetadata } from '@/lib/seo';
@@ -47,23 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         )}
 
-        {/* Google Analytics */}
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="gtag-init" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
-              `}
-            </Script>
-          </>
-        )}
+        {/* Google Analytics handled below via @next/third-parties */}
 
         {/* Microsoft Clarity */}
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
@@ -100,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

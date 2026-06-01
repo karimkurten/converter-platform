@@ -6,6 +6,7 @@ import type { ConverterCategory, Converter, ConversionResult } from '@/types';
 import { runConversion, isPopularPath, getConverterBySlug } from '@/lib/converters';
 import { convertCurrency } from '@/lib/converters/currency';
 import { copyToClipboard, addRecentConverter, toggleFavoriteConverter, getFavoriteConverters, formatNumber } from '@/lib/utils';
+import { Analytics } from '@/lib/analytics';
 
 interface ConverterEngineProps {
   converter: Converter;
@@ -97,6 +98,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
 
       setToValue(result.formatted);
       setFormula(result.formula);
+      Analytics.trackConversion(fromUnit, toUnit, category.id);
 
       // Flash animation
       if (resultRef.current) {
@@ -113,6 +115,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
   useEffect(() => { convert(fromValue); }, [fromValue, fromUnit, toUnit, precision, convert]);
 
   const handleSwap = () => {
+    Analytics.trackSwap(category.id);
     const oldFrom = fromUnit;
     const oldTo = toUnit;
     const oldToValue = toValue;
@@ -145,6 +148,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
     const success = await copyToClipboard(text);
     if (success) {
       setCopied(true);
+      Analytics.trackCopy(converter.id);
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -152,6 +156,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
   const handleFavorite = () => {
     const added = toggleFavoriteConverter(converterPath);
     setIsFavorite(added);
+    if (added) Analytics.trackFavorite(converter.id);
   };
 
   return (
