@@ -3,8 +3,11 @@ import { CATEGORIES, getAllConverterPaths } from '@/lib/converters';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertnow.ca';
 
+export const dynamic = 'force-static';
+export const revalidate = false;
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD only
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
