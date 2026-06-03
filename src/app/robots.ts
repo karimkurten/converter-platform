@@ -1,12 +1,19 @@
-import type { MetadataRoute } from 'next';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertnow.ca';
+import type { MetadataRoute } from 'next'
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/api/', '/_next/'] },
-      { userAgent: 'Googlebot', allow: '/', crawlDelay: 0 },
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/api/', '/_next/'],
+      },
+      {
+        userAgent: 'Googlebot',
+        allow: '/',
+      },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
-  };
+    sitemap: 'https://www.convertnow.ca/sitemap.xml',
+    host: 'https://www.convertnow.ca',
+  }
 }
