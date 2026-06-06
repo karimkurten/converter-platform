@@ -43,16 +43,13 @@ export default function ShopPage() {
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors whitespace-nowrap flex flex-col items-center leading-tight ${
+            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors whitespace-nowrap ${
               activeCategory === cat.id
                 ? 'bg-brand-500 text-white'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
-            <span>{cat.label}</span>
-            <span className={`text-[10px] ${activeCategory === cat.id ? 'text-white/80' : 'text-gray-400'}`}>
-              {cat.commission} commission
-            </span>
+            {cat.label}
           </button>
         ))}
       </div>
@@ -91,11 +88,6 @@ function FeaturedCard({ product }: { product: ShopProduct }) {
       onClick={handleClick}
       className="flex-shrink-0 w-64 card p-4 flex flex-col hover:shadow-lg transition-all hover:scale-[1.02] group"
     >
-      {/* Commission Badge */}
-      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-[10px] font-bold">
-        Earn {product.commission}
-      </span>
-
       {/* Emoji */}
       <div className="text-4xl text-center mb-3 group-hover:scale-110 transition-transform">
         {product.emoji}
@@ -141,11 +133,6 @@ function ProductCard({ product }: { product: ShopProduct }) {
       onClick={handleClick}
       className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group relative"
     >
-      {/* Commission Badge */}
-      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-[10px] font-bold">
-        Earn {product.commission}
-      </span>
-
       {/* Emoji */}
       <div className="text-5xl text-center mb-4 group-hover:scale-110 transition-transform">
         {product.emoji}
