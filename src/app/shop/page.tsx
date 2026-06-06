@@ -119,8 +119,8 @@ function FeaturedCard({ product }: { product: ShopProduct }) {
       </p>
 
       {/* CTA */}
-      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-xs py-2 rounded-lg transition-colors">
-        Check Price →
+      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-xs py-2 rounded-lg transition-all hover:scale-105 duration-200">
+        🔥 Check Discounted Offers →
       </span>
     </a>
   );
@@ -196,8 +196,8 @@ function ProductCard({ product }: { product: ShopProduct }) {
       </p>
 
       {/* CTA */}
-      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-colors">
-        Check Price on Amazon →
+      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-all hover:scale-105 duration-200">
+        🔥 Check Discounted Offers →
       </span>
     </a>
   );
