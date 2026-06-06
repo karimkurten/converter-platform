@@ -37,6 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#072849" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
+        {/* Pinterest Domain Verification */}
+        <meta name="p:domain_verify" content="24827a46c82e9527965d78613e30ec4e" />
+
         {/* AdSense */}
         {ADSENSE_ID && (
           <Script
