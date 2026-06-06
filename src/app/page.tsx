@@ -175,10 +175,10 @@ export default function HomePage() {
               <div className="text-4xl">🛍️</div>
               <div className="flex-1">
                 <h3 className="font-bold text-gray-900 dark:text-white">
-                  Shop Measurement Tools on Amazon.ca
+                  Shop Measurement Tools in Our Shop
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Kitchen scales, thermometers, tape measures and more — hand picked for our users
+                  Kitchen scales, thermometers, tape measures and more — hand picked for you
                 </p>
               </div>
               <div className="flex-shrink-0 px-4 py-2 rounded-xl bg-amber-400 group-hover:bg-amber-500 text-gray-900 font-semibold text-sm transition-colors">

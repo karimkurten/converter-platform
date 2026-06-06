@@ -13,6 +13,7 @@ export interface ShopProduct {
   features: string[];
   amazonUrl: string;
   globalDemand: string;
+  productKeyword?: string;
 }
 
 const TAG = 'convertnow-20';

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'convertnow-v1780775645357';
+const CACHE_NAME = 'convertnow-v1780776464569';
 // Build-time replaced via package.json `prebuild` hook with a unique version.
 // See `scripts/bump-sw-version` (inline) so each deploy busts the cache.
 const STATIC_ASSETS = [

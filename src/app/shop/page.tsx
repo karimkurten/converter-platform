@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, getFeaturedProducts, getProductCount, type ShopProduct } from '@/lib/shopProducts';
 import { trackEvent } from '@/lib/analytics';
+import { getAmazonUrl } from '@/lib/amazonRedirect';
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -76,18 +77,22 @@ export default function ShopPage() {
 // ─── Featured Card ─────────────────────────────────────────────────────────────
 
 function FeaturedCard({ product }: { product: ShopProduct }) {
-  const handleClick = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleAmazonClick(e: React.MouseEvent) {
+    e.preventDefault();
+    setIsLoading(true);
     trackEvent('shop_product_click', 'affiliate', product.id, 1);
-  };
+    
+    const keyword = product.productKeyword || product.title;
+    const url = await getAmazonUrl(keyword);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    
+    setIsLoading(false);
+  }
 
   return (
-    <a
-      href={product.amazonUrl}
-      target="_blank"
-      rel="noopener noreferrer nofollow"
-      onClick={handleClick}
-      className="flex-shrink-0 w-64 card p-4 flex flex-col hover:shadow-lg transition-all hover:scale-[1.02] group"
-    >
+    <div className="flex-shrink-0 w-64 card p-4 flex flex-col hover:shadow-lg transition-all hover:scale-[1.02] group">
       {/* Emoji */}
       <div className="text-4xl text-center mb-3 group-hover:scale-110 transition-transform">
         {product.emoji}
@@ -111,28 +116,36 @@ function FeaturedCard({ product }: { product: ShopProduct }) {
       </p>
 
       {/* CTA */}
-      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-xs py-2 rounded-lg transition-all hover:scale-105 duration-200">
-        🔥 Check Discounted Offers →
-      </span>
-    </a>
+      <button
+        onClick={handleAmazonClick}
+        disabled={isLoading}
+        className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-xs py-2 rounded-lg transition-all hover:scale-105 duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        {isLoading ? '🔄 Finding best offer...' : '🔥 Check Discounted Offers →'}
+      </button>
+    </div>
   );
 }
 
 // ─── Product Card ──────────────────────────────────────────────────────────────
 
 function ProductCard({ product }: { product: ShopProduct }) {
-  const handleClick = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleAmazonClick(e: React.MouseEvent) {
+    e.preventDefault();
+    setIsLoading(true);
     trackEvent('shop_product_click', 'affiliate', product.id, 1);
-  };
+    
+    const keyword = product.productKeyword || product.title;
+    const url = await getAmazonUrl(keyword);
+    window.open(url, '_blank', 'noopener,noreferrer');
+    
+    setIsLoading(false);
+  }
 
   return (
-    <a
-      href={product.amazonUrl}
-      target="_blank"
-      rel="noopener noreferrer nofollow"
-      onClick={handleClick}
-      className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group relative"
-    >
+    <div className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group relative">
       {/* Emoji */}
       <div className="text-5xl text-center mb-4 group-hover:scale-110 transition-transform">
         {product.emoji}
@@ -183,10 +196,14 @@ function ProductCard({ product }: { product: ShopProduct }) {
       </p>
 
       {/* CTA */}
-      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-all hover:scale-105 duration-200">
-        🔥 Check Discounted Offers →
-      </span>
-    </a>
+      <button
+        onClick={handleAmazonClick}
+        disabled={isLoading}
+        className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-all hover:scale-105 duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
+      >
+        {isLoading ? '🔄 Finding best offer...' : '🔥 Check Discounted Offers →'}
+      </button>
+    </div>
   );
 }
 
