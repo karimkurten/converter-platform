@@ -68,6 +68,7 @@ export default function Header() {
     { href: '/temperature', label: 'Temp' },
     { href: '/currency', label: 'Currency' },
     { href: '/area', label: 'Area' },
+    { href: '/shop', label: '🛍️ Shop' },
   ];
 
   return (

@@ -168,6 +168,26 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* ─── Shop Promo ────────────────────────────────────────────────────── */}
+        <section className="section">
+          <Link href="/shop" className="block max-w-2xl mx-auto">
+            <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 p-5 flex items-center gap-4 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors group">
+              <div className="text-4xl">🛍️</div>
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900 dark:text-white">
+                  Shop Measurement Tools on Amazon.ca
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Kitchen scales, thermometers, tape measures and more — hand picked for our users
+                </p>
+              </div>
+              <div className="flex-shrink-0 px-4 py-2 rounded-xl bg-amber-400 group-hover:bg-amber-500 text-gray-900 font-semibold text-sm transition-colors">
+                Shop Now →
+              </div>
+            </div>
+          </Link>
+        </section>
+
         {/* ─── SEO content block ───────────────────────────────────────────── */}
         <section className="section border-t border-gray-100 dark:border-gray-800">
           <div className="max-w-3xl">

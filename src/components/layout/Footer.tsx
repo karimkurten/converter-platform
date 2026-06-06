@@ -32,6 +32,7 @@ export default function Footer() {
                 { label: 'USD to EUR', href: '/currency/USD-to-EUR' },
                 { label: 'feet to meters', href: '/length/foot-to-meter' },
                 { label: 'gallons to liters', href: '/volume/us-gallon-to-liter' },
+                { label: '🛍️ Shop Products', href: '/shop' },
               ].map(link => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
@@ -66,6 +67,7 @@ export default function Footer() {
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
                 { label: 'Sitemap', href: '/sitemap.xml' },
+                { label: 'Affiliate Disclosure', href: '/affiliate-disclosure' },
               ].map(link => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
