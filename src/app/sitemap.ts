@@ -4,7 +4,7 @@ import { CATEGORIES, getAllConverterPaths } from '@/lib/converters'
 const SITE_URL = 'https://www.convertnow.ca'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date()
+  const now = new Date().toISOString().split('T')[0] // YYYY-MM-DD
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -33,6 +33,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${SITE_URL}/terms`,
+      lastModified: now,
+      changeFrequency: 'yearly',
+      priority: 0.1,
+    },
+    {
+      url: `${SITE_URL}/shop`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
+      url: `${SITE_URL}/affiliate-disclosure`,
       lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.1,
