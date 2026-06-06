@@ -120,7 +120,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
 
       {/* CTA */}
       <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-colors">
-        View on Amazon →
+        Check Price on Amazon →
       </span>
     </a>
   );
