@@ -1,47 +1,64 @@
 'use client';
 
 import { useState } from 'react';
-import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, type ShopProduct } from '@/lib/shopProducts';
+import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, getFeaturedProducts, getProductCount, type ShopProduct } from '@/lib/shopProducts';
 import { trackEvent } from '@/lib/analytics';
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const products = getProductsByCategory(activeCategory);
+  const featuredProducts = getFeaturedProducts(8);
+  const productCount = getProductCount();
 
   return (
     <div className="container-lg py-8 lg:py-12">
       {/* Header */}
       <div className="text-center mb-8 animate-fade-in">
         <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
-          Shop Recommended Products
+          Shop {productCount}+ Recommended Products
         </h1>
         <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-          Hand-picked tools for measurement, cooking, fitness and travel. All available on Amazon.ca
+          Hand-picked best-selling products from Amazon Canada. Luxury beauty, kitchen, fitness, tech, books and more.
         </p>
         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
           As an Amazon Associate, ConvertNow.ca earns from qualifying purchases
         </p>
       </div>
 
+      {/* Featured Section */}
+      <div className="mb-10 animate-fade-in stagger-1">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+          <span>⭐</span> Editor&apos;s Top Picks
+        </h2>
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {featuredProducts.map(product => (
+            <FeaturedCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+
       {/* Category Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide animate-fade-in stagger-1">
+      <div className="flex gap-2 overflow-x-auto pb-3 mb-8 scrollbar-hide animate-fade-in stagger-2">
         {SHOP_CATEGORIES.map(cat => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
-            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors whitespace-nowrap ${
+            className={`flex-shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-colors whitespace-nowrap flex flex-col items-center leading-tight ${
               activeCategory === cat.id
                 ? 'bg-brand-500 text-white'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
-            {cat.label}
+            <span>{cat.label}</span>
+            <span className={`text-[10px] ${activeCategory === cat.id ? 'text-white/80' : 'text-gray-400'}`}>
+              {cat.commission} commission
+            </span>
           </button>
         ))}
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in stagger-2">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in stagger-3">
         {products.map(product => (
           <ProductCard key={product.id} product={product} />
         ))}
@@ -59,6 +76,56 @@ export default function ShopPage() {
   );
 }
 
+// ─── Featured Card ─────────────────────────────────────────────────────────────
+
+function FeaturedCard({ product }: { product: ShopProduct }) {
+  const handleClick = () => {
+    trackEvent('shop_product_click', 'affiliate', product.id, 1);
+  };
+
+  return (
+    <a
+      href={product.amazonUrl}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      onClick={handleClick}
+      className="flex-shrink-0 w-64 card p-4 flex flex-col hover:shadow-lg transition-all hover:scale-[1.02] group"
+    >
+      {/* Commission Badge */}
+      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-[10px] font-bold">
+        Earn {product.commission}
+      </span>
+
+      {/* Emoji */}
+      <div className="text-4xl text-center mb-3 group-hover:scale-110 transition-transform">
+        {product.emoji}
+      </div>
+
+      {/* Badge */}
+      {product.badge && (
+        <span className="inline-flex items-center self-start px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wide mb-2">
+          {product.badge}
+        </span>
+      )}
+
+      {/* Title */}
+      <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1 line-clamp-2">
+        {product.title}
+      </h3>
+
+      {/* Price */}
+      <p className="text-sm font-bold text-green-600 dark:text-green-400 mb-2">
+        {product.priceRange}
+      </p>
+
+      {/* CTA */}
+      <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-xs py-2 rounded-lg transition-colors">
+        Check Price →
+      </span>
+    </a>
+  );
+}
+
 // ─── Product Card ──────────────────────────────────────────────────────────────
 
 function ProductCard({ product }: { product: ShopProduct }) {
@@ -72,8 +139,13 @@ function ProductCard({ product }: { product: ShopProduct }) {
       target="_blank"
       rel="noopener noreferrer nofollow"
       onClick={handleClick}
-      className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group"
+      className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group relative"
     >
+      {/* Commission Badge */}
+      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-[10px] font-bold">
+        Earn {product.commission}
+      </span>
+
       {/* Emoji */}
       <div className="text-5xl text-center mb-4 group-hover:scale-110 transition-transform">
         {product.emoji}
@@ -109,7 +181,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
       </p>
 
       {/* Features */}
-      <ul className="space-y-0.5 mb-4">
+      <ul className="space-y-0.5 mb-3">
         {product.features.slice(0, 3).map((feat, i) => (
           <li key={i} className="flex items-start gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
             <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
@@ -117,6 +189,11 @@ function ProductCard({ product }: { product: ShopProduct }) {
           </li>
         ))}
       </ul>
+
+      {/* Global Demand */}
+      <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-3">
+        {product.globalDemand}
+      </p>
 
       {/* CTA */}
       <span className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-colors">
