@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, getConverterTools, getProductsBySubCategory, getProductCount, type ShopProduct } from '@/lib/shopProducts';
 import { trackEvent } from '@/lib/analytics';
 import { getAmazonUrl } from '@/lib/amazonRedirect';
@@ -8,6 +9,16 @@ import { getAmazonUrl } from '@/lib/amazonRedirect';
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const productGridRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  
+  // Handle URL params on load
+  useEffect(() => {
+    const category = searchParams.get('category');
+    const sub = searchParams.get('sub');
+    if (category) setActiveCategory(category);
+    if (sub) setActiveSubCategory(sub);
+  }, [searchParams]);
   
   const productCount = getProductCount();
   const converterTools = getConverterTools();
@@ -32,6 +43,18 @@ export default function ShopPage() {
       count: SHOP_PRODUCTS.filter(p => p.subCategory === sub.id).length
     }));
   }, []);
+
+  // Handle subcategory card click with scroll
+  const handleSubCategoryClick = (subId: string) => {
+    setActiveCategory('converter-tools');
+    setActiveSubCategory(subId);
+    trackEvent('shop_subcategory_click', 'navigation', subId, 1);
+    
+    // Scroll to product grid after a short delay to allow state update
+    setTimeout(() => {
+      productGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
 
   return (
     <div className="container-lg py-8 lg:py-12">
@@ -78,11 +101,8 @@ export default function ShopPage() {
             <SubCategoryCard 
               key={sub.id} 
               sub={sub} 
-              onClick={() => {
-                setActiveCategory('converter-tools');
-                setActiveSubCategory(sub.id);
-                trackEvent('shop_subcategory_click', 'navigation', sub.id, 1);
-              }}
+              isActive={activeCategory === 'converter-tools' && activeSubCategory === sub.id}
+              onClick={() => handleSubCategoryClick(sub.id)}
             />
           ))}
         </div>
@@ -156,7 +176,7 @@ export default function ShopPage() {
       </div>
 
       {/* SECTION 5 — PRODUCT GRID */}
-      <div className="mb-12 animate-fade-in stagger-4">
+      <div ref={productGridRef} id="product-grid" className="mb-12 animate-fade-in stagger-4 scroll-mt-24">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {activeCategory === 'all' ? 'All Products' : 
@@ -217,9 +237,11 @@ export default function ShopPage() {
 
 function SubCategoryCard({ 
   sub, 
+  isActive,
   onClick 
 }: { 
   sub: { id: string; label: string; count: number }; 
+  isActive: boolean;
   onClick: () => void;
 }) {
   const descriptions: Record<string, string> = {
@@ -237,7 +259,11 @@ function SubCategoryCard({
   return (
     <button
       onClick={onClick}
-      className="card p-5 text-center hover:shadow-lg transition-all hover:scale-[1.02] group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900"
+      className={`card p-5 text-center hover:shadow-lg transition-all hover:scale-[1.02] group ${
+        isActive 
+          ? 'ring-2 ring-brand-500 bg-brand-50 dark:bg-brand-950/30' 
+          : 'bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900'
+      }`}
     >
       <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">
         {sub.label.split(' ')[0]}
@@ -251,8 +277,12 @@ function SubCategoryCard({
       <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
         {descriptions[sub.id] || 'Conversion tools'}
       </p>
-      <span className="inline-flex items-center text-xs font-medium text-brand-600 dark:text-brand-400 group-hover:underline">
-        Shop Now →
+      <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+        isActive
+          ? 'bg-brand-500 text-white'
+          : 'bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 group-hover:bg-brand-200'
+      }`}>
+        {isActive ? 'Showing →' : 'Shop Now →'}
       </span>
     </button>
   );
