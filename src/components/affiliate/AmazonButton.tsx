@@ -13,7 +13,7 @@ interface AmazonButtonProps {
 export default function AmazonButton({ 
   baseUrl,
   productId,
-  label = 'View on Amazon →',
+  label = '🔥 Grab These Deals Now',
   variant = 'card',
   className = '',
 }: AmazonButtonProps) {
@@ -35,21 +35,30 @@ export default function AmazonButton({
 
   const buttonStyles = {
     primary: `w-full py-3 px-4 rounded-xl
-              bg-amber-400 hover:bg-amber-500
-              text-gray-900 text-sm font-bold
+              bg-gradient-to-r from-amber-400 to-amber-500 
+              hover:from-amber-500 hover:to-amber-600
+              text-gray-900 text-sm font-extrabold
               transition-all duration-200
-              text-center block active:scale-95`,
-    card: `w-full py-2.5 px-4 rounded-xl
-           bg-amber-400 hover:bg-amber-500
-           text-gray-900 text-sm font-bold
+              text-center block active:scale-95
+              hover:shadow-lg hover:shadow-amber-400/50`,
+    card: `w-full py-3 px-4 rounded-xl
+           bg-gradient-to-r from-amber-400 to-amber-500 
+           hover:from-amber-500 hover:to-amber-600
+           text-gray-900 text-sm font-extrabold
            transition-all duration-200
-           text-center block active:scale-95`,
+           text-center block active:scale-95
+           hover:shadow-lg hover:shadow-amber-400/50
+           hover:scale-[1.02]
+           relative overflow-hidden
+           group`,
     subcategory: `w-full py-2 px-4 rounded-xl
-                  bg-brand-500 hover:bg-brand-600
-                  text-white text-sm font-semibold
-                  transition-colors duration-200
+                  bg-gradient-to-r from-brand-500 to-brand-600 
+                  hover:from-brand-600 hover:to-brand-700
+                  text-white text-sm font-bold
+                  transition-all duration-200
                   active:scale-95 inline-block
-                  text-center`,
+                  text-center
+                  hover:shadow-lg hover:shadow-brand-500/50`,
   }
 
   return (
@@ -70,7 +79,9 @@ export default function AmazonButton({
         </span>
       ) : (
         <span className="flex items-center justify-center gap-1.5">
-          {store.flag} {label}
+          <span className="text-base">{store.flag}</span>
+          <span className="tracking-wide">{label}</span>
+          <span className="text-xs opacity-75">on {store.domain}</span>
         </span>
       )}
     </a>
