@@ -394,7 +394,6 @@ function ProductCard({ product }: { product: ShopProduct }) {
       <AmazonButton
         baseUrl={product.amazonUrl}
         productId={product.id}
-        label="View on Amazon"
         variant="card"
       />
     </div>

@@ -103,7 +103,6 @@ function WidgetProductCard({ product }: { product: ShopProduct }) {
       <AmazonButton
         baseUrl={product.amazonUrl}
         productId={product.id}
-        label={`View on ${store.domain}`}
         variant="card"
         className="text-xs py-1.5"
       />
