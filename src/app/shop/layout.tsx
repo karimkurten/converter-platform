@@ -1,12 +1,18 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Shop 200+ Recommended Products | ConvertNow.ca',
-  description: '200+ hand-picked best-selling products from Amazon Canada. Luxury beauty, kitchen, fitness, tech, books and more. All with fast Canadian shipping.',
+  title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
+  description: 'Shop 200+ hand-picked products matched to your conversions. Measurement tools, kitchen scales, thermometers, laser measures and more — all on Amazon Canada with fast shipping.',
   keywords: [
-    'amazon canada products', 'luxury beauty canada', 'kitchen appliances canada', 
-    'fitness products canada', 'tech gadgets canada', 'best amazon products',
-    'amazon affiliate canada', 'top rated products canada'
+    'measurement tools canada',
+    'kitchen scale metric imperial',
+    'meat thermometer celsius fahrenheit',
+    'tape measure metric imperial canada',
+    'laser distance measure meters feet',
+    'digital caliper metric imperial',
+    'amazon canada measurement tools',
+    'converter tools shop',
+    'unit conversion tools'
   ],
 };
 

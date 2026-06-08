@@ -18,6 +18,7 @@ import Breadcrumb from '@/components/layout/Breadcrumb';
 import ConverterEngine from '@/components/converter/ConverterEngine';
 import { RelatedConverters, ConversionTable, FormulaBlock } from '@/components/converter/ConverterWidgets';
 import AdUnit, { StickyMobileAd } from '@/components/ads/AdUnit';
+import ContextualProductWidget from '@/components/affiliate/ContextualProductWidget';
 
 interface Props {
   params: Promise<{ category: string; converter: string }>;
@@ -112,6 +113,9 @@ export default async function ConverterPage({ params }: Props) {
             <Suspense fallback={<div className="converter-card h-64 animate-pulse" />}>
               <ConverterEngine converter={converter} category={category} />
             </Suspense>
+
+            {/* ─── Contextual Product Widget ────────────────────── */}
+            <ContextualProductWidget categorySlug={categorySlug} />
 
             {/* ─── In-content ad ───────────────────────────────── */}
             <div className="flex justify-center py-2">
