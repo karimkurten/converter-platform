@@ -4,13 +4,16 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, getConverterTools, getProductsBySubCategory, getProductCount, type ShopProduct } from '@/lib/shopProducts';
 import { trackEvent } from '@/lib/analytics';
-import { getAmazonUrl } from '@/lib/amazonRedirect';
+import { useAmazonStore } from '@/hooks/useAmazonStore';
+import AmazonButton from '@/components/affiliate/AmazonButton';
+import CountryBanner from '@/components/affiliate/CountryBanner';
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
   const productGridRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
+  const { store, getSubCategoryUrl } = useAmazonStore();
   
   // Handle URL params on load
   useEffect(() => {
@@ -79,7 +82,7 @@ export default function ShopPage() {
             <span className="font-bold text-gray-900 dark:text-white">15</span> Categories
           </span>
           <span className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-full">
-            🇨🇦 Ships to Canada, USA, UK & Australia
+            {store.flag} Ships to {store.countryName}
           </span>
         </div>
       </div>
@@ -103,6 +106,7 @@ export default function ShopPage() {
               sub={sub} 
               isActive={activeCategory === 'converter-tools' && activeSubCategory === sub.id}
               onClick={() => handleSubCategoryClick(sub.id)}
+              amazonUrl={getSubCategoryUrl(sub.id)}
             />
           ))}
         </div>
@@ -119,6 +123,9 @@ export default function ShopPage() {
           ))}
         </div>
       </div>
+
+      {/* Country Banner */}
+      <CountryBanner />
 
       {/* SECTION 4 — CATEGORY TABS */}
       <div className="mb-8 animate-fade-in stagger-3">
@@ -204,9 +211,9 @@ export default function ShopPage() {
             description="Products selected for quality" 
           />
           <TrustBadge 
-            icon="🇨🇦" 
-            title="Ships to Canada" 
-            description="USA, UK & Australia too" 
+            icon={store.flag} 
+            title={`Ships to ${store.countryName}`} 
+            description="Fast local delivery" 
           />
           <TrustBadge 
             icon="⭐" 
@@ -216,7 +223,7 @@ export default function ShopPage() {
           <TrustBadge 
             icon="🔒" 
             title="Amazon Secure" 
-            description="Safe checkout on Amazon" 
+            description={`Checkout on ${store.domain}`} 
           />
         </div>
       </div>
@@ -225,7 +232,7 @@ export default function ShopPage() {
       <div className="mt-12 max-w-3xl mx-auto animate-fade-in stagger-6">
         <div className="card p-6 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900">
           <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
-            <span className="font-semibold">Affiliate Disclosure:</span> As an Amazon Associate, ConvertNow.ca earns from qualifying purchases. Product prices and availability may vary.
+            <span className="font-semibold">Affiliate Disclosure:</span> As an Amazon Associate, ConvertNow.ca earns from qualifying purchases on {store.domain}. Product prices and availability may vary.
           </p>
         </div>
       </div>
@@ -238,11 +245,13 @@ export default function ShopPage() {
 function SubCategoryCard({ 
   sub, 
   isActive,
-  onClick 
+  onClick,
+  amazonUrl
 }: { 
   sub: { id: string; label: string; count: number }; 
   isActive: boolean;
   onClick: () => void;
+  amazonUrl: string;
 }) {
   const descriptions: Record<string, string> = {
     'length': 'For km ↔ miles users',
@@ -256,9 +265,10 @@ function SubCategoryCard({
     'time': 'For time zone users',
   };
 
+  const hasProducts = sub.count > 0;
+
   return (
-    <button
-      onClick={onClick}
+    <div
       className={`card p-5 text-center hover:shadow-lg transition-all hover:scale-[1.02] group ${
         isActive 
           ? 'ring-2 ring-brand-500 bg-brand-50 dark:bg-brand-950/30' 
@@ -277,14 +287,28 @@ function SubCategoryCard({
       <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
         {descriptions[sub.id] || 'Conversion tools'}
       </p>
-      <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-        isActive
-          ? 'bg-brand-500 text-white'
-          : 'bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 group-hover:bg-brand-200'
-      }`}>
-        {isActive ? 'Showing →' : 'Shop Now →'}
-      </span>
-    </button>
+      {hasProducts ? (
+        <button
+          onClick={onClick}
+          className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+            isActive
+              ? 'bg-brand-500 text-white'
+              : 'bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 hover:bg-brand-200'
+          }`}
+        >
+          {isActive ? 'Showing →' : 'Shop Now →'}
+        </button>
+      ) : (
+        <a
+          href={amazonUrl}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+          className="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-400 hover:bg-amber-500 text-gray-900 transition-colors"
+        >
+          Shop Amazon →
+        </a>
+      )}
+    </div>
   );
 }
 
@@ -315,20 +339,6 @@ function TrustBadge({
 // ─── Product Card ──────────────────────────────────────────────────────────────
 
 function ProductCard({ product }: { product: ShopProduct }) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function handleAmazonClick(e: React.MouseEvent) {
-    e.preventDefault();
-    setIsLoading(true);
-    trackEvent('shop_product_click', 'affiliate', product.id, 1);
-    
-    const keyword = product.productKeyword || product.title;
-    const url = await getAmazonUrl(keyword);
-    window.open(url, '_blank', 'noopener,noreferrer');
-    
-    setIsLoading(false);
-  }
-
   return (
     <div className="card p-5 flex flex-col h-full hover:shadow-lg transition-all hover:scale-[1.01] group relative">
       {/* Emoji */}
@@ -380,14 +390,13 @@ function ProductCard({ product }: { product: ShopProduct }) {
         {product.globalDemand}
       </p>
 
-      {/* CTA */}
-      <button
-        onClick={handleAmazonClick}
-        disabled={isLoading}
-        className="mt-auto block w-full text-center bg-amber-400 hover:bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-500 text-gray-900 dark:text-white font-bold text-sm py-2.5 rounded-xl transition-all hover:scale-105 duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
-      >
-        {isLoading ? '🔄 Finding best offer...' : '🔥 Check Discounted Offers →'}
-      </button>
+      {/* CTA - Using AmazonButton with geo-routing */}
+      <AmazonButton
+        baseUrl={product.amazonUrl}
+        productId={product.id}
+        label="View on Amazon"
+        variant="card"
+      />
     </div>
   );
 }

@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { SHOP_PRODUCTS, type ShopProduct } from '@/lib/shopProducts';
-import { trackEvent } from '@/lib/analytics';
-import { getAmazonUrl } from '@/lib/amazonRedirect';
+import { useAmazonStore } from '@/hooks/useAmazonStore';
+import AmazonButton from './AmazonButton';
 import Link from 'next/link';
 
 interface ContextualProductWidgetProps {
@@ -39,6 +38,7 @@ const categoryDisplayNames: Record<string, string> = {
 };
 
 export default function ContextualProductWidget({ categorySlug }: ContextualProductWidgetProps) {
+  const { store } = useAmazonStore();
   const subCategoryId = categoryToSubCategory[categorySlug];
   
   if (!subCategoryId) return null;
@@ -77,7 +77,7 @@ export default function ContextualProductWidget({ categorySlug }: ContextualProd
           </Link>
           
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            As an Amazon Associate we earn from sales
+            As an Amazon Associate we earn from sales on {store.domain}
           </p>
         </div>
       </div>
@@ -86,19 +86,7 @@ export default function ContextualProductWidget({ categorySlug }: ContextualProd
 }
 
 function WidgetProductCard({ product }: { product: ShopProduct }) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function handleAmazonClick(e: React.MouseEvent) {
-    e.preventDefault();
-    setIsLoading(true);
-    trackEvent('contextual_widget_click', 'affiliate', product.id, 1);
-    
-    const keyword = product.productKeyword || product.title;
-    const url = await getAmazonUrl(keyword);
-    window.open(url, '_blank', 'noopener,noreferrer');
-    
-    setIsLoading(false);
-  }
+  const { store } = useAmazonStore();
 
   return (
     <div className="flex flex-col p-3 bg-white dark:bg-gray-800 rounded-lg">
@@ -109,16 +97,16 @@ function WidgetProductCard({ product }: { product: ShopProduct }) {
       </h4>
       
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-        {product.priceRange} on Amazon
+        {product.priceRange} on {store.domain}
       </p>
       
-      <button
-        onClick={handleAmazonClick}
-        disabled={isLoading}
-        className="mt-auto text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline disabled:opacity-70"
-      >
-        {isLoading ? '🔄 Loading...' : 'View on Amazon →'}
-      </button>
+      <AmazonButton
+        baseUrl={product.amazonUrl}
+        productId={product.id}
+        label={`View on ${store.domain}`}
+        variant="card"
+        className="text-xs py-1.5"
+      />
     </div>
   );
 }
