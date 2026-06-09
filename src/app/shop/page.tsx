@@ -7,6 +7,7 @@ import { trackEvent } from '@/lib/analytics';
 import { useAmazonStore } from '@/hooks/useAmazonStore';
 import AmazonButton from '@/components/affiliate/AmazonButton';
 import CountryBanner from '@/components/affiliate/CountryBanner';
+import AdUnit from '@/components/ads/AdUnit';
 
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -181,6 +182,9 @@ export default function ShopPage() {
           </div>
         )}
       </div>
+
+      {/* Ad Unit above product grid */}
+      <AdUnit slot="in-content" />
 
       {/* SECTION 5 — PRODUCT GRID */}
       <div ref={productGridRef} id="product-grid" className="mb-12 animate-fade-in stagger-4 scroll-mt-24">
