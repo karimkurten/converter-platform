@@ -9,10 +9,24 @@ import AmazonButton from '@/components/affiliate/AmazonButton';
 import CountryBanner from '@/components/affiliate/CountryBanner';
 import AdUnit from '@/components/ads/AdUnit';
 
+function extractPrice(priceRange: string): number {
+  const match = priceRange.match(/[\d.,]+/);
+  if (!match) return 0;
+  return parseFloat(match[0].replace(/,/g, ''));
+}
+
+function parseReviewCount(rc: string): number {
+  const match = rc.replace(/[^0-9]/g, '');
+  return parseInt(match) || 0;
+}
+
 export default function ShopClientPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'popular' | 'price-low' | 'price-high' | 'rating'>('popular');
   const productGridRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
   const { store, getSubCategoryUrl } = useAmazonStore();
 
@@ -27,12 +41,44 @@ export default function ShopClientPage() {
   const converterTools = getConverterTools();
   const converterToolsTopPicks = converterTools.filter(p => p.badge).slice(0, 8);
 
+  // Filter and sort products
   const products = useMemo(() => {
+    let result: ShopProduct[];
     if (activeCategory === 'converter-tools' && activeSubCategory) {
-      return getProductsBySubCategory(activeSubCategory);
+      result = getProductsBySubCategory(activeSubCategory);
+    } else {
+      result = getProductsByCategory(activeCategory);
     }
-    return getProductsByCategory(activeCategory);
-  }, [activeCategory, activeSubCategory]);
+
+    // Search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.features.some(f => f.toLowerCase().includes(q))
+      );
+    }
+
+    // Sort
+    switch (sortBy) {
+      case 'price-low':
+        result = [...result].sort((a, b) => extractPrice(a.priceRange) - extractPrice(b.priceRange));
+        break;
+      case 'price-high':
+        result = [...result].sort((a, b) => extractPrice(b.priceRange) - extractPrice(a.priceRange));
+        break;
+      case 'rating':
+        result = [...result].sort((a, b) => b.rating - a.rating);
+        break;
+      case 'popular':
+      default:
+        result = [...result].sort((a, b) => parseReviewCount(b.reviewCount) - parseReviewCount(a.reviewCount));
+        break;
+    }
+
+    return result;
+  }, [activeCategory, activeSubCategory, searchQuery, sortBy]);
 
   const converterToolsCategory = SHOP_CATEGORIES.find(c => c.id === 'converter-tools');
 
@@ -134,6 +180,33 @@ export default function ShopClientPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Search + Sort Bar */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 animate-fade-in stagger-3">
+        <div className="relative flex-1">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+          <input
+            ref={searchRef}
+            type="search"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search products (e.g. scale, thermometer, tape...)"
+            className="w-full pl-10 pr-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+          />
+        </div>
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value as typeof sortBy)}
+          className="px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          <option value="popular">Sort: Most Popular</option>
+          <option value="rating">Sort: Highest Rated</option>
+          <option value="price-low">Sort: Price Low → High</option>
+          <option value="price-high">Sort: Price High → Low</option>
+        </select>
       </div>
 
       {/* Ad Unit */}
