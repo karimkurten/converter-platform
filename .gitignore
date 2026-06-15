@@ -42,3 +42,10 @@ Thumbs.db
 # Misc
 *.log
 .cache/
+
+# Social media automation
+automation/social-media/output/
+automation/social-media/scripts/.env
+automation/social-media/scripts/service-account.json
+automation/social-media/scripts/__pycache__/
+automation/social-media/scripts/*.pyc

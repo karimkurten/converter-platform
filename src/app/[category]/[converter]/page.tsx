@@ -164,9 +164,25 @@ export default async function ConverterPage({ params }: Props) {
               </div>
             </div>
 
-            {/* ─── SEO content block ────────────────────────────── */}
+            {/* ─── Voice-search optimized SEO content ───────────── */}
             <div className="card p-6">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+                How Do I Convert {fromUnit.name} to {toUnit.name}?
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                To convert {fromUnit.name} ({fromUnit.symbol}) to {toUnit.name} ({toUnit.symbol}), simply enter the value
+                in the converter above and click the swap button if needed. The formula is {exampleFormula || 'based on the standard conversion rate'}.
+              </p>
+
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 mt-6">
+                What Is the Formula to Convert {fromUnit.name} to {toUnit.name}?
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                {formulaDescription || `1 ${fromUnit.name} equals approximately ${exampleResult} ${toUnit.name}.`} This conversion uses
+                scientifically verified constants for maximum accuracy. Perfect for students, travelers, engineers, and home cooks.
+              </p>
+
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 mt-6">
                 About {fromUnit.name} and {toUnit.name}
               </h2>
               <div className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed space-y-3">

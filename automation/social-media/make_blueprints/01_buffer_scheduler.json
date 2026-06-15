@@ -1,0 +1,207 @@
+{
+  "name": "ConvertNow - Daily Buffer Scheduler",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:searchRowsAdvanced",
+      "version": 4,
+      "parameters": {
+        "__IMTCONN__": "{{GOOGLE_SHEETS_CONNECTION}}"
+      },
+      "mapper": {
+        "from": "drive",
+        "mode": "select",
+        "spreadsheetId": "{{GOOGLE_SHEET_ID}}",
+        "sheetId": "Content Calendar",
+        "includesHeaders": true,
+        "filter": [
+          [
+            {
+              "a": "Post Status",
+              "o": "text:equal",
+              "b": "ready_to_post"
+            },
+            {
+              "a": "Date",
+              "o": "date:lessOrEqual",
+              "b": "{{formatDate(now; \"YYYY-MM-DD\")}}"
+            }
+          ]
+        ],
+        "sortType": "asc",
+        "sortColumn": "Date",
+        "limit": "10"
+      },
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "label": "Google Sheets Connection",
+              "data": {
+                "scoped": "true",
+                "connection": "google"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "mapper": null,
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0
+        }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 3,
+              "module": "buffer:createUpdate",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": "{{BUFFER_CONNECTION}}"
+              },
+              "mapper": {
+                "profile_ids": ["{{BUFFER_FB_PROFILE_ID}}"],
+                "text": "{{1.Caption}}",
+                "media": {
+                  "photo": "{{1.`Image URL`}}",
+                  "link": "{{1.`CTA URL`}}"
+                },
+                "shorten": false,
+                "now": false
+              },
+              "filter": {
+                "name": "Facebook posts only",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{1.Platform}}",
+                      "o": "text:equal",
+                      "b": "facebook"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{1.Platform}}",
+                      "o": "text:equal",
+                      "b": "both"
+                    }
+                  ]
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 600,
+                  "y": -100
+                }
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 4,
+              "module": "buffer:createUpdate",
+              "version": 1,
+              "parameters": {
+                "__IMTCONN__": "{{BUFFER_CONNECTION}}"
+              },
+              "mapper": {
+                "profile_ids": ["{{BUFFER_IG_PROFILE_ID}}"],
+                "text": "{{1.Caption}}",
+                "media": {
+                  "photo": "{{1.`Image URL`}}",
+                  "link": "{{1.`CTA URL`}}"
+                },
+                "shorten": false,
+                "now": false
+              },
+              "filter": {
+                "name": "Instagram posts only",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{1.Platform}}",
+                      "o": "text:equal",
+                      "b": "instagram"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{1.Platform}}",
+                      "o": "text:equal",
+                      "b": "both"
+                    }
+                  ]
+                ]
+              },
+              "metadata": {
+                "designer": {
+                  "x": 600,
+                  "y": 100
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "module": "google-sheets:updateRow",
+      "version": 4,
+      "parameters": {
+        "__IMTCONN__": "{{GOOGLE_SHEETS_CONNECTION}}"
+      },
+      "mapper": {
+        "from": "drive",
+        "mode": "select",
+        "spreadsheetId": "{{GOOGLE_SHEET_ID}}",
+        "sheetId": "Content Calendar",
+        "rowNumber": "{{1.__ROW_NUMBER__}}",
+        "values": {
+          "Post Status": "scheduled",
+          "Buffer ID": "{{ifempty(3.id; 4.id)}}",
+          "Notes": "Posted on {{formatDate(now; \"YYYY-MM-DD HH:mm\")}}"
+        }
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "us1.make.com"
+  }
+}

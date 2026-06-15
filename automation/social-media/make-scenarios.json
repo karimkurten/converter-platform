@@ -1,0 +1,374 @@
+{
+  "scenarios": [
+    {
+      "name": "1. Weekly Content Generation",
+      "description": "Runs every Sunday at 9am to generate 15 posts for the week",
+      "trigger": {
+        "type": "schedule",
+        "frequency": "weekly",
+        "day": "sunday",
+        "time": "09:00",
+        "timezone": "America/Toronto"
+      },
+      "steps": [
+        {
+          "id": 1,
+          "module": "Google Sheets",
+          "action": "Get Settings",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "range": "Settings!A:C"
+          }
+        },
+        {
+          "id": 2,
+          "module": "OpenAI",
+          "action": "Generate Content",
+          "config": {
+            "model": "gpt-4",
+            "temperature": 0.8,
+            "max_tokens": 4000,
+            "system_prompt": "{{file:CONTENT_PROMPT.md}}",
+            "user_prompt": "Generate 15 unique social media posts for ConvertNow.ca for the week of {{formatDate(now(); \"YYYY-MM-DD\")}}. Return valid JSON only."
+          },
+          "output": "generated_posts"
+        },
+        {
+          "id": 3,
+          "module": "JSON Parser",
+          "action": "Parse Posts",
+          "config": {
+            "input": "{{generated_posts}}",
+            "path": "posts"
+          }
+        },
+        {
+          "id": 4,
+          "module": "Iterator",
+          "action": "Process Each Post",
+          "config": {
+            "source": "{{parsed_posts}}"
+          },
+          "sub_steps": [
+            {
+              "module": "Google Sheets",
+              "action": "Add Row",
+              "config": {
+                "spreadsheet_id": "{{settings.sheet_id}}",
+                "sheet": "Content Calendar",
+                "values": [
+                  "{{item.id}}",
+                  "{{addDays(now(); item.date_offset)}}",
+                  "{{item.platform}}",
+                  "{{item.content_pillar}}",
+                  "{{item.hook}}",
+                  "{{item.caption}}",
+                  "{{item.content_format}}",
+                  "{{item.image_prompt}}",
+                  "",
+                  "{{item.cta_type}}",
+                  "{{item.cta_url}}",
+                  "{{item.optimal_time}}",
+                  "Draft",
+                  "",
+                  "",
+                  "",
+                  "Auto-generated {{formatDate(now(); \"YYYY-MM-DD\")}}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "module": "Google Sheets",
+          "action": "Update Status",
+          "config": {
+            "message": "15 posts generated for week starting {{formatDate(now(); \"YYYY-MM-DD\")}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Daily Image Generation",
+      "description": "Runs daily at 6am to generate images for posts scheduled in next 3 days",
+      "trigger": {
+        "type": "schedule",
+        "frequency": "daily",
+        "time": "06:00",
+        "timezone": "America/Toronto"
+      },
+      "steps": [
+        {
+          "id": 1,
+          "module": "Google Sheets",
+          "action": "Search Rows",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Content Calendar",
+            "filter": {
+              "Post Status": "Draft",
+              "Date": "between today and +3 days"
+            }
+          },
+          "output": "pending_posts"
+        },
+        {
+          "id": 2,
+          "module": "Iterator",
+          "action": "Generate Images",
+          "config": {
+            "source": "{{pending_posts}}"
+          },
+          "sub_steps": [
+            {
+              "module": "OpenAI",
+              "action": "Generate Image",
+              "config": {
+                "model": "dall-e-3",
+                "prompt": "{{item.Image Prompt}}",
+                "size": "1024x1024",
+                "quality": "standard",
+                "style": "vivid"
+              },
+              "output": "image_data"
+            },
+            {
+              "module": "HTTP",
+              "action": "Upload to Cloud Storage",
+              "config": {
+                "method": "POST",
+                "url": "{{settings.image_storage_url}}",
+                "headers": {
+                  "Authorization": "Bearer {{settings.storage_token}}"
+                },
+                "body": "{{image_data.url}}"
+              },
+              "output": "stored_url"
+            },
+            {
+              "module": "Google Sheets",
+              "action": "Update Row",
+              "config": {
+                "spreadsheet_id": "{{settings.sheet_id}}",
+                "sheet": "Content Calendar",
+                "row_id": "{{item.ID}}",
+                "updates": {
+                  "Image URL": "{{stored_url}}",
+                  "Post Status": "Ready to Post"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Post to Buffer (Daily Scheduler)",
+      "description": "Runs 3x daily (9am, 12pm, 6pm) to schedule posts via Buffer",
+      "trigger": {
+        "type": "schedule",
+        "times": ["09:00", "12:00", "18:00"],
+        "timezone": "America/Toronto"
+      },
+      "steps": [
+        {
+          "id": 1,
+          "module": "Google Sheets",
+          "action": "Search Rows",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Content Calendar",
+            "filter": {
+              "Post Status": "Ready to Post",
+              "Date": "today",
+              "Optimal Time": "<= current_time"
+            },
+            "limit": 1
+          },
+          "output": "post_to_schedule"
+        },
+        {
+          "id": 2,
+          "module": "Router",
+          "action": "Check Platform",
+          "routes": [
+            {
+              "condition": "{{post_to_schedule.Platform}} == 'Facebook' OR {{post_to_schedule.Platform}} == 'Both'",
+              "steps": [
+                {
+                  "module": "Buffer",
+                  "action": "Create Post",
+                  "config": {
+                    "access_token": "{{settings.buffer_token}}",
+                    "profile_ids": ["{{settings.fb_page_id}}"],
+                    "text": "{{post_to_schedule.Caption}}",
+                    "media": {
+                      "photo": "{{post_to_schedule.Image URL}}"
+                    },
+                    "scheduled_at": "{{post_to_schedule.Date}}T{{post_to_schedule.Optimal Time}}:00-05:00"
+                  },
+                  "output": "buffer_fb_response"
+                }
+              ]
+            },
+            {
+              "condition": "{{post_to_schedule.Platform}} == 'Instagram' OR {{post_to_schedule.Platform}} == 'Both'",
+              "steps": [
+                {
+                  "module": "Buffer",
+                  "action": "Create Post",
+                  "config": {
+                    "access_token": "{{settings.buffer_token}}",
+                    "profile_ids": ["{{settings.ig_business_id}}"],
+                    "text": "{{post_to_schedule.Caption}}",
+                    "media": {
+                      "photo": "{{post_to_schedule.Image URL}}"
+                    },
+                    "scheduled_at": "{{post_to_schedule.Date}}T{{post_to_schedule.Optimal Time}}:00-05:00"
+                  },
+                  "output": "buffer_ig_response"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "module": "Google Sheets",
+          "action": "Update Status",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Content Calendar",
+            "row_id": "{{post_to_schedule.ID}}",
+            "updates": {
+              "Post Status": "Scheduled",
+              "Buffer ID": "{{buffer_fb_response.id || buffer_ig_response.id}}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Error Handler & Retry",
+      "description": "Runs hourly to retry failed posts",
+      "trigger": {
+        "type": "schedule",
+        "frequency": "hourly"
+      },
+      "steps": [
+        {
+          "id": 1,
+          "module": "Google Sheets",
+          "action": "Search Rows",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Content Calendar",
+            "filter": {
+              "Post Status": "Error"
+            },
+            "limit": 5
+          },
+          "output": "failed_posts"
+        },
+        {
+          "id": 2,
+          "module": "Iterator",
+          "action": "Retry Failed",
+          "config": {
+            "source": "{{failed_posts}}"
+          },
+          "sub_steps": [
+            {
+              "module": "Buffer",
+              "action": "Create Post",
+              "config": {
+                "access_token": "{{settings.buffer_token}}",
+                "profile_ids": ["{{settings.fb_page_id}}", "{{settings.ig_business_id}}"],
+                "text": "{{item.Caption}}",
+                "media": {
+                  "photo": "{{item.Image URL}}"
+                }
+              },
+              "on_error": {
+                "action": "update_sheet",
+                "status": "Error",
+                "notes": "Retry failed: {{error.message}}"
+              },
+              "on_success": {
+                "action": "update_sheet",
+                "status": "Scheduled",
+                "notes": "Retry successful at {{formatDate(now())}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Weekly Analytics Report",
+      "description": "Runs every Monday to compile performance data",
+      "trigger": {
+        "type": "schedule",
+        "frequency": "weekly",
+        "day": "monday",
+        "time": "08:00"
+      },
+      "steps": [
+        {
+          "id": 1,
+          "module": "Google Sheets",
+          "action": "Get Posted This Week",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Content Calendar",
+            "filter": {
+              "Post Status": "Posted",
+              "Date": "last 7 days"
+            }
+          },
+          "output": "weekly_posts"
+        },
+        {
+          "id": 2,
+          "module": "Buffer",
+          "action": "Get Analytics",
+          "config": {
+            "access_token": "{{settings.buffer_token}}",
+            "date_range": "last_7_days"
+          },
+          "output": "buffer_stats"
+        },
+        {
+          "id": 3,
+          "module": "Google Sheets",
+          "action": "Add Analytics Row",
+          "config": {
+            "spreadsheet_id": "{{settings.sheet_id}}",
+            "sheet": "Analytics",
+            "values": [
+              "{{formatDate(addDays(now(); -7); \"YYYY-MM-DD\")}}",
+              "{{length(weekly_posts)}}",
+              "{{count(weekly_posts; 'Platform'; 'Facebook')}}",
+              "{{count(weekly_posts; 'Platform'; 'Instagram')}}",
+              "{{buffer_stats.total_engagement}}",
+              "{{buffer_stats.link_clicks}}",
+              "{{buffer_stats.top_post}}",
+              "{{count(weekly_posts; 'Post Status'; 'Error')}}"
+            ]
+          }
+        },
+        {
+          "id": 4,
+          "module": "Email",
+          "action": "Send Report",
+          "config": {
+            "to": "{{settings.admin_email}}",
+            "subject": "ConvertNow Social Media Weekly Report",
+            "body": "Weekly performance summary attached. Total posts: {{length(weekly_posts)}}. Total engagement: {{buffer_stats.total_engagement}}."
+          }
+        }
+      ]
+    }
+  ]
+}

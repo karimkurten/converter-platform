@@ -1,0 +1,83 @@
+{
+  "name": "ConvertNow - Error Monitor & Notifier",
+  "flow": [
+    {
+      "id": 1,
+      "module": "google-sheets:searchRowsAdvanced",
+      "version": 4,
+      "parameters": {
+        "__IMTCONN__": "{{GOOGLE_SHEETS_CONNECTION}}"
+      },
+      "mapper": {
+        "from": "drive",
+        "mode": "select",
+        "spreadsheetId": "{{GOOGLE_SHEET_ID}}",
+        "sheetId": "Content Calendar",
+        "includesHeaders": true,
+        "filter": [
+          [
+            {
+              "a": "Post Status",
+              "o": "text:equal",
+              "b": "error"
+            }
+          ]
+        ],
+        "limit": "20"
+      },
+      "metadata": {
+        "designer": {"x": 0, "y": 0}
+      }
+    },
+    {
+      "id": 2,
+      "module": "util:Aggregator",
+      "version": 1,
+      "parameters": {
+        "feeder": 1
+      },
+      "mapper": {
+        "value": "{{1.ID}} - {{1.`Content Pillar`}} - {{1.Notes}}"
+      },
+      "metadata": {
+        "designer": {"x": 300, "y": 0}
+      }
+    },
+    {
+      "id": 3,
+      "module": "email:ActionSendEmail",
+      "version": 2,
+      "parameters": {
+        "account": "{{EMAIL_CONNECTION}}"
+      },
+      "mapper": {
+        "to": ["{{ADMIN_EMAIL}}"],
+        "subject": "ConvertNow Social Media: {{2.array.length}} posts need attention",
+        "contentType": "text",
+        "content": "The following posts have errors and need review:\n\n{{join(2.array; \"\\n\")}}\n\nReview at: https://docs.google.com/spreadsheets/d/{{GOOGLE_SHEET_ID}}"
+      },
+      "filter": {
+        "name": "Only if errors exist",
+        "conditions": [[{
+          "a": "{{2.array.length}}",
+          "o": "number:greater",
+          "b": "0"
+        }]]
+      },
+      "metadata": {
+        "designer": {"x": 600, "y": 0}
+      }
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "sequential": false
+    },
+    "zone": "us1.make.com"
+  }
+}

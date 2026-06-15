@@ -1,0 +1,165 @@
+{
+  "sheets": [
+    {
+      "name": "Content Calendar",
+      "description": "Main sheet for all social media posts",
+      "columns": [
+        {
+          "name": "ID",
+          "type": "text",
+          "description": "Unique post identifier (CNW001, CNW002, etc.)",
+          "validation": "required"
+        },
+        {
+          "name": "Date",
+          "type": "date",
+          "description": "Scheduled posting date",
+          "format": "YYYY-MM-DD"
+        },
+        {
+          "name": "Platform",
+          "type": "dropdown",
+          "options": ["Facebook", "Instagram", "Both"],
+          "description": "Target social media platform"
+        },
+        {
+          "name": "Content Pillar",
+          "type": "dropdown",
+          "options": ["Conversion Fact", "Product Spotlight", "Tip/Hack", "Engagement", "Seasonal"],
+          "description": "Content category for tracking"
+        },
+        {
+          "name": "Hook",
+          "type": "text",
+          "description": "Attention-grabbing first line",
+          "max_length": 100
+        },
+        {
+          "name": "Caption",
+          "type": "long_text",
+          "description": "Full post caption with hashtags"
+        },
+        {
+          "name": "Content Format",
+          "type": "dropdown",
+          "options": ["Static Image", "Carousel", "Reel Suggestion", "Text Graphic", "Infographic", "Question/Poll"],
+          "description": "Visual format type"
+        },
+        {
+          "name": "Image Prompt",
+          "type": "long_text",
+          "description": "DALL-E 3 prompt for image generation"
+        },
+        {
+          "name": "Image URL",
+          "type": "url",
+          "description": "Generated image URL (auto-populated)"
+        },
+        {
+          "name": "CTA Type",
+          "type": "dropdown",
+          "options": ["Website Visit", "Shop Visit", "Engagement", "Share"],
+          "description": "Call-to-action objective"
+        },
+        {
+          "name": "CTA URL",
+          "type": "url",
+          "description": "Destination URL for CTA"
+        },
+        {
+          "name": "Optimal Time",
+          "type": "time",
+          "description": "Best posting time (HH:MM)"
+        },
+        {
+          "name": "Post Status",
+          "type": "dropdown",
+          "options": ["Draft", "Image Pending", "Ready to Post", "Scheduled", "Posted", "Error"],
+          "description": "Current status in workflow",
+          "default": "Draft"
+        },
+        {
+          "name": "Buffer ID",
+          "type": "text",
+          "description": "Buffer scheduling ID (auto-populated)"
+        },
+        {
+          "name": "Posted URL",
+          "type": "url",
+          "description": "Live post URL after publishing"
+        },
+        {
+          "name": "Engagement",
+          "type": "text",
+          "description": "Likes/Comments/Shares (manual update)"
+        },
+        {
+          "name": "Notes",
+          "type": "long_text",
+          "description": "Internal notes and observations"
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "description": "Performance tracking sheet",
+      "columns": [
+        {"name": "Week Starting", "type": "date"},
+        {"name": "Total Posts", "type": "number"},
+        {"name": "FB Posts", "type": "number"},
+        {"name": "IG Posts", "type": "number"},
+        {"name": "Total Engagement", "type": "number"},
+        {"name": "Website Clicks", "type": "number"},
+        {"name": "Top Performing Post", "type": "text"},
+        {"name": "Errors", "type": "number"}
+      ]
+    },
+    {
+      "name": "Settings",
+      "description": "Configuration and API keys",
+      "columns": [
+        {"name": "Setting", "type": "text"},
+        {"name": "Value", "type": "text"},
+        {"name": "Description", "type": "text"}
+      ],
+      "rows": [
+        ["OpenAI API Key", "[HIDDEN]", "For content generation"],
+        ["Buffer Access Token", "[HIDDEN]", "For posting to social platforms"],
+        ["Google Sheet ID", "[AUTO]", "This sheet's ID"],
+        ["Make Webhook URL", "[AUTO]", "For triggering workflows"],
+        ["Content Gen Day", "Sunday", "Day to generate weekly content"],
+        ["Content Gen Time", "09:00", "Time to generate content"],
+        ["FB Page ID", "", "Facebook Page identifier"],
+        ["IG Business ID", "", "Instagram Business account ID"],
+        ["Weekly Post Target", "15", "Number of posts per week"],
+        ["Image Size", "1024x1024", "DALL-E image dimensions"]
+      ]
+    }
+  ],
+  "formulas": {
+    "status_coloring": {
+      "Draft": "gray",
+      "Image Pending": "yellow",
+      "Ready to Post": "blue",
+      "Scheduled": "green",
+      "Posted": "dark green",
+      "Error": "red"
+    },
+    "conditional_rules": [
+      {
+        "range": "M2:M1000",
+        "condition": "text is exactly 'Error'",
+        "format": {
+          "backgroundColor": {"red": 1, "green": 0.8, "blue": 0.8}
+        }
+      },
+      {
+        "range": "M2:M1000",
+        "condition": "text is exactly 'Posted'",
+        "format": {
+          "backgroundColor": {"red": 0.8, "green": 1, "blue": 0.8}
+        }
+      }
+    ]
+  }
+}

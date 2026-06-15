@@ -105,15 +105,32 @@ export function buildCategoryMetadata(category: ConverterCategory): Metadata {
 export function buildWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: SITE_NAME,
-    url: SITE_URL,
-    description: 'Free online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, and more.',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
-      'query-input': 'required name=search_term_string',
-    },
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: 'Free online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, and more.',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}#organization`,
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: `${SITE_URL}/og-image.png`,
+        sameAs: [
+          'https://www.facebook.com/ConvertNow.ca',
+          'https://www.instagram.com/ConvertNow.ca',
+          'https://ca.pinterest.com/ConvertNow',
+        ],
+        description: 'Free, fast online unit converter supporting 500+ conversions with no signup required.',
+      },
+    ],
   };
 }
 
@@ -141,6 +158,51 @@ export function buildConverterSchema(
           { '@type': 'ListItem', position: 3, name: converter.title, item: url },
         ],
       },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'HowTo',
+      name: `How to convert ${fromUnit.name} to ${toUnit.name}`,
+      description: `Step-by-step guide to convert ${fromUnit.name} (${fromUnit.symbol}) to ${toUnit.name} (${toUnit.symbol}) using ConvertNow.`,
+      totalTime: 'PT0M',
+      estimatedCost: {
+        '@type': 'MonetaryAmount',
+        currency: 'USD',
+        value: '0',
+      },
+      supply: [
+        { '@type': 'HowToSupply', name: 'Internet connection (optional)' },
+      ],
+      tool: [
+        { '@type': 'HowToTool', name: 'ConvertNow online converter' },
+      ],
+      step: [
+        {
+          '@type': 'HowToStep',
+          position: 1,
+          name: 'Open the converter',
+          text: `Go to ConvertNow.ca and navigate to the ${fromUnit.name} to ${toUnit.name} converter.`,
+          url: `${SITE_URL}/${category.slug}/${converter.id}`,
+        },
+        {
+          '@type': 'HowToStep',
+          position: 2,
+          name: 'Enter your value',
+          text: `Type the number of ${fromUnit.name} you want to convert into the input field.`,
+        },
+        {
+          '@type': 'HowToStep',
+          position: 3,
+          name: 'Get instant result',
+          text: `The converter instantly shows the equivalent in ${toUnit.name} (${toUnit.symbol}), along with the formula used.`,
+        },
+        {
+          '@type': 'HowToStep',
+          position: 4,
+          name: 'Swap or adjust (optional)',
+          text: `Use the swap button to convert ${toUnit.name} back to ${fromUnit.name}, or adjust decimal precision as needed.`,
+        },
+      ],
     },
     {
       '@context': 'https://schema.org',

@@ -5,6 +5,7 @@ import { buildMetadata, buildWebsiteSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import HeroSearch from '@/components/home/HeroSearch';
 import AdUnit from '@/components/ads/AdUnit';
+import SEOContent from '@/components/home/SEOContent';
 
 export const metadata: Metadata = buildMetadata({
   title: 'ConvertNow — Free Online Unit Converter | 500+ Conversions',
@@ -190,25 +191,7 @@ export default function HomePage() {
 
         {/* ─── SEO content block ───────────────────────────────────────────── */}
         <section className="section border-t border-gray-100 dark:border-gray-800">
-          <div className="max-w-3xl">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              The Most Accurate Free Unit Converter
-            </h2>
-            <div className="prose prose-gray dark:prose-invert max-w-none text-sm leading-relaxed space-y-3 text-gray-600 dark:text-gray-400">
-              <p>
-                ConvertNow is a free, fast, and accurate online unit converter supporting 500+ unit conversions
-                across 13 categories. Whether you need to convert <Link href="/length/kilometer-to-mile" className="text-brand-500 hover:underline">kilometers to miles</Link>,{' '}
-                <Link href="/weight/kilogram-to-pound" className="text-brand-500 hover:underline">kilograms to pounds</Link>, or{' '}
-                <Link href="/temperature/celsius-to-fahrenheit" className="text-brand-500 hover:underline">Celsius to Fahrenheit</Link>,
-                we provide instant results with the formula shown.
-              </p>
-              <p>
-                Our <Link href="/currency" className="text-brand-500 hover:underline">currency converter</Link> uses
-                live exchange rates, while all other converters use precise scientific constants for maximum accuracy.
-                Every converter includes bidirectional conversion, a swap button, and a reference table.
-              </p>
-            </div>
-          </div>
+          <SEOContent />
         </section>
 
         {/* ─── FAQ ─────────────────────────────────────────────────────────── */}
