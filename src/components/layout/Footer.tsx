@@ -101,8 +101,9 @@ export default function Footer() {
                 { label: 'Contact', href: '/contact' },
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
-                { label: 'Sitemap', href: '/sitemap.xml' },
+                { label: 'Editorial Policy', href: '/editorial-policy' },
                 { label: 'Affiliate Disclosure', href: '/affiliate-disclosure' },
+                { label: 'Sitemap', href: '/sitemap.xml' },
               ].map(link => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-500 dark:hover:text-brand-400 transition-colors">
