@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { CATEGORIES, getCategoryBySlug } from '@/lib/converters';
 import { buildCategoryMetadata, buildBreadcrumbSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
+import { generateCategoryHubContent } from '@/lib/categoryContent';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import AdUnit from '@/components/ads/AdUnit';
 
@@ -27,6 +28,8 @@ export default async function CategoryPage({ params }: Props) {
   const { category: categorySlug } = await params;
   const category = getCategoryBySlug(categorySlug);
   if (!category) notFound();
+
+  const hub = generateCategoryHubContent(category);
 
   const colors = CATEGORY_COLORS[category.color] || CATEGORY_COLORS.blue;
   const popularConverters = category.converters.filter(c => c.popular);
@@ -65,12 +68,12 @@ export default async function CategoryPage({ params }: Props) {
                 {category.name} Converter
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mt-1">
-                {allConverters.length} conversions · {category.units.length} units
+                {allConverters.length}+ conversions · {category.units.length} units
               </p>
             </div>
           </div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl">
-            {category.description}
+          <p className="mt-4 text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
+            {hub.heroDescription}
           </p>
         </div>
       </div>
@@ -78,11 +81,18 @@ export default async function CategoryPage({ params }: Props) {
       <div className="container-lg py-10">
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
           {/* Main content */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 space-y-10">
+
+            {/* Intro */}
+            <section className="prose prose-gray dark:prose-invert max-w-none">
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                {hub.intro}
+              </p>
+            </section>
 
             {/* Popular converters */}
             {popularConverters.length > 0 && (
-              <section className="mb-10">
+              <section>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                   <span className="text-lg">⭐</span> Popular {category.name} Conversions
                 </h2>
@@ -110,7 +120,7 @@ export default async function CategoryPage({ params }: Props) {
             )}
 
             {/* Ad */}
-            <div className="flex justify-center mb-10">
+            <div className="flex justify-center">
               <AdUnit slot="in-content" label />
             </div>
 
@@ -146,10 +156,158 @@ export default async function CategoryPage({ params }: Props) {
                 ))}
               </div>
             </section>
+
+            {/* ─────────────── RICH HUB CONTENT ─────────────── */}
+
+            {/* History */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                History of {category.name} Measurement
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {hub.history}
+              </p>
+            </section>
+
+            {/* Why it matters */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                Why Accurate {category.name} Conversion Matters
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {hub.whyItMatters}
+              </p>
+            </section>
+
+            {/* Who uses it */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                Who Uses {category.name} Conversions?
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {hub.whoUsesIt}
+              </p>
+            </section>
+
+            {/* Common confusions */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                Common {category.name} Conversion Confusions
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                {hub.commonConfusions}
+              </p>
+            </section>
+
+            {/* Units reference table */}
+            {hub.unitsTable.length > 0 && (
+              <section className="card p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  {hub.unitsTableHeader}
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-gray-800/50">
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Unit</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Symbol</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Base Equivalent</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Common Use</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hub.unitsTable.map((u, i) => (
+                        <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
+                          <td className="px-4 py-2 text-gray-700 dark:text-gray-300 font-medium">{u.name}</td>
+                          <td className="px-4 py-2 font-mono text-gray-600 dark:text-gray-400">{u.symbol}</td>
+                          <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{u.baseEquiv}</td>
+                          <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{u.countryUse}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* Quick reference */}
+            {hub.quickRef.length > 0 && (
+              <section className="card p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                  {hub.quickRefHeader}
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50 dark:bg-gray-800/50">
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Common Value</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Equals</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {hub.quickRef.map((r, i) => (
+                        <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
+                          <td className="px-4 py-2 text-gray-700 dark:text-gray-300">{r.from}</td>
+                          <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{r.factor}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+            {/* FAQ */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-5">
+                {category.name} Conversion FAQ
+              </h2>
+              <div className="space-y-4">
+                {hub.faqs.map((faq, i) => (
+                  <details key={i} className="group border border-gray-100 dark:border-gray-800 rounded-xl p-4">
+                    <summary className="flex items-center justify-between cursor-pointer font-semibold text-gray-800 dark:text-gray-200 text-sm list-none">
+                      <span>{faq.question}</span>
+                      <svg className="w-4 h-4 text-gray-400 group-open:rotate-180 transition-transform flex-shrink-0 ml-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </section>
+
+            {/* Cross links */}
+            <section className="card p-6">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+                Explore Other Conversion Categories
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {hub.crossLinks.map(cat => (
+                  <Link
+                    key={cat.slug}
+                    href={`/${cat.slug}`}
+                    className="group flex items-start gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50 hover:bg-brand-50 dark:hover:bg-brand-950/20 transition-colors"
+                  >
+                    <span className="text-lg flex-shrink-0 mt-0.5">📐</span>
+                    <div>
+                      <span className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors">
+                        {cat.name}
+                      </span>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">
+                        {cat.text}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
           </div>
 
           {/* Sidebar */}
-          <aside className="hidden lg:block">
+          <aside className="hidden lg:block mt-8 lg:mt-0">
             <div className="sticky top-24 space-y-6">
               {/* Units reference */}
               <div className="card p-5">
