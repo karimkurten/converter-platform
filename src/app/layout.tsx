@@ -37,8 +37,38 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#072849" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-        {/* Pinterest Domain Verification */}
-        <meta name="p:domain_verify" content="24827a46c82e9527965d78613e30ec4e" />
+        {/* Organization Schema */}
+        <Script id="ld-org" type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'ConvertNow',
+            url: 'https://www.convertnow.ca',
+            logo: 'https://www.convertnow.ca/icons/icon-512.png',
+            description: 'Free, fast, and accurate online unit converter with 500+ conversions across 13 categories.',
+            contactPoint: {
+              '@type': 'ContactPoint',
+              email: 'support@convertnow.ca',
+              contactType: 'Customer Support',
+              availableLanguage: ['English'],
+            },
+          }),
+        }} />
+
+        {/* WebSite + SearchAction Schema */}
+        <Script id="ld-website" type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'ConvertNow',
+            url: 'https://www.convertnow.ca',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://www.convertnow.ca/search?q={search_term_string}',
+              'query-input': 'required name=search_term_string',
+            },
+          }),
+        }} />
 
         {/* AdSense */}
         {ADSENSE_ID && (
