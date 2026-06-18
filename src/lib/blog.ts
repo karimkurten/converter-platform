@@ -353,7 +353,7 @@ export function getAllBlogPosts(): BlogPost[] {
 }
 
 export function getBlogPostsByCategory(category: string): BlogPost[] {
-  return blogPosts.filter(post => post.category === category);
+  return blogPosts.filter(post => post.category.toLowerCase() === category.toLowerCase());
 }
 
 export function getRelatedBlogPosts(slug: string): BlogPost[] {
