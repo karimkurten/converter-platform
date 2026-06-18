@@ -6,7 +6,6 @@ import { buildCategoryMetadata, buildBreadcrumbSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import { generateCategoryHubContent } from '@/lib/categoryContent';
 import Breadcrumb from '@/components/layout/Breadcrumb';
-import AdUnit from '@/components/ads/AdUnit';
 
 interface Props {
   params: Promise<{ category: string }>;
@@ -118,11 +117,6 @@ export default async function CategoryPage({ params }: Props) {
                 </div>
               </section>
             )}
-
-            {/* Ad */}
-            <div className="flex justify-center">
-              <AdUnit slot="in-content" label />
-            </div>
 
             {/* All converters grouped by unit */}
             <section>
@@ -321,9 +315,6 @@ export default async function CategoryPage({ params }: Props) {
                   ))}
                 </ul>
               </div>
-
-              {/* Sidebar ad */}
-              <AdUnit slot="sidebar-top" label />
 
               {/* Other categories */}
               <div className="card p-5">

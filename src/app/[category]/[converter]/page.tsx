@@ -18,7 +18,6 @@ import {
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ConverterEngine from '@/components/converter/ConverterEngine';
 import { RelatedConverters, ConversionTable, FormulaBlock } from '@/components/converter/ConverterWidgets';
-import AdUnit, { StickyMobileAd } from '@/components/ads/AdUnit';
 import ContextualProductWidget from '@/components/affiliate/ContextualProductWidget';
 
 interface Props {
@@ -44,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const category = getCategoryBySlug(categorySlug);
   const converter = getConverterBySlug(categorySlug, converterSlug);
   if (!category || !converter) return {};
-  return buildConverterMetadata(converter, category);
+  return buildConverterMetadata(converter, category, !converter.popular);
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -100,8 +99,6 @@ export default async function ConverterPage({ params }: Props) {
         />
       ))}
 
-      <StickyMobileAd />
-
       {/* Breadcrumb header */}
       <div className="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
         <div className="container-lg py-4">
@@ -123,11 +120,6 @@ export default async function ConverterPage({ params }: Props) {
             {/* ─── Contextual Product Widget ────────────────────── */}
             <ContextualProductWidget categorySlug={categorySlug} />
 
-            {/* ─── In-content ad ───────────────────────────────── */}
-            <div className="flex justify-center py-2">
-              <AdUnit slot="in-content" label />
-            </div>
-
             {/* ─── Formula explanation ──────────────────────────── */}
             {exampleFormula && (
               <FormulaBlock
@@ -142,11 +134,6 @@ export default async function ConverterPage({ params }: Props) {
                 <ConversionTable converter={converter} category={category} />
               </div>
             )}
-
-            {/* ─── Second in-content ad ─────────────────────────── */}
-            <div className="flex justify-center py-2">
-              <AdUnit slot="in-content" label />
-            </div>
 
             {/* ─── Rich programmatic SEO content ─────────────── */}
             <div className="space-y-6">
@@ -256,18 +243,12 @@ export default async function ConverterPage({ params }: Props) {
           <aside className="hidden lg:block mt-8 lg:mt-0">
             <div className="sticky top-24 space-y-5">
 
-              {/* Sidebar ad */}
-              <AdUnit slot="sidebar-top" label />
-
               {/* Related converters */}
               {relatedConverters.length > 0 && (
                 <div className="card p-5">
                   <RelatedConverters converters={relatedConverters} category={category} />
                 </div>
               )}
-
-              {/* Sidebar ad #2 */}
-              <AdUnit slot="sidebar-bottom" label />
 
               {/* Quick navigation */}
               <div className="card p-5">

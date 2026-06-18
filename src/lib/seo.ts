@@ -59,7 +59,11 @@ export function buildMetadata({
 
 // ─── Converter Page Metadata ───────────────────────────────────────────────────
 
-export function buildConverterMetadata(converter: Converter, category: ConverterCategory): Metadata {
+export function buildConverterMetadata(
+  converter: Converter,
+  category: ConverterCategory,
+  noIndex = false,
+): Metadata {
   const fromUnit = category.units.find(u => u.id === converter.from)!;
   const toUnit = category.units.find(u => u.id === converter.to)!;
 
@@ -70,6 +74,7 @@ export function buildConverterMetadata(converter: Converter, category: Converter
     title,
     description,
     path: `/${category.slug}/${converter.id}`,
+    noIndex,
     keywords: [
       `${fromUnit.name.toLowerCase()} to ${toUnit.name.toLowerCase()}`,
       `${fromUnit.symbol} to ${toUnit.symbol}`,

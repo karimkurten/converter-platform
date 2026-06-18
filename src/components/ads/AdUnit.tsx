@@ -74,19 +74,7 @@ export default function AdUnit({ slot, className = '', label = true }: AdUnitPro
 
   // In development or no AdSense ID: show placeholder
   if (!ADSENSE_CLIENT || process.env.NODE_ENV === 'development') {
-    return (
-      <div ref={adRef} className={`ad-container ${className}`}>
-        {label && <p className="ad-label">Advertisement</p>}
-        <div
-          style={{ width: config.width, height: config.height, maxWidth: '100%' }}
-          className="bg-gray-100 dark:bg-gray-800 border border-dashed border-gray-200 dark:border-gray-700 rounded-lg flex items-center justify-center"
-        >
-          <span className="text-xs text-gray-400 dark:text-gray-500">
-            Ad Placeholder ({config.width} × {config.height})
-          </span>
-        </div>
-      </div>
-    );
+    return null; // Hide placeholder during AdSense review
   }
 
   return (
@@ -109,24 +97,5 @@ export default function AdUnit({ slot, className = '', label = true }: AdUnitPro
 // ─── Sticky Mobile Ad ──────────────────────────────────────────────────────────
 
 export function StickyMobileAd() {
-  const [dismissed, setDismissed] = useState(false);
-
-  if (dismissed) return null;
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 no-print">
-      <div className="flex items-center justify-between px-3 py-1 max-w-sm mx-auto">
-        <AdUnit slot="mobile-sticky" label={false} />
-        <button
-          onClick={() => setDismissed(true)}
-          className="ml-2 p-1 text-gray-400 hover:text-gray-600 flex-shrink-0"
-          aria-label="Close ad"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  );
+  return null; // Hidden during AdSense review
 }

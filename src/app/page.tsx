@@ -4,8 +4,8 @@ import { CATEGORIES, getPopularConverters } from '@/lib/converters';
 import { buildMetadata, buildWebsiteSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import HeroSearch from '@/components/home/HeroSearch';
-import AdUnit from '@/components/ads/AdUnit';
 import SEOContent from '@/components/home/SEOContent';
+import { blogPosts } from '@/lib/blog';
 
 export const metadata: Metadata = buildMetadata({
   title: 'ConvertNow — Free Online Unit Converter | 500+ Conversions',
@@ -92,9 +92,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── Header ad ─────────────────────────────────────────────────────── */}
+      {/* ─── Info Banner (AdSense prep placeholder) ─────────────────────────── */}
       <div className="container-lg py-4 flex justify-center">
-        <AdUnit slot="header" label />
+        <div className="text-xs text-gray-400 bg-gray-50 dark:bg-gray-800/50 px-4 py-2 rounded-full border border-gray-100 dark:border-gray-700">
+          Boost your conversions with trusted tools — explore our recommended gear below
+        </div>
       </div>
 
       <div className="container-lg">
@@ -131,11 +133,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ─── In-content ad ───────────────────────────────────────────────── */}
-        <div className="flex justify-center mb-12">
-          <AdUnit slot="in-content" label />
-        </div>
-
         {/* ─── Categories Grid ─────────────────────────────────────────────── */}
         <section className="section">
           <div className="mb-6">
@@ -166,6 +163,44 @@ export default function HomePage() {
                 </Link>
               );
             })}
+          </div>
+        </section>
+
+        {/* ─── From the Blog (authority content) ─────────────────────────────── */}
+        <section className="section">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Guides & Expert Tips</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">How-to articles, buying guides, and travelers' tips</p>
+            </div>
+            <Link href="/blog" className="text-brand-500 hover:text-brand-600 text-sm font-semibold">
+              View all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {blogPosts.slice(0, 6).map((post, i) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="card p-5 hover:scale-[1.01] transition-transform group flex flex-col h-full"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                <span className="inline-block px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-800 text-[10px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 w-fit">
+                  {post.category}
+                </span>
+                <h3 className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors line-clamp-2 flex-1">
+                  {post.title}
+                </h3>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 line-clamp-2 leading-relaxed">
+                  {post.description}
+                </p>
+                <div className="flex items-center gap-2 mt-3 text-[11px] text-gray-400">
+                  <span>{post.readTime} read</span>
+                  <span>·</span>
+                  <span>{post.publishedAt}</span>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
 

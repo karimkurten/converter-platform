@@ -27,18 +27,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   const converterPaths = getAllConverterPaths()
-  const converterPages: MetadataRoute.Sitemap = converterPaths.map(
-    ({ category, converter }) => {
+  const converterPages: MetadataRoute.Sitemap = converterPaths
+    .map(({ category, converter }) => {
       const cat = CATEGORIES.find(c => c.slug === category)
       const conv = cat?.converters.find(c => c.id === converter)
+      if (!conv?.popular) return null
       return {
         url: `${SITE_URL}/${category}/${converter}`,
         lastModified: now,
         changeFrequency: 'monthly',
-        priority: conv?.popular ? 0.8 : 0.6,
+        priority: 0.8,
       }
-    }
-  )
+    })
+    .filter(Boolean) as MetadataRoute.Sitemap
 
   const blogPages: MetadataRoute.Sitemap = blogPosts.map(post => ({
     url: `${SITE_URL}/blog/${post.slug}`,

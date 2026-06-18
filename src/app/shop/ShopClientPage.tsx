@@ -7,7 +7,6 @@ import { trackEvent } from '@/lib/analytics';
 import { useAmazonStore } from '@/hooks/useAmazonStore';
 import AmazonButton from '@/components/affiliate/AmazonButton';
 import CountryBanner from '@/components/affiliate/CountryBanner';
-import AdUnit from '@/components/ads/AdUnit';
 
 function extractPrice(priceRange: string): number {
   const match = priceRange.match(/[\d.,]+/);
@@ -208,9 +207,6 @@ export default function ShopClientPage() {
           <option value="price-high">Sort: Price High → Low</option>
         </select>
       </div>
-
-      {/* Ad Unit */}
-      <AdUnit slot="in-content" />
 
       {/* Product Grid */}
       <div ref={productGridRef} id="product-grid" className="mb-12 animate-fade-in stagger-4 scroll-mt-24">
