@@ -33,7 +33,7 @@ const AD_SLOT_IDS: Record<AdSlot, string> = {
   'mobile-sticky': process.env.NEXT_PUBLIC_AD_SLOT_MOBILE || '6789012345',
 };
 
-const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_ID;
+const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-7999532935872277';
 
 export default function AdUnit({ slot, className = '', label = true }: AdUnitProps) {
   const adRef = useRef<HTMLDivElement>(null);

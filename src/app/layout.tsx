@@ -15,7 +15,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID;
+const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-7999532935872277';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }),
         }} />
 
-        {/* AdSense */}
+        {/* AdSense - disabled during corporate firewall review
         {ADSENSE_ID && (
           <Script
             id="adsense"
@@ -79,11 +79,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             crossOrigin="anonymous"
             strategy="lazyOnload"
           />
-        )}
+        )} */}
 
         {/* Google Analytics handled below via @next/third-parties */}
 
-        {/* Microsoft Clarity */}
+        {/* Microsoft Clarity - disabled during corporate firewall review
         {process.env.NEXT_PUBLIC_CLARITY_ID && (
           <Script id="clarity" strategy="lazyOnload">
             {`
@@ -94,7 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               })(window,document,"clarity","script","${process.env.NEXT_PUBLIC_CLARITY_ID}");
             `}
           </Script>
-        )}
+        )} */}
       </head>
       <body className="font-sans antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
