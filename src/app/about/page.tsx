@@ -10,6 +10,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function AboutPage() {
+  const lastReviewed = 'July 2026';
   return (
     <div className="container-md py-12 lg:py-16">
       <div className="max-w-2xl">
@@ -44,20 +45,42 @@ export default function AboutPage() {
         {/* Content */}
         <div className="prose prose-gray dark:prose-invert max-w-none space-y-6 text-gray-600 dark:text-gray-400 leading-relaxed">
           <section>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">What We Offer</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Who Runs ConvertNow</h2>
             <p>
-              ConvertNow supports over 500 unit conversions across 13 categories including length, weight,
-              temperature, currency, area, volume, speed, time, and digital storage. Every converter shows
-              the formula used, so you always know exactly how the calculation works.
+              ConvertNow is built and maintained by a small, independent team of software engineers who rely on
+              unit conversion daily — in cooking, home improvement, travel, and engineering projects. We built
+              the converter we wished existed: fast, ad-light, and transparent about the math behind every result.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Accuracy</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">What We Offer</h2>
             <p>
-              All conversions use internationally standardized constants (SI units, NIST standards). Currency
-              conversions use live exchange rates updated hourly via external APIs, with a cached fallback
-              to ensure the converter always works even when offline.
+              ConvertNow supports over 500 unit conversions across 13 categories including length, weight,
+              temperature, currency, area, volume, speed, time, digital storage, pressure, energy, and fuel
+              economy. Every converter shows the formula used, so you always know exactly how the calculation works.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Accuracy &amp; Sources</h2>
+            <p>
+              Every conversion factor on this site is cross-checked against internationally recognized standards
+              before publishing, including the{' '}
+              <a href="https://www.bipm.org/en/publications/si-brochure" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">
+                BIPM SI Brochure
+              </a>{' '}
+              (the official definition of SI units),{' '}
+              <a href="https://www.nist.gov/pml/special-publication-811" target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:underline">
+                NIST Special Publication 811
+              </a>{' '}
+              (guide for use of the metric system), and ISO 80000 quantity standards. Currency conversions use
+              live exchange rates refreshed hourly, with a cached fallback so the converter keeps working even
+              if the rate feed is briefly unavailable.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-500">
+              Conversion factors and category content on this page were last reviewed in {lastReviewed}.
+              Spotted an outdated figure? <Link href="/contact" className="text-brand-500 hover:underline">Let us know</Link> and we&apos;ll correct it.
             </p>
           </section>
 
@@ -71,7 +94,7 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">PWA & Offline Support</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">PWA &amp; Offline Support</h2>
             <p>
               ConvertNow is a Progressive Web App (PWA). You can install it on your device from your browser
               and use it offline. Most unit converters work without an internet connection — only live
@@ -83,7 +106,8 @@ export default function AboutPage() {
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Open to Feedback</h2>
             <p>
               Found an error? Missing a unit? Want to suggest a feature?{' '}
-              <Link href="/contact" className="text-brand-500 hover:underline">Contact us</Link> — we read every message.
+              <Link href="/contact" className="text-brand-500 hover:underline">Contact us</Link> — we read every message
+              and use accuracy reports to correct the site quickly.
             </p>
           </section>
         </div>

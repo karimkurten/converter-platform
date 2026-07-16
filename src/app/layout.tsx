@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Outfit, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
 import { GoogleAnalytics } from '@next/third-parties/google';
@@ -6,6 +7,19 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { buildMetadata } from '@/lib/seo';
 import './globals.css';
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-outfit',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+});
 
 export const metadata: Metadata = buildMetadata({
   title: 'ConvertNow — Free Online Unit Converter',
@@ -19,26 +33,15 @@ const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-799953293587227
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${jetbrainsMono.variable}`}>
       <head>
-        {/* Preconnect for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* Custom fonts - Outfit (body) + Cabinet Grotesk (display) */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-
-        {/* PWA */}
-        <link rel="manifest" href="/manifest.json" />
+        {/* PWA manifest is auto-injected by Next.js from app/manifest.ts */}
         <meta name="theme-color" content="#0c8ee7" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#072849" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
-        {/* Organization Schema */}
-        <Script id="ld-org" type="application/ld+json" dangerouslySetInnerHTML={{
+        {/* Organization + WebSite Schema (plain script so it's present in the initial server-rendered HTML, not deferred like next/script) */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'Organization',
@@ -54,9 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             },
           }),
         }} />
-
-        {/* WebSite + SearchAction Schema */}
-        <Script id="ld-website" type="application/ld+json" dangerouslySetInnerHTML={{
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',

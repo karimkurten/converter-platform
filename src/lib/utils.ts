@@ -188,4 +188,22 @@ export const CATEGORY_COLORS: Record<string, { bg: string; text: string; border:
     border: 'border-amber-200',
     light: 'bg-amber-50 dark:bg-amber-950',
   },
+  rose: {
+    bg: 'bg-rose-600',
+    text: 'text-rose-600',
+    border: 'border-rose-200',
+    light: 'bg-rose-50 dark:bg-rose-950',
+  },
+  lime: {
+    bg: 'bg-lime-600',
+    text: 'text-lime-600',
+    border: 'border-lime-200',
+    light: 'bg-lime-50 dark:bg-lime-950',
+  },
+  sky: {
+    bg: 'bg-sky-600',
+    text: 'text-sky-600',
+    border: 'border-sky-200',
+    light: 'bg-sky-50 dark:bg-sky-950',
+  },
 };

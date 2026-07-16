@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 /* ─── CSS Custom Properties ──────────────────────────────────────────────────── */
+/* --font-outfit and --font-jetbrains are supplied by next/font (see layout.tsx) */
 :root {
-  --font-outfit: 'Outfit', system-ui, sans-serif;
-
   /* Brand */
   --brand-50: #f0f7ff;
   --brand-100: #e0effe;

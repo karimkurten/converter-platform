@@ -127,7 +127,7 @@ export function buildWebsiteSchema() {
         '@id': `${SITE_URL}#organization`,
         name: SITE_NAME,
         url: SITE_URL,
-        logo: `${SITE_URL}/og-image.png`,
+        logo: `${SITE_URL}/icons/icon-512.png`,
         sameAs: [
           'https://www.facebook.com/ConvertNow.ca',
           'https://www.instagram.com/ConvertNow.ca',
@@ -135,6 +135,32 @@ export function buildWebsiteSchema() {
         ],
         description: 'Free, fast online unit converter supporting 500+ conversions with no signup required.',
       },
+    ],
+  };
+}
+
+export function buildWebApplicationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: SITE_NAME,
+    url: SITE_URL,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any (web-based)',
+    browserRequirements: 'Requires JavaScript.',
+    isAccessibleForFree: true,
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    description: 'Free online unit converter supporting 500+ conversions across 13 categories: length, weight, temperature, currency, area, volume, speed, time, digital storage, pressure, energy, fuel economy, and cooking measurements.',
+    featureList: [
+      'Length converter', 'Weight & mass converter', 'Temperature converter',
+      'Live currency converter', 'Area converter', 'Volume converter',
+      'Speed converter', 'Time converter', 'Digital storage converter',
+      'Pressure converter', 'Energy converter', 'Fuel economy converter',
+      'Cooking measurement converter', 'Works offline as a PWA',
     ],
   };
 }

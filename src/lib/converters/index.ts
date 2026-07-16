@@ -8,7 +8,11 @@ import {
   SPEED_UNITS, SPEED_POPULAR_PAIRS,
   TIME_UNITS, TIME_POPULAR_PAIRS,
   DIGITAL_UNITS, DIGITAL_POPULAR_PAIRS,
+  PRESSURE_UNITS, PRESSURE_POPULAR_PAIRS,
+  ENERGY_UNITS, ENERGY_POPULAR_PAIRS,
+  FUEL_UNITS, FUEL_POPULAR_PAIRS,
   convertArea, convertVolume, convertSpeed, convertTime, convertDigital,
+  convertPressure, convertEnergy, convertFuel,
 } from './units';
 import { CURRENCIES, POPULAR_CURRENCY_PAIRS } from './currency';
 
@@ -157,6 +161,26 @@ export const CATEGORIES: ConverterCategory[] = [
     converters: makeAllConverters('digital', DIGITAL_UNITS, DIGITAL_POPULAR_PAIRS),
   },
   {
+    id: 'pressure',
+    name: 'Pressure',
+    slug: 'pressure',
+    description: 'Convert pascals, bar, PSI, atmospheres, and torr for tires, weather, and engineering.',
+    icon: '🎛️',
+    color: 'rose',
+    units: PRESSURE_UNITS,
+    converters: makeAllConverters('pressure', PRESSURE_UNITS, PRESSURE_POPULAR_PAIRS),
+  },
+  {
+    id: 'energy',
+    name: 'Energy',
+    slug: 'energy',
+    description: 'Convert joules, calories, kilowatt-hours, and BTU for food, fitness, and utility bills.',
+    icon: '⚡',
+    color: 'lime',
+    units: ENERGY_UNITS,
+    converters: makeAllConverters('energy', ENERGY_UNITS, ENERGY_POPULAR_PAIRS),
+  },
+  {
     id: 'cooking',
     name: 'Cooking',
     slug: 'cooking',
@@ -165,6 +189,16 @@ export const CATEGORIES: ConverterCategory[] = [
     color: 'amber',
     units: VOLUME_UNITS.filter(u => ['us-cup', 'tablespoon', 'teaspoon', 'us-fluid-oz', 'us-pint', 'liter', 'milliliter'].includes(u.id)),
     converters: makeAllConverters('cooking', VOLUME_UNITS.filter(u => ['us-cup', 'tablespoon', 'teaspoon', 'us-fluid-oz', 'us-pint', 'liter', 'milliliter'].includes(u.id)), []),
+  },
+  {
+    id: 'fuel',
+    name: 'Fuel Economy',
+    slug: 'fuel',
+    description: 'Convert MPG (US/UK), litres per 100km, and km per litre for cars and road trips.',
+    icon: '⛽',
+    color: 'sky',
+    units: FUEL_UNITS,
+    converters: makeAllConverters('fuel', FUEL_UNITS, FUEL_POPULAR_PAIRS),
   },
 ];
 
@@ -181,6 +215,9 @@ export const CONVERT_FNS: Record<string, ConvertFn> = {
   time: convertTime,
   digital: convertDigital,
   cooking: convertVolume,
+  pressure: convertPressure,
+  energy: convertEnergy,
+  fuel: convertFuel,
 };
 
 export function runConversion(categoryId: string, value: number, from: string, to: string): ConversionResult | null {
@@ -199,6 +236,12 @@ export function getCategoryBySlug(slug: string): ConverterCategory | undefined {
 export function getConverterBySlug(categorySlug: string, converterSlug: string): Converter | undefined {
   const category = getCategoryBySlug(categorySlug);
   return category?.converters.find(c => c.id === converterSlug);
+}
+
+// Looks up which category a converter id belongs to, regardless of caller context.
+// Useful for building links (e.g. blog "related converters") without hardcoding categories.
+export function getCategoryForConverterId(converterId: string): ConverterCategory | undefined {
+  return CATEGORIES.find(cat => cat.converters.some(c => c.id === converterId));
 }
 
 export function getAllConverterPaths(): { category: string; converter: string }[] {

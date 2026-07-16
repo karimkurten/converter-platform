@@ -211,6 +211,127 @@ export const DIGITAL_POPULAR_PAIRS = [
   { from: 'bit', to: 'byte' },
 ];
 
+// ─── PRESSURE ─────────────────────────────────────────────────────────────────
+// All in pascals
+export const PRESSURE_UNITS: Unit[] = [
+  { id: 'pascal', name: 'Pascal', symbol: 'Pa' },
+  { id: 'bar', name: 'Bar', symbol: 'bar' },
+  { id: 'psi', name: 'PSI', symbol: 'psi' },
+  { id: 'atm', name: 'Atmosphere', symbol: 'atm' },
+  { id: 'torr', name: 'Torr', symbol: 'Torr' },
+];
+
+const PRESSURE_TO_PASCALS: Record<string, number> = {
+  pascal: 1,
+  bar: 100000,
+  psi: 6894.757293168361,             // exact (lbf/in²)
+  atm: 101325,                        // exact
+  torr: 101325 / 760,                 // 133.3223684210526
+};
+
+export function convertPressure(value: number, from: string, to: string): ConversionResult {
+  return convertSimple(value, from, to, PRESSURE_TO_PASCALS, PRESSURE_UNITS);
+}
+
+export const PRESSURE_POPULAR_PAIRS = [
+  { from: 'psi', to: 'bar' },
+  { from: 'bar', to: 'psi' },
+  { from: 'atm', to: 'psi' },
+  { from: 'bar', to: 'pascal' },
+  { from: 'atm', to: 'pascal' },
+];
+
+// ─── ENERGY ───────────────────────────────────────────────────────────────────
+// All in joules
+export const ENERGY_UNITS: Unit[] = [
+  { id: 'joule', name: 'Joule', symbol: 'J' },
+  { id: 'kilojoule', name: 'Kilojoule', symbol: 'kJ' },
+  { id: 'calorie', name: 'Calorie', symbol: 'cal' },
+  { id: 'kilocalorie', name: 'Kilocalorie', symbol: 'kcal' },
+  { id: 'kilowatt-hour', name: 'Kilowatt-hour', symbol: 'kWh' },
+  { id: 'btu', name: 'BTU', symbol: 'BTU' },
+];
+
+const ENERGY_TO_JOULES: Record<string, number> = {
+  joule: 1,
+  kilojoule: 1000,
+  calorie: 4.184,
+  kilocalorie: 4184,
+  'kilowatt-hour': 3600000,
+  btu: 1055.05585262,
+};
+
+export function convertEnergy(value: number, from: string, to: string): ConversionResult {
+  return convertSimple(value, from, to, ENERGY_TO_JOULES, ENERGY_UNITS);
+}
+
+export const ENERGY_POPULAR_PAIRS = [
+  { from: 'kilocalorie', to: 'kilojoule' },
+  { from: 'kilojoule', to: 'kilocalorie' },
+  { from: 'kilowatt-hour', to: 'joule' },
+  { from: 'btu', to: 'joule' },
+  { from: 'calorie', to: 'joule' },
+];
+
+// ─── FUEL ECONOMY ─────────────────────────────────────────────────────────────
+// Reciprocal-style units (higher mpg = better, higher L/100km = worse), so a
+// simple linear factor table doesn't work. Convert through a common
+// L/100km intermediate value instead.
+export const FUEL_UNITS: Unit[] = [
+  { id: 'mpg-us', name: 'Miles per Gallon (US)', symbol: 'mpg' },
+  { id: 'mpg-uk', name: 'Miles per Gallon (UK)', symbol: 'mpg' },
+  { id: 'l-100km', name: 'Litres per 100 km', symbol: 'L/100km' },
+  { id: 'km-per-liter', name: 'Kilometres per Litre', symbol: 'km/L' },
+];
+
+// (100 km * litres per gallon) / (km per mile)
+const MPG_US_CONSTANT = (100 * 3.785411784) / 1.609344;    // ≈ 235.214583
+const MPG_UK_CONSTANT = (100 * 4.54609) / 1.609344;        // ≈ 282.480936
+
+function fuelToL100km(value: number, unit: string): number {
+  switch (unit) {
+    case 'l-100km': return value;
+    case 'mpg-us': return MPG_US_CONSTANT / value;
+    case 'mpg-uk': return MPG_UK_CONSTANT / value;
+    case 'km-per-liter': return 100 / value;
+    default: throw new Error(`Unknown unit: ${unit}`);
+  }
+}
+
+function fuelFromL100km(l100: number, unit: string): number {
+  switch (unit) {
+    case 'l-100km': return l100;
+    case 'mpg-us': return MPG_US_CONSTANT / l100;
+    case 'mpg-uk': return MPG_UK_CONSTANT / l100;
+    case 'km-per-liter': return 100 / l100;
+    default: throw new Error(`Unknown unit: ${unit}`);
+  }
+}
+
+export function convertFuel(value: number, from: string, to: string): ConversionResult {
+  const fromUnit = FUEL_UNITS.find(u => u.id === from);
+  const toUnit = FUEL_UNITS.find(u => u.id === to);
+  if (!fromUnit || !toUnit) {
+    throw new Error(`Unknown unit: ${from} or ${to}`);
+  }
+
+  const l100 = fuelToL100km(value, from);
+  const result = fuelFromL100km(l100, to);
+
+  return {
+    value: result,
+    formatted: formatNumber(result),
+    formula: `${value} ${fromUnit.symbol} = ${formatNumber(result)} ${toUnit.symbol}`,
+  };
+}
+
+export const FUEL_POPULAR_PAIRS = [
+  { from: 'mpg-us', to: 'l-100km' },
+  { from: 'l-100km', to: 'mpg-us' },
+  { from: 'mpg-uk', to: 'l-100km' },
+  { from: 'km-per-liter', to: 'l-100km' },
+];
+
 // ─── Shared converter helper ──────────────────────────────────────────────────
 
 function convertSimple(

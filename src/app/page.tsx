@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { CATEGORIES, getPopularConverters } from '@/lib/converters';
-import { buildMetadata, buildWebsiteSchema } from '@/lib/seo';
+import { buildMetadata, buildWebApplicationSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import HeroSearch from '@/components/home/HeroSearch';
 import SEOContent from '@/components/home/SEOContent';
@@ -20,7 +20,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function HomePage() {
   const popularConverters = getPopularConverters(12);
-  const websiteSchema = buildWebsiteSchema();
+  const webAppSchema = buildWebApplicationSchema();
 
   const faqs = [
     {
@@ -47,10 +47,10 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Website Schema */}
+      {/* WebApplication Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppSchema) }}
       />
 
       {/* ─── Hero ──────────────────────────────────────────────────────────── */}
@@ -65,8 +65,8 @@ export default function HomePage() {
               ⚡ 500+ unit conversions · Free forever
             </span>
             <h1 className="text-4xl lg:text-6xl font-extrabold text-white mb-5 tracking-tight leading-tight">
-              The Fastest Free<br />
-              <span className="text-yellow-300">Unit Converter</span>
+              Free Online Unit Converter<br />
+              <span className="text-yellow-300">Length, Weight, Temperature &amp; More</span>
             </h1>
             <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8 leading-relaxed">
               Instantly convert length, weight, temperature, currency, and 500+ units.

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getBlogPostBySlug, getRelatedBlogPosts, getAllBlogPosts } from '@/lib/blog';
+import { getCategoryForConverterId, getConverterBySlug } from '@/lib/converters';
 import { buildMetadata } from '@/lib/seo';
 
 interface Props {
@@ -69,10 +70,43 @@ export default async function BlogPostPage({ params }: Props) {
     ],
   };
 
+  // HowTo schema for practical conversion guides (cooking/baking posts with step-like content)
+  const isHowToPost =
+    post.category === 'Cooking' ||
+    post.category === 'Cooking Conversions' ||
+    post.tags.includes('baking') ||
+    /how (to|many)/i.test(post.title);
+
+  const howToSchema = isHowToPost
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'HowTo',
+        name: post.title,
+        description: post.description,
+        step: post.content.split('\n\n').map((para, i) => {
+          const cutIndex = Math.min(
+            ...['.', ':', '?'].map(ch => (para.indexOf(ch) >= 0 ? para.indexOf(ch) : Infinity))
+          );
+          const name = Number.isFinite(cutIndex) && cutIndex > 0
+            ? para.slice(0, Math.min(cutIndex + 1, 110))
+            : `Step ${i + 1}`;
+          return {
+            '@type': 'HowToStep',
+            position: i + 1,
+            name,
+            text: para,
+          };
+        }),
+      }
+    : null;
+
   return (
     <div className="container-lg py-8 lg:py-12">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {howToSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+      )}
 
       {/* ─── Breadcrumb ──────────────────────────────────────── */}
       <nav className="text-sm text-gray-500 dark:text-gray-400 mb-6">
@@ -120,15 +154,20 @@ export default async function BlogPostPage({ params }: Props) {
               Try These Converters
             </h2>
             <div className="flex flex-wrap gap-2">
-              {post.relatedConverters.map(slug => (
-                <Link
-                  key={slug}
-                  href={`/${slug.split('-')[0] === 'kilogram' ? 'weight' : slug.split('-')[0] === 'kilometer' ? 'length' : slug.split('-')[0] === 'celsius' ? 'temperature' : 'length'}/${slug}`}
-                  className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-brand-50 dark:hover:bg-brand-950 transition-colors"
-                >
-                  {slug.replace(/-/g, ' ')}
-                </Link>
-              ))}
+              {post.relatedConverters.map(slug => {
+                const category = getCategoryForConverterId(slug);
+                if (!category) return null;
+                const converter = getConverterBySlug(category.slug, slug);
+                return (
+                  <Link
+                    key={slug}
+                    href={`/${category.slug}/${slug}`}
+                    className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm text-gray-700 dark:text-gray-300 hover:bg-brand-50 dark:hover:bg-brand-950 transition-colors"
+                  >
+                    {converter?.title ?? slug.replace(/-/g, ' ')}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
