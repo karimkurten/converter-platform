@@ -109,6 +109,13 @@ const nextConfig: NextConfig = {
         destination: '/:path*',
         permanent: true,
       },
+      {
+        // Apex domain → www canonical host (apex DNS points to Vercel)
+        source: '/:path*',
+        has: [{ type: 'host', value: 'convertnow.ca' }],
+        destination: 'https://www.convertnow.ca/:path*',
+        permanent: true,
+      },
     ];
   },
 
