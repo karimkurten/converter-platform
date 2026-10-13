@@ -67,7 +67,7 @@ export default async function CategoryPage({ params }: Props) {
                 {category.name} Converter
               </h1>
               <p className="text-gray-500 dark:text-gray-400 mt-1">
-                {allConverters.length}+ conversions · {category.units.length} units
+                {allConverters.length} conversions · {category.units.length} units
               </p>
             </div>
           </div>

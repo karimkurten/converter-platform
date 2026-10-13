@@ -278,8 +278,8 @@ export const ENERGY_POPULAR_PAIRS = [
 // simple linear factor table doesn't work. Convert through a common
 // L/100km intermediate value instead.
 export const FUEL_UNITS: Unit[] = [
-  { id: 'mpg-us', name: 'Miles per Gallon (US)', symbol: 'mpg' },
-  { id: 'mpg-uk', name: 'Miles per Gallon (UK)', symbol: 'mpg' },
+  { id: 'mpg-us', name: 'Miles per Gallon (US)', symbol: 'mpg (US)' },
+  { id: 'mpg-uk', name: 'Miles per Gallon (UK)', symbol: 'mpg (UK)' },
   { id: 'l-100km', name: 'Litres per 100 km', symbol: 'L/100km' },
   { id: 'km-per-liter', name: 'Kilometres per Litre', symbol: 'km/L' },
 ];

@@ -1,5 +1,3 @@
-import type { Metadata } from 'next';
-
 export interface BlogPost {
   slug: string;
   title: string;

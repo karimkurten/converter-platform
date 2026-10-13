@@ -19,7 +19,7 @@ export default function EditorialPage() {
           <section>
             <h2 className="text-base font-bold text-gray-900 dark:text-white mb-2">1. Mission</h2>
             <p>
-              ConvertNow's mission is to provide fast, accurate, and free unit conversions backed by clear
+              ConvertNow&rsquo;s mission is to provide fast, accurate, and free unit conversions backed by clear
               educational content. Every page is designed to teach the user why a conversion matters, not just to
               spit out a number.
             </p>

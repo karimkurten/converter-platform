@@ -18,11 +18,6 @@ export function formatNumber(value: number, precision: number = 6): string {
   return str;
 }
 
-export function roundToPrecision(value: number, precision: number): number {
-  if (!isFinite(value)) return 0;
-  return parseFloat(value.toFixed(precision));
-}
-
 // ─── URL helpers ───────────────────────────────────────────────────────────────
 
 export function slugify(text: string): string {
@@ -34,21 +29,6 @@ export function slugify(text: string): string {
 
 export function buildConverterUrl(category: string, from: string, to: string): string {
   return `/${category}/${from}-to-${to}`;
-}
-
-export function parseConverterSlug(slug: string): { from: string; to: string } | null {
-  const match = slug.match(/^(.+)-to-(.+)$/);
-  if (!match) return null;
-  return { from: match[1], to: match[2] };
-}
-
-export function buildShareUrl(
-  baseUrl: string,
-  value: number,
-  from: string,
-  to: string
-): string {
-  return `${baseUrl}?v=${value}&from=${from}&to=${to}`;
 }
 
 // ─── Local storage helpers ─────────────────────────────────────────────────────

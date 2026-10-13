@@ -26,6 +26,12 @@ export function convertTemperature(value: number, from: string, to: string): Con
     default: throw new Error(`Unknown unit: ${from}`);
   }
 
+  // Absolute zero: -273.15°C. Any input below this is physically impossible —
+  // reject it instead of producing a negative Kelvin.
+  if (celsius < -273.15 - 1e-9) {
+    throw new Error('Temperature below absolute zero');
+  }
+
   // Then convert from Celsius to target
   let result: number;
   let formula: string;
@@ -87,6 +93,13 @@ function getFormula(value: number, from: string, to: string, result: number): st
       celsius: `(${value}°R - 491.67) × 5/9 = ${result.toFixed(2)}°C`,
       fahrenheit: `${value}°R - 459.67 = ${result.toFixed(2)}°F`,
       kelvin: `${value}°R × 5/9 = ${result.toFixed(2)} K`,
+      reaumur: `(${value}°R - 491.67) × 4/9 = ${result.toFixed(2)}°Ré`,
+    },
+    reaumur: {
+      celsius: `${value}°Ré × 5/4 = ${result.toFixed(2)}°C`,
+      fahrenheit: `(${value}°Ré × 9/4) + 32 = ${result.toFixed(2)}°F`,
+      kelvin: `${value}°Ré × 5/4 + 273.15 = ${result.toFixed(2)} K`,
+      rankine: `(${value}°Ré × 5/4 + 273.15) × 9/5 = ${result.toFixed(2)}°R`,
     },
   };
 

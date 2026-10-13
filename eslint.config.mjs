@@ -1,13 +1,15 @@
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const compat = new FlatCompat({ baseDirectory: __dirname });
+import next from '@next/eslint-plugin-next';
+import tseslint from 'typescript-eslint';
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  // Ignore build output, dependencies, and generated files
+  {
+    ignores: ['.next/**', 'node_modules/**', 'out/**', 'public/sw.js', 'coverage/**'],
+  },
+  // Next.js Core Web Vitals rules (flat-config native; replaces FlatCompat extends)
+  next.configs['core-web-vitals'],
+  // TypeScript recommended rules (replaces the old next/typescript preset)
+  ...tseslint.configs.recommended,
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',

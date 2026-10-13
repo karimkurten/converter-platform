@@ -38,7 +38,6 @@ const categoryDisplayNames: Record<string, string> = {
 };
 
 export default function ContextualProductWidget({ categorySlug }: ContextualProductWidgetProps) {
-  const { store } = useAmazonStore();
   const subCategoryId = categoryToSubCategory[categorySlug];
   
   if (!subCategoryId) return null;
@@ -76,8 +75,8 @@ export default function ContextualProductWidget({ categorySlug }: ContextualProd
             View all {displayName.toLowerCase()} tools →
           </Link>
           
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            As an Amazon Associate we earn from sales on {store.domain}
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            As an Amazon Associate I earn from qualifying purchases.
           </p>
         </div>
       </div>
@@ -97,7 +96,7 @@ function WidgetProductCard({ product }: { product: ShopProduct }) {
       </h4>
       
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-        {product.priceRange} on {store.domain}
+        Typically {product.priceRange} · {store.domain}
       </p>
       
       <AmazonButton

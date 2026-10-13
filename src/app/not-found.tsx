@@ -5,6 +5,7 @@ import { CATEGORIES } from '@/lib/converters';
 export const metadata: Metadata = {
   title: '404 — Page Not Found | ConvertNow',
   description: 'The page you were looking for could not be found.',
+  robots: { index: false, follow: false },
 };
 
 export default function NotFound() {

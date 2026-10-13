@@ -4,6 +4,11 @@ import Link from 'next/link';
 import { getBlogPostBySlug, getRelatedBlogPosts, getAllBlogPosts } from '@/lib/blog';
 import { getCategoryForConverterId, getConverterBySlug } from '@/lib/converters';
 import { buildMetadata } from '@/lib/seo';
+import BlogProductLink from '@/components/affiliate/BlogProductLink';
+
+// Matches "Product link: https://..." at the end of a blog paragraph so the
+// raw URL can be rendered as a clickable, geo-localized affiliate link.
+const PRODUCT_LINK_RE = /^([\s\S]*?)\s*Product link:\s*(https?:\/\/\S+)\s*$/;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -140,11 +145,28 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* ─── Content ─────────────────────────────────────────── */}
         <div className="prose prose-lg prose-gray dark:prose-invert max-w-none mb-12">
-          {post.content.split('\n\n').map((para, i) => (
-            <p key={i} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-              {para}
-            </p>
-          ))}
+          {post.content.split('\n\n').map((para, i) => {
+            const linkMatch = para.match(PRODUCT_LINK_RE);
+            if (linkMatch) {
+              const [, text, url] = linkMatch;
+              return (
+                <div key={i} className="mb-4">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-2">
+                    {text.trim()}
+                  </p>
+                  <BlogProductLink baseUrl={url} />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5">
+                    As an Amazon Associate I earn from qualifying purchases.
+                  </p>
+                </div>
+              );
+            }
+            return (
+              <p key={i} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+                {para}
+              </p>
+            );
+          })}
         </div>
 
         {/* ─── Related Converters ──────────────────────────────── */}

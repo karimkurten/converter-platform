@@ -16,6 +16,9 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 
+# Generated service worker (built from public/sw.template.js by `npm run prebuild`)
+public/sw.js
+
 # Environment files
 .env
 .env*.local

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getAllBlogPosts, getBlogPostsByCategory, getRelatedBlogPosts, type BlogPost } from '@/lib/blog';
+import { getAllBlogPosts, type BlogPost } from '@/lib/blog';
 import { buildMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({

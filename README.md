@@ -1,6 +1,6 @@
 # ConvertNow — Production-Ready Unit Converter Platform
 
-ConvertNow.ca — a fast, SEO-optimized, monetization-ready unit converter built with Next.js 15, TypeScript, and Tailwind CSS.
+ConvertNow.ca — a fast, SEO-optimized, monetization-ready unit converter built with Next.js 16, TypeScript, and Tailwind CSS.
 
 ---
 
@@ -39,7 +39,7 @@ src/
 │   ├── layout.tsx               # Root layout (fonts, theme, analytics, AdSense)
 │   ├── page.tsx                 # Homepage (hero, popular, categories, FAQs)
 │   ├── globals.css              # Global CSS + design system
-│   ├── sitemap.ts               # Auto-generated XML sitemap (500+ URLs)
+│   ├── sitemap.ts               # Auto-generated XML sitemap (~120 URLs)
 │   ├── robots.ts                # robots.txt
 │   ├── manifest.ts              # PWA manifest
 │   ├── not-found.tsx            # 404 page
@@ -52,8 +52,7 @@ src/
 │   │   └── [converter]/
 │   │       └── page.tsx         # Converter page (e.g. /length/km-to-miles)
 │   └── api/
-│       ├── currency/route.ts    # Live exchange rates (Edge Runtime)
-│       └── search/route.ts      # Converter search (Edge Runtime)
+│       └── currency/route.ts    # Live exchange rates (Edge Runtime)
 │
 ├── components/
 │   ├── layout/
@@ -74,7 +73,7 @@ src/
 │   │   ├── length.ts            # Length converter (14 units)
 │   │   ├── weight.ts            # Weight converter (13 units)
 │   │   ├── temperature.ts       # Temperature (5 scales, special formulas)
-│   │   ├── units.ts             # Area, Volume, Speed, Time, Digital (5 converters)
+│   │   ├── units.ts             # Area, Volume, Speed, Time, Digital, Pressure, Energy, Fuel (8 converters)
 │   │   └── currency.ts          # Currency (40 currencies, live rates)
 │   ├── seo.ts                   # Metadata, schema, FAQ generation
 │   └── utils.ts                 # Formatting, clipboard, localStorage, colors
@@ -147,7 +146,7 @@ Every converter page (`/length/kilometer-to-mile`, etc.) has:
 ```
 
 ### Sitemap
-Auto-generated at `/sitemap.xml` with 500+ URLs, proper priorities:
+Auto-generated at `/sitemap.xml` with ~120 URLs (9 static + 13 categories + ~80 popular converters + 20 blog), proper priorities:
 - Homepage: 1.0
 - Category pages: 0.9
 - Popular converters: 0.8
@@ -183,7 +182,7 @@ vercel --prod
 **Environment variables:** Add all `.env.example` values in Vercel Dashboard → Settings → Environment Variables.
 
 ### Vercel Edge Config (optional)
-Both API routes use `runtime = 'edge'` for global low-latency.
+The currency API route uses `runtime = 'edge'` for global low-latency.
 
 ---
 
@@ -317,7 +316,7 @@ npm run type-check   # TypeScript type check
 
 | Decision | Rationale |
 |---|---|
-| App Router (Next.js 15) | Best for SEO, RSC, streaming |
+| App Router (Next.js 16) | Best for SEO, RSC, streaming |
 | Static generation + ISR | 200 popular pages built at deploy; rest on-demand |
 | Edge Runtime for API | Global low-latency for currency + search |
 | Client-side conversion | Instant results, no server round-trip needed |
