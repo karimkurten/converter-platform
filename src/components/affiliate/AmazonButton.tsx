@@ -2,6 +2,7 @@
 
 import { useAmazonStore } from '@/hooks/useAmazonStore'
 import { trackEvent } from '@/lib/analytics'
+import { amazonUrlToGoUrl } from '@/lib/amazonRedirect'
 
 interface AmazonButtonProps {
   baseUrl: string
@@ -18,9 +19,11 @@ export default function AmazonButton({
   variant = 'card',
   className = '',
 }: AmazonButtonProps) {
-  const { store, getLocalUrl, isLoading } = useAmazonStore()
-  
-  const localUrl = getLocalUrl(baseUrl)
+  const { store, isLoading } = useAmazonStore()
+
+  // One canonical on-site link — the server geo-redirects to the
+  // visitor's Amazon store with the correct Associates tag.
+  const localUrl = amazonUrlToGoUrl(baseUrl)
   
   const handleClick = () => {
     trackEvent('amazon_affiliate_click', 'affiliate', productId);

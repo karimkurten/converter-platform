@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import { SHOP_PRODUCTS, SHOP_CATEGORIES, getProductsByCategory, getConverterTools, getProductsBySubCategory, getProductCount, type ShopProduct } from '@/lib/shopProducts';
 import { trackEvent } from '@/lib/analytics';
 import { useAmazonStore } from '@/hooks/useAmazonStore';
+import { SUBCATEGORY_SEARCH_TERMS } from '@/lib/amazonGeo';
+import { buildAmazonGoUrl } from '@/lib/amazonRedirect';
 import AmazonButton from '@/components/affiliate/AmazonButton';
 import CountryBanner from '@/components/affiliate/CountryBanner';
 
@@ -21,7 +23,7 @@ export default function ShopClientPage() {
   const productGridRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
-  const { store, getSubCategoryUrl } = useAmazonStore();
+  const { store } = useAmazonStore();
 
   useEffect(() => {
     trackEvent('shop_view', 'navigation', 'shop');
@@ -131,7 +133,7 @@ export default function ShopClientPage() {
               sub={sub}
               isActive={activeCategory === 'converter-tools' && activeSubCategory === sub.id}
               onClick={() => handleSubCategoryClick(sub.id)}
-              amazonUrl={getSubCategoryUrl(sub.id)}
+              amazonUrl={buildAmazonGoUrl(SUBCATEGORY_SEARCH_TERMS[sub.id] || sub.id)}
             />
           ))}
         </div>
