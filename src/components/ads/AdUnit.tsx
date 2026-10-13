@@ -24,13 +24,24 @@ const AD_CONFIGS: Record<AdSlot, { width: string; height: string; format: string
   'mobile-sticky': { width: '320px', height: '50px', format: 'horizontal' },
 };
 
+// Historical placeholder slot IDs that must NEVER be shipped to production.
+// Real slot IDs are supplied via NEXT_PUBLIC_AD_SLOT_* env vars.
+const PLACEHOLDER_SLOT_IDS = new Set([
+  '1234567890',
+  '2345678901',
+  '3456789012',
+  '4567890123',
+  '5678901234',
+  '6789012345',
+]);
+
 const AD_SLOT_IDS: Record<AdSlot, string> = {
-  'header': process.env.NEXT_PUBLIC_AD_SLOT_HEADER || '1234567890',
-  'sidebar-top': process.env.NEXT_PUBLIC_AD_SLOT_SIDEBAR_TOP || '2345678901',
-  'sidebar-bottom': process.env.NEXT_PUBLIC_AD_SLOT_SIDEBAR_BOTTOM || '3456789012',
-  'in-content': process.env.NEXT_PUBLIC_AD_SLOT_IN_CONTENT || '4567890123',
-  'footer': process.env.NEXT_PUBLIC_AD_SLOT_FOOTER || '5678901234',
-  'mobile-sticky': process.env.NEXT_PUBLIC_AD_SLOT_MOBILE || '6789012345',
+  'header': process.env.NEXT_PUBLIC_AD_SLOT_HEADER || '',
+  'sidebar-top': process.env.NEXT_PUBLIC_AD_SLOT_SIDEBAR_TOP || '',
+  'sidebar-bottom': process.env.NEXT_PUBLIC_AD_SLOT_SIDEBAR_BOTTOM || '',
+  'in-content': process.env.NEXT_PUBLIC_AD_SLOT_IN_CONTENT || '',
+  'footer': process.env.NEXT_PUBLIC_AD_SLOT_FOOTER || '',
+  'mobile-sticky': process.env.NEXT_PUBLIC_AD_SLOT_MOBILE || '',
 };
 
 const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-7999532935872277';
@@ -71,6 +82,13 @@ export default function AdUnit({ slot, className = '', label = true }: AdUnitPro
   }, [visible, initialized]);
 
   const config = AD_CONFIGS[slot];
+  const slotId = AD_SLOT_IDS[slot];
+
+  // Never render a manual ad unit without a real slot ID: empty means
+  // "not configured", and the known placeholder IDs must never ship.
+  if (!slotId || PLACEHOLDER_SLOT_IDS.has(slotId)) {
+    return null;
+  }
 
   // In development or no AdSense ID: show placeholder
   if (!ADSENSE_CLIENT || process.env.NODE_ENV === 'development') {
@@ -85,7 +103,7 @@ export default function AdUnit({ slot, className = '', label = true }: AdUnitPro
           className="adsbygoogle"
           style={{ display: 'block', width: config.width, height: config.height, maxWidth: '100%' }}
           data-ad-client={ADSENSE_CLIENT}
-          data-ad-slot={AD_SLOT_IDS[slot]}
+          data-ad-slot={slotId}
           data-ad-format={config.format}
           data-full-width-responsive="true"
         />

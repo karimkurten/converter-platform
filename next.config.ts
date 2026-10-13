@@ -23,12 +23,13 @@ const nextConfig: NextConfig = {
     const csp = [
       "default-src 'self'",
       // 'unsafe-eval' removed; Next.js production build doesn't need it.
-      // AdSense/Clarity domains removed while those scripts are disabled for firewall review.
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+      // AdSense script domain restored (re-enabled 2026-10-13); Clarity stays disabled.
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://pagead2.googlesyndication.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https: blob:",
-      "connect-src 'self' https://api.exchangerate-api.com https://open.er-api.com https://www.google-analytics.com https://www.googletagmanager.com",
+      "connect-src 'self' https://api.exchangerate-api.com https://open.er-api.com https://www.google-analytics.com https://www.googletagmanager.com https://pagead2.googlesyndication.com",
+      "frame-src 'self' https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com",
       "frame-ancestors 'self'",
       "object-src 'none'",
       "base-uri 'self'",
