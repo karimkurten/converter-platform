@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getProductCount, getProductsByCategory } from '@/lib/shopProducts';
+import { amazonUrlToGoUrl } from '@/lib/amazonRedirect';
 import ShopClientPage from './ShopClientPage';
 
 const PRODUCT_COUNT = getProductCount();
@@ -72,7 +73,7 @@ function buildShopSchema() {
               '@type': 'Product',
               name: product.title,
               description: product.description,
-              url: product.amazonUrl,
+              url: `https://www.convertnow.ca${amazonUrlToGoUrl(product.amazonUrl)}`,
             },
           })),
         },
