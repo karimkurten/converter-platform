@@ -86,7 +86,7 @@ export default function SEOContent() {
           <ul className="list-none space-y-2 pl-0">
             {[
               '✅ No signup or account required — ever',
-              '✅ No intrusive ads blocking the interface',
+              '✅ Minimal, non-intrusive ads — the converter always comes first',
               '✅ 500+ conversions across 13 categories',
               '✅ Live currency rates updated hourly',
               '✅ Works offline as a Progressive Web App (PWA)',

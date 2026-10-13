@@ -13,7 +13,10 @@ export default function AffiliateDisclosurePage() {
       </h1>
       <div className="prose prose-gray dark:prose-invert max-w-none text-sm leading-relaxed space-y-4 text-gray-600 dark:text-gray-400">
         <p>
-          ConvertNow.ca participates in the Amazon Associates Program, an affiliate advertising program that allows us to earn fees by linking to Amazon.ca.
+          ConvertNow.ca participates in the Amazon Associates Program, an affiliate advertising program that allows us to earn fees by linking to Amazon.ca and Amazon.com. Product links on this site detect your country and forward you to your local Amazon store.
+        </p>
+        <p>
+          As an Amazon Associate I earn from qualifying purchases.
         </p>
         <p>
           When you click a product link on our Shop page and make a purchase on Amazon, we earn a small commission at no extra cost to you.
