@@ -1,10 +1,25 @@
-// Amazon store configuration by country code
+/**
+ * Amazon store DISPLAY configuration.
+ *
+ * This file is display-only (flag, country name, currency, domain label for
+ * the CountryBanner). It contains NO affiliate tags.
+ *
+ * The single source of truth for where product links actually go — including
+ * Karim's real Associates Store IDs — is `src/lib/amazonRedirect.ts`:
+ * every product click goes through `/go/amazon?k=<keyword>`, which the server
+ * 302-redirects to the visitor's store. Only two Amazon stores are ever
+ * routed to: amazon.ca (Canadian visitors) and amazon.com (everyone else).
+ *
+ * Do NOT add per-country affiliate tags here. One tracking tag only earns on
+ * its own country's Amazon store, and Karim holds Associates accounts for
+ * CA + US only (confirmed 2026-10-13). The old unverified tags
+ * (convertnow-22 … convertnow-31) were removed for exactly this reason.
+ */
 export interface AmazonStore {
   domain: string
   flag: string
   currency: string
   countryName: string
-  affiliateTag: string
   currencySymbol: string
 }
 
@@ -14,7 +29,6 @@ export const AMAZON_STORES: Record<string, AmazonStore> = {
     flag: '🇨🇦',
     currency: 'CAD',
     countryName: 'Canada',
-    affiliateTag: 'convertnow-20',
     currencySymbol: 'CA$',
   },
   US: {
@@ -22,137 +36,24 @@ export const AMAZON_STORES: Record<string, AmazonStore> = {
     flag: '🇺🇸',
     currency: 'USD',
     countryName: 'United States',
-    affiliateTag: 'convertnowus-20',
     currencySymbol: '$',
-  },
-  GB: {
-    domain: 'amazon.co.uk',
-    flag: '🇬🇧',
-    currency: 'GBP',
-    countryName: 'United Kingdom',
-    affiliateTag: 'convertnow-22',
-    currencySymbol: '£',
-  },
-  AU: {
-    domain: 'amazon.com.au',
-    flag: '🇦🇺',
-    currency: 'AUD',
-    countryName: 'Australia',
-    affiliateTag: 'convertnow-23',
-    currencySymbol: 'A$',
-  },
-  DE: {
-    domain: 'amazon.de',
-    flag: '🇩🇪',
-    currency: 'EUR',
-    countryName: 'Germany',
-    affiliateTag: 'convertnow-24',
-    currencySymbol: '€',
-  },
-  FR: {
-    domain: 'amazon.fr',
-    flag: '🇫🇷',
-    currency: 'EUR',
-    countryName: 'France',
-    affiliateTag: 'convertnow-25',
-    currencySymbol: '€',
-  },
-  IT: {
-    domain: 'amazon.it',
-    flag: '🇮🇹',
-    currency: 'EUR',
-    countryName: 'Italy',
-    affiliateTag: 'convertnow-26',
-    currencySymbol: '€',
-  },
-  ES: {
-    domain: 'amazon.es',
-    flag: '🇪🇸',
-    currency: 'EUR',
-    countryName: 'Spain',
-    affiliateTag: 'convertnow-27',
-    currencySymbol: '€',
-  },
-  JP: {
-    domain: 'amazon.co.jp',
-    flag: '🇯🇵',
-    currency: 'JPY',
-    countryName: 'Japan',
-    affiliateTag: 'convertnow-28',
-    currencySymbol: '¥',
-  },
-  IN: {
-    domain: 'amazon.in',
-    flag: '🇮🇳',
-    currency: 'INR',
-    countryName: 'India',
-    affiliateTag: 'convertnow-29',
-    currencySymbol: '₹',
-  },
-  MX: {
-    domain: 'amazon.com.mx',
-    flag: '🇲🇽',
-    currency: 'MXN',
-    countryName: 'Mexico',
-    affiliateTag: 'convertnow-30',
-    currencySymbol: '$',
-  },
-  BR: {
-    domain: 'amazon.com.br',
-    flag: '🇧🇷',
-    currency: 'BRL',
-    countryName: 'Brazil',
-    affiliateTag: 'convertnow-31',
-    currencySymbol: 'R$',
   },
 }
 
-// Default store (Canada) used as fallback
-export const DEFAULT_STORE = AMAZON_STORES['CA']
+// Fallback display store — mirrors the redirect: unknown visitors land on amazon.com
+export const DEFAULT_STORE = AMAZON_STORES['US']
 
-// Get store config for a country code
+/**
+ * Map a visitor country code to the DISPLAY store.
+ * Mirrors the routing in amazonRedirect.getAmazonDestination: only Canadian
+ * visitors are routed to amazon.ca; everyone else lands on amazon.com.
+ */
 export function getStoreForCountry(
   countryCode: string
 ): AmazonStore {
-  return AMAZON_STORES[countryCode.toUpperCase()] || DEFAULT_STORE
-}
-
-// Build a localized Amazon URL with affiliate tag
-// Takes the search keyword and builds the right URL
-export function buildAmazonUrl(
-  searchKeyword: string,
-  countryCode: string
-): string {
-  const store = getStoreForCountry(countryCode)
-  const encodedKeyword = encodeURIComponent(searchKeyword)
-  return `https://www.${store.domain}/s?k=${encodedKeyword}&tag=${store.affiliateTag}`
-}
-
-// Build Amazon URL from a base CA URL by 
-// replacing the domain and tag
-export function localizeAmazonUrl(
-  baseUrl: string,
-  countryCode: string
-): string {
-  const store = getStoreForCountry(countryCode)
-  
-  // Extract search keyword from existing URL
-  try {
-    const url = new URL(baseUrl)
-    const keyword = url.searchParams.get('k') || ''
-    
-    if (keyword) {
-      return `https://www.${store.domain}/s?k=${encodeURIComponent(keyword)}&tag=${store.affiliateTag}`
-    }
-    
-    // For direct product links (ASIN based)
-    // Replace domain and tag
-    return baseUrl
-      .replace(/amazon\.(ca|com|co\.uk|com\.au|de|fr|it|es|co\.jp|in|com\.mx|com\.br)/g, store.domain)
-      .replace(/tag=[^&]+/g, `tag=${store.affiliateTag}`)
-  } catch {
-    return baseUrl
-  }
+  return countryCode.trim().toUpperCase() === 'CA'
+    ? AMAZON_STORES['CA']
+    : AMAZON_STORES['US']
 }
 
 // Detect user country via free IP geolocation API
@@ -164,33 +65,33 @@ export async function detectUserCountry(): Promise<string> {
     'https://api.country.is/',
     'https://ipwho.is/',
   ]
-  
+
   for (const api of apis) {
     try {
       const controller = new AbortController()
       const timeout = setTimeout(
-        () => controller.abort(), 
+        () => controller.abort(),
         3000
       )
-      
-      const res = await fetch(api, { 
+
+      const res = await fetch(api, {
         signal: controller.signal,
         cache: 'force-cache'
       })
-      
+
       clearTimeout(timeout)
-      
+
       if (!res.ok) continue
-      
+
       const data = await res.json()
-      
+
       // Different APIs return different field names
-      const country = 
+      const country =
         data.country_code ||  // ipapi.co
         data.country ||       // api.country.is
         data.country_code2 || // ipwho.is
         ''
-      
+
       if (country && country.length === 2) {
         return country.toUpperCase()
       }
@@ -198,9 +99,9 @@ export async function detectUserCountry(): Promise<string> {
       continue
     }
   }
-  
-  // Default to Canada if all APIs fail
-  return 'CA'
+
+  // Default to US if all APIs fail (matches the /go/amazon redirect fallback)
+  return 'US'
 }
 
 // Subcategory Amazon search terms by category
