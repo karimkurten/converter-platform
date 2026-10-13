@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { SHOP_CATEGORIES, getProductCount, getConverterTools, getProductsByCategory, getProductsBySubCategory } from '@/lib/shopProducts';
+import { getProductCount, getProductsByCategory } from '@/lib/shopProducts';
 import ShopClientPage from './ShopClientPage';
+
+const PRODUCT_COUNT = getProductCount();
 
 export const metadata: Metadata = {
   title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-  description: 'Shop 200+ hand-picked products matched to your conversions. Measurement tools, kitchen scales, thermometers, laser measures and more — all on Amazon with fast shipping.',
+  description: `Shop ${PRODUCT_COUNT} hand-picked products matched to your conversions. Measurement tools, kitchen scales, thermometers, laser measures and more — all on Amazon with fast shipping.`,
   keywords: [
     'measurement tools',
     'kitchen scale metric imperial',
@@ -22,14 +24,14 @@ export const metadata: Metadata = {
     description: 'Hand-picked measurement tools matched to your conversions. Ships worldwide.',
     url: 'https://www.convertnow.ca/shop',
     siteName: 'ConvertNow',
-    images: [{ url: 'https://www.convertnow.ca/og-shop.png', width: 1200, height: 630, alt: 'ConvertNow Shop' }],
+    images: [{ url: 'https://www.convertnow.ca/og-image.png', width: 1200, height: 630, alt: 'ConvertNow Shop' }],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
     description: 'Hand-picked measurement tools matched to your conversions.',
-    images: ['https://www.convertnow.ca/og-shop.png'],
+    images: ['https://www.convertnow.ca/og-image.png'],
   },
   alternates: {
     canonical: 'https://www.convertnow.ca/shop',
@@ -70,17 +72,7 @@ function buildShopSchema() {
               '@type': 'Product',
               name: product.title,
               description: product.description,
-              aggregateRating: {
-                '@type': 'AggregateRating',
-                ratingValue: product.rating,
-                reviewCount: product.reviewCount.replace(/[^0-9]/g, ''),
-              },
-              offers: {
-                '@type': 'Offer',
-                priceCurrency: 'CAD',
-                availability: 'https://schema.org/InStock',
-                url: product.amazonUrl,
-              },
+              url: product.amazonUrl,
             },
           })),
         },

@@ -142,7 +142,7 @@ export function localizeAmazonUrl(
     const keyword = url.searchParams.get('k') || ''
     
     if (keyword) {
-      return `https://www.${store.domain}/s?k=${keyword}&tag=${store.affiliateTag}`
+      return `https://www.${store.domain}/s?k=${encodeURIComponent(keyword)}&tag=${store.affiliateTag}`
     }
     
     // For direct product links (ASIN based)

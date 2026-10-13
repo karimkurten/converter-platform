@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { BreadcrumbItem, FAQItem, Converter, ConverterCategory } from '@/types';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://convertnow.ca';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.convertnow.ca';
 const SITE_NAME = 'ConvertNow';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
@@ -106,38 +106,6 @@ export function buildCategoryMetadata(category: ConverterCategory): Metadata {
 }
 
 // ─── JSON-LD Schema ────────────────────────────────────────────────────────────
-
-export function buildWebsiteSchema() {
-  return {
-    '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'WebSite',
-        name: SITE_NAME,
-        url: SITE_URL,
-        description: 'Free online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, and more.',
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/search?q={search_term_string}` },
-          'query-input': 'required name=search_term_string',
-        },
-      },
-      {
-        '@type': 'Organization',
-        '@id': `${SITE_URL}#organization`,
-        name: SITE_NAME,
-        url: SITE_URL,
-        logo: `${SITE_URL}/icons/icon-512.png`,
-        sameAs: [
-          'https://www.facebook.com/ConvertNow.ca',
-          'https://www.instagram.com/ConvertNow.ca',
-          'https://ca.pinterest.com/ConvertNow',
-        ],
-        description: 'Free, fast online unit converter supporting 500+ conversions with no signup required.',
-      },
-    ],
-  };
-}
 
 export function buildWebApplicationSchema() {
   return {
@@ -261,31 +229,5 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
 }
 
 // ─── FAQ Generation ────────────────────────────────────────────────────────────
-
-export function generateConverterFAQs(
-  converter: Converter,
-  category: ConverterCategory,
-  exampleResult: number
-): FAQItem[] {
-  const fromUnit = category.units.find(u => u.id === converter.from)!;
-  const toUnit = category.units.find(u => u.id === converter.to)!;
-
-  return [
-    {
-      question: `How do I convert ${fromUnit.name} to ${toUnit.name}?`,
-      answer: `To convert ${fromUnit.name} to ${toUnit.name}, use our free online converter above. Simply enter the value in ${fromUnit.name} and instantly get the result in ${toUnit.name}.`,
-    },
-    {
-      question: `How many ${toUnit.name} are in one ${fromUnit.name}?`,
-      answer: `1 ${fromUnit.name} equals ${exampleResult} ${toUnit.name}. You can use the converter above to calculate any value.`,
-    },
-    {
-      question: `What is the formula to convert ${fromUnit.symbol} to ${toUnit.symbol}?`,
-      answer: `Use our converter for the exact formula. The result is displayed with the full conversion formula for reference.`,
-    },
-    {
-      question: `Is this ${fromUnit.name} to ${toUnit.name} converter free?`,
-      answer: `Yes! Our converter is completely free to use. No sign-up, no download required. Just enter your value and get an instant result.`,
-    },
-  ];
-}
+// (generateConverterFAQs removed 2026-10-13: superseded by seoContent.faqs used by
+// converter pages for both visible FAQs and FAQPage schema; zero callers remained.)

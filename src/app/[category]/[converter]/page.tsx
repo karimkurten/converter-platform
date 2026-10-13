@@ -13,7 +13,6 @@ import {
 import {
   buildConverterMetadata,
   buildConverterSchema,
-  generateConverterFAQs,
 } from '@/lib/seo';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ConverterEngine from '@/components/converter/ConverterEngine';
@@ -77,8 +76,6 @@ export default async function ConverterPage({ params }: Props) {
     }
   } catch {}
 
-  const faqs = generateConverterFAQs(converter, category, exampleResult);
-  // Merge old FAQ shape with new generated content for schema compatibility
   const schemaFAQs = seoContent.faqs.map(f => ({ question: f.q, answer: f.a }));
   const schemas = buildConverterSchema(converter, category, schemaFAQs);
 

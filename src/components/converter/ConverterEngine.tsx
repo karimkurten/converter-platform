@@ -93,6 +93,14 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
       } else {
         const r = runConversion(category.id, num, fromUnit, toUnit);
         if (!r) return;
+        if (!Number.isFinite(r.value)) {
+          setError(category.id === 'fuel'
+            ? 'Enter a value greater than zero for fuel economy conversions'
+            : 'The result is not a valid number. Please check your input.');
+          setToValue('');
+          setFormula('');
+          return;
+        }
         result = { ...r, formatted: formatNumber(r.value, precision) };
       }
 
@@ -106,8 +114,8 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
         void resultRef.current.offsetWidth;
         resultRef.current.classList.add('result-glow');
       }
-    } catch {
-      setError('Conversion error. Please check your input.');
+    } catch (e) {
+      setError(e instanceof Error && e.message ? e.message : 'Conversion error. Please check your input.');
     }
   }, [category.id, fromUnit, toUnit, precision, liveRates, ratesLoading]);
 
@@ -311,9 +319,9 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
       {/* Precision control */}
       <div className="mt-4 flex items-center gap-3">
         <label className="text-xs text-gray-500 dark:text-gray-400 font-medium flex-shrink-0">
-          Decimal places:
+          Significant figures:
         </label>
-        <div className="flex gap-1" role="group" aria-label="Decimal places">
+        <div className="flex gap-1" role="group" aria-label="Significant figures">
           {[2, 4, 6, 8, 10].map(p => (
             <button
               key={p}
@@ -324,7 +332,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
               aria-pressed={precision === p}
-              aria-label={`${p} decimal places`}
+              aria-label={`${p} significant figures`}
             >
               {p}
             </button>

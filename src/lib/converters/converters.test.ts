@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { convertLength } from './length';
 import { convertWeight } from './weight';
 import { convertTemperature } from './temperature';
-import { convertArea, convertVolume, convertSpeed, convertTime, convertDigital } from './units';
+import { convertArea, convertVolume, convertSpeed, convertTime, convertDigital, convertPressure, convertEnergy, convertFuel } from './units';
 import { convertCurrency } from './currency';
 import { runConversion, isPopularPath, getCategoryBySlug, getConverterBySlug, searchConverters } from './index';
 
@@ -135,5 +135,113 @@ describe('search index', () => {
   it('caps results to limit', () => {
     const r = searchConverters('meter', 3);
     expect(r.length).toBeLessThanOrEqual(3);
+  });
+});
+
+describe('pressure conversion (pascals basis)', () => {
+  it('1 bar = 100000 Pa exactly', () => {
+    const r = convertPressure(1, 'bar', 'pascal');
+    expect(r.value).toBe(100000);
+  });
+  it('1 psi ≈ 6894.757 Pa (exact lbf/in²)', () => {
+    const r = convertPressure(1, 'psi', 'pascal');
+    expect(r.value).toBeCloseTo(6894.757293168361, 6);
+  });
+  it('1 atm = 760 torr exactly', () => {
+    const r = convertPressure(1, 'atm', 'torr');
+    expect(r.value).toBeCloseTo(760, 10);
+  });
+  it('round-trip psi→bar→psi', () => {
+    const bar = convertPressure(35, 'psi', 'bar').value;
+    const back = convertPressure(bar, 'bar', 'psi').value;
+    expect(back).toBeCloseTo(35, 10);
+  });
+});
+
+describe('energy conversion (joules basis)', () => {
+  it('1 kWh = 3600000 J exactly', () => {
+    const r = convertEnergy(1, 'kilowatt-hour', 'joule');
+    expect(r.value).toBe(3600000);
+  });
+  it('1 kcal = 4.184 kJ exactly', () => {
+    const r = convertEnergy(1, 'kilocalorie', 'kilojoule');
+    expect(r.value).toBe(4.184);
+  });
+  it('1 BTU ≈ 1055.05585 J', () => {
+    const r = convertEnergy(1, 'btu', 'joule');
+    expect(r.value).toBeCloseTo(1055.05585262, 6);
+  });
+  it('round-trip kcal→kJ→kcal', () => {
+    const kj = convertEnergy(250, 'kilocalorie', 'kilojoule').value;
+    const back = convertEnergy(kj, 'kilojoule', 'kilocalorie').value;
+    expect(back).toBeCloseTo(250, 10);
+  });
+});
+
+describe('fuel economy conversion (L/100km intermediate)', () => {
+  it('1 mpg (UK) = 282.480936 L/100km', () => {
+    const r = convertFuel(1, 'mpg-uk', 'l-100km');
+    expect(r.value).toBeCloseTo(282.480936, 4);
+  });
+  it('1 mpg (US) = 235.214583 L/100km', () => {
+    const r = convertFuel(1, 'mpg-us', 'l-100km');
+    expect(r.value).toBeCloseTo(235.214583, 4);
+  });
+  it('10 km/L = 10 L/100km', () => {
+    const r = convertFuel(10, 'km-per-liter', 'l-100km');
+    expect(r.value).toBeCloseTo(10, 10);
+  });
+  it('round-trip mpg-us→l-100km→mpg-us', () => {
+    const l100 = convertFuel(30, 'mpg-us', 'l-100km').value;
+    expect(l100).toBeCloseTo(7.8404861, 6);
+    const back = convertFuel(l100, 'l-100km', 'mpg-us').value;
+    expect(back).toBeCloseTo(30, 8);
+  });
+  it('round-trip km-per-liter→l-100km→km-per-liter', () => {
+    const l100 = convertFuel(12, 'km-per-liter', 'l-100km').value;
+    const back = convertFuel(l100, 'l-100km', 'km-per-liter').value;
+    expect(back).toBeCloseTo(12, 10);
+  });
+  it('zero input yields a non-finite result (engine shows the fuel-economy error)', () => {
+    const r = convertFuel(0, 'mpg-us', 'l-100km');
+    expect(Number.isFinite(r.value)).toBe(false);
+  });
+});
+
+describe('temperature: absolute zero guard', () => {
+  it('throws below absolute zero (celsius input)', () => {
+    expect(() => convertTemperature(-300, 'celsius', 'kelvin')).toThrow('Temperature below absolute zero');
+  });
+  it('throws below absolute zero (fahrenheit input)', () => {
+    expect(() => convertTemperature(-500, 'fahrenheit', 'kelvin')).toThrow('Temperature below absolute zero');
+  });
+  it('throws below absolute zero even when target is not kelvin', () => {
+    expect(() => convertTemperature(-300, 'celsius', 'fahrenheit')).toThrow('Temperature below absolute zero');
+  });
+  it('allows exactly 0 K (boundary is valid)', () => {
+    const r = convertTemperature(0, 'kelvin', 'celsius');
+    expect(r.value).toBeCloseTo(-273.15, 10);
+  });
+  it('allows exactly -273.15°C (boundary is valid)', () => {
+    const r = convertTemperature(-273.15, 'celsius', 'kelvin');
+    expect(r.value).toBeCloseTo(0, 10);
+  });
+});
+
+describe('temperature: reaumur formulas', () => {
+  it('reaumur→celsius shows the multiplication formula, not the fallback', () => {
+    const r = convertTemperature(80, 'reaumur', 'celsius');
+    expect(r.value).toBeCloseTo(100, 10);
+    expect(r.formula).toContain('× 5/4');
+  });
+  it('reaumur→fahrenheit shows the full formula', () => {
+    const r = convertTemperature(80, 'reaumur', 'fahrenheit');
+    expect(r.value).toBe(212);
+    expect(r.formula).toContain('× 9/4');
+  });
+  it('rankine→reaumur shows the full formula', () => {
+    const r = convertTemperature(491.67, 'rankine', 'reaumur');
+    expect(r.value).toBeCloseTo(0, 6);
+    expect(r.formula).toContain('× 4/9');
   });
 });

@@ -1,6 +1,7 @@
 'use client'
 
 import { useAmazonStore } from '@/hooks/useAmazonStore'
+import { trackEvent } from '@/lib/analytics'
 
 interface AmazonButtonProps {
   baseUrl: string
@@ -22,15 +23,7 @@ export default function AmazonButton({
   const localUrl = getLocalUrl(baseUrl)
   
   const handleClick = () => {
-    // Track click with GA4
-    if (typeof window !== 'undefined' && (window as typeof window & { gtag?: Function }).gtag) {
-      (window as typeof window & { gtag?: Function }).gtag!('event', 'amazon_affiliate_click', {
-        event_category: 'affiliate',
-        event_label: productId,
-        store_country: store.countryName,
-        store_domain: store.domain,
-      })
-    }
+    trackEvent('amazon_affiliate_click', 'affiliate', productId);
   }
 
   const buttonStyles = {

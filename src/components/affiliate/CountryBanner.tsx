@@ -24,7 +24,7 @@ export default function CountryBanner() {
             Showing products for {store.countryName}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Links go to {store.domain} · Prices in {store.currency}
+            Links go to {store.domain} — check current prices on Amazon
           </p>
         </div>
       </div>

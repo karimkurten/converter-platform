@@ -171,7 +171,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Guides & Expert Tips</h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">How-to articles, buying guides, and travelers' tips</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">How-to articles, buying guides, and travelers&rsquo; tips</p>
             </div>
             <Link href="/blog" className="text-brand-500 hover:text-brand-600 text-sm font-semibold">
               View all →

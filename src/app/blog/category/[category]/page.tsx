@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildMetadata({
     title: `${posts[0].category} Articles — ConvertNow Blog`,
     description: `Browse ${posts.length} ${posts[0].category.toLowerCase()} articles on ConvertNow. Expert guides, tips, and reviews.`,
-    path: `/blog/category/${category}`,
+    path: `/blog/category/${category.toLowerCase()}`,
   });
 }
 

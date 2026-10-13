@@ -8,12 +8,6 @@ import { useAmazonStore } from '@/hooks/useAmazonStore';
 import AmazonButton from '@/components/affiliate/AmazonButton';
 import CountryBanner from '@/components/affiliate/CountryBanner';
 
-function extractPrice(priceRange: string): number {
-  const match = priceRange.match(/[\d.,]+/);
-  if (!match) return 0;
-  return parseFloat(match[0].replace(/,/g, ''));
-}
-
 function parseReviewCount(rc: string): number {
   const match = rc.replace(/[^0-9]/g, '');
   return parseInt(match) || 0;
@@ -23,11 +17,15 @@ export default function ShopClientPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'popular' | 'price-low' | 'price-high' | 'rating'>('popular');
+  const [sortBy, setSortBy] = useState<'popular' | 'alpha'>('popular');
   const productGridRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
   const { store, getSubCategoryUrl } = useAmazonStore();
+
+  useEffect(() => {
+    trackEvent('shop_view', 'navigation', 'shop');
+  }, []);
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -59,16 +57,10 @@ export default function ShopClientPage() {
       );
     }
 
-    // Sort
+    // Sort (internal ordering only — no real price/rating data)
     switch (sortBy) {
-      case 'price-low':
-        result = [...result].sort((a, b) => extractPrice(a.priceRange) - extractPrice(b.priceRange));
-        break;
-      case 'price-high':
-        result = [...result].sort((a, b) => extractPrice(b.priceRange) - extractPrice(a.priceRange));
-        break;
-      case 'rating':
-        result = [...result].sort((a, b) => b.rating - a.rating);
+      case 'alpha':
+        result = [...result].sort((a, b) => a.title.localeCompare(b.title));
         break;
       case 'popular':
       default:
@@ -87,7 +79,7 @@ export default function ShopClientPage() {
       ...sub,
       count: SHOP_PRODUCTS.filter(p => p.subCategory === sub.id).length
     }));
-  }, []);
+  }, [converterToolsCategory?.subCategories]);
 
   const handleSubCategoryClick = (subId: string) => {
     setActiveCategory('converter-tools');
@@ -202,9 +194,7 @@ export default function ShopClientPage() {
           className="px-4 py-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500"
         >
           <option value="popular">Sort: Most Popular</option>
-          <option value="rating">Sort: Highest Rated</option>
-          <option value="price-low">Sort: Price Low → High</option>
-          <option value="price-high">Sort: Price High → Low</option>
+          <option value="alpha">Sort: A → Z</option>
         </select>
       </div>
 
@@ -224,6 +214,9 @@ export default function ShopClientPage() {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-4">
+          *Estimated price ranges — check the current price on Amazon.
+        </p>
       </div>
 
       {/* Trust Badges */}
@@ -231,7 +224,7 @@ export default function ShopClientPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <TrustBadge icon="✅" title="Hand Picked" description="Products selected for quality" />
           <TrustBadge icon={store.flag} title={`Ships to ${store.countryName}`} description="Fast local delivery" />
-          <TrustBadge icon="⭐" title="4.5+ Star Products" description="Only highly rated items" />
+          <TrustBadge icon="🛠️" title="Converter Matched" description="Picked for your conversions" />
           <TrustBadge icon="🔒" title="Amazon Secure" description={`Checkout on ${store.domain}`} />
         </div>
       </div>
@@ -310,12 +303,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
       )}
       <h3 className="font-semibold text-sm text-gray-900 dark:text-white mb-1.5 line-clamp-2">{product.title}</h3>
       <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3 flex-1">{product.description}</p>
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className="text-amber-400 text-xs">{'★'.repeat(Math.floor(product.rating))}</span>
-        <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{product.rating}</span>
-        <span className="text-[10px] text-gray-400">({product.reviewCount})</span>
-      </div>
-      <p className="text-sm font-bold text-green-600 dark:text-green-400 mb-3">{product.priceRange}</p>
+      <p className="text-sm font-bold text-green-600 dark:text-green-400 mb-3">Typically {product.priceRange}</p>
       <ul className="space-y-0.5 mb-3">
         {product.features.slice(0, 3).map((feat, i) => (
           <li key={i} className="flex items-start gap-1.5 text-[11px] text-gray-500 dark:text-gray-400"><span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>{feat}</li>

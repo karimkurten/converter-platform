@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { Outfit, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
-import { GoogleAnalytics } from '@next/third-parties/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import CookieConsent from '@/components/CookieConsent';
 import { buildMetadata } from '@/lib/seo';
 import './globals.css';
 
@@ -29,6 +29,8 @@ export const metadata: Metadata = buildMetadata({
 });
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// Kept intentionally: used by the AdSense script block below (currently disabled pending firewall review)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-7999532935872277';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,11 +65,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             '@type': 'WebSite',
             name: 'ConvertNow',
             url: 'https://www.convertnow.ca',
-            potentialAction: {
-              '@type': 'SearchAction',
-              target: 'https://www.convertnow.ca/search?q={search_term_string}',
-              'query-input': 'required name=search_term_string',
-            },
           }),
         }} />
 
@@ -119,7 +116,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
       </body>
-      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
+      {GA_ID && <CookieConsent gaId={GA_ID} />}
     </html>
   );
 }
