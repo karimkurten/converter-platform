@@ -1,14 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { 
-  detectUserCountry, 
+import {
+  detectUserCountry,
   getStoreForCountry,
-  localizeAmazonUrl,
-  buildAmazonUrl,
   DEFAULT_STORE,
   type AmazonStore,
-  SUBCATEGORY_SEARCH_TERMS,
 } from '@/lib/amazonGeo'
 
 export function useAmazonStore() {
@@ -51,17 +48,6 @@ export function useAmazonStore() {
     })
   }, [])
 
-  // Get localized URL for a product
-  const getLocalUrl = (baseUrl: string): string => {
-    return localizeAmazonUrl(baseUrl, countryCode)
-  }
-
-  // Get URL for a subcategory card
-  const getSubCategoryUrl = (subCategoryId: string): string => {
-    const searchTerm = SUBCATEGORY_SEARCH_TERMS[subCategoryId] || subCategoryId
-    return buildAmazonUrl(searchTerm, countryCode)
-  }
-
   // Allow manual country override
   const setCountry = (code: string) => {
     const newStore = getStoreForCountry(code)
@@ -71,13 +57,11 @@ export function useAmazonStore() {
     localStorage.setItem('convertnow_country_time', Date.now().toString())
   }
 
-  return { 
-    countryCode, 
-    store, 
+  return {
+    countryCode,
+    store,
     isLoading,
     isDetected,
-    getLocalUrl,
-    getSubCategoryUrl,
     setCountry,
   }
 }
