@@ -116,3 +116,94 @@ export function FormulaBlock({ formula, description }: FormulaBlockProps) {
     </div>
   );
 }
+
+// ─── In-content related conversions block (CN-16) ────────────────────────────
+// Server-rendered block in the converter page's main column: reverse pair,
+// same-category siblings, the parent category hub, and blog guides that
+// discuss this converter. Before this block, converter pages carried no
+// in-content internal links in their crawlable body at all.
+
+interface RelatedConversionsProps {
+  converter: Converter;
+  category: ConverterCategory;
+  reverse: Converter | null;
+  siblings: Converter[];
+  guides: { slug: string; title: string }[];
+}
+
+export function RelatedConversions({ converter, category, reverse, siblings, guides }: RelatedConversionsProps) {
+  const unitName = (id: string) => category.units.find(u => u.id === id)?.name ?? id;
+  const fromName = unitName(converter.from);
+  const toName = unitName(converter.to);
+
+  return (
+    <section className="card p-6" data-related-conversions>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+        Related Conversions
+      </h2>
+
+      {reverse && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+          Need the opposite direction? Use the{' '}
+          <Link
+            href={`/${category.slug}/${reverse.id}`}
+            className="text-brand-600 dark:text-brand-400 font-medium underline decoration-brand-300 underline-offset-2 hover:text-brand-500"
+          >
+            {toName} to {fromName} Converter
+          </Link>{' '}
+          to convert {toName.toLowerCase()} back to {fromName.toLowerCase()}.
+        </p>
+      )}
+
+      {siblings.length > 0 && (
+        <>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+            More {category.name} Conversions
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            {siblings.map(conv => (
+              <Link
+                key={conv.id}
+                href={`/${category.slug}/${conv.id}`}
+                className="px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-brand-950 border border-transparent hover:border-brand-100 dark:hover:border-brand-900 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-all"
+              >
+                {unitName(conv.from)} to {unitName(conv.to)}
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+        Browse every tool in this category on the{' '}
+        <Link
+          href={`/${category.slug}`}
+          className="text-brand-600 dark:text-brand-400 font-medium underline decoration-brand-300 underline-offset-2 hover:text-brand-500"
+        >
+          {category.name} Converter
+        </Link>{' '}
+        hub page.
+      </p>
+
+      {guides.length > 0 && (
+        <>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-white mt-5 mb-2">
+            Guides &amp; Articles
+          </h3>
+          <ul className="space-y-1.5">
+            {guides.map(guide => (
+              <li key={guide.slug}>
+                <Link
+                  href={`/blog/${guide.slug}`}
+                  className="text-sm text-brand-600 dark:text-brand-400 font-medium underline decoration-brand-300 underline-offset-2 hover:text-brand-500"
+                >
+                  {guide.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </section>
+  );
+}

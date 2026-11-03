@@ -13,6 +13,9 @@ export interface BlogPost {
   content: string;
   relatedConverters?: string[];
   relatedShopProducts?: string[];
+  // CN-16: in-body links — each phrase is matched (first occurrence) in the
+  // post's own prose and wrapped in a link to the converter it discusses.
+  inlineLinks?: { phrase: string; href: string }[];
 }
 
 function makePost(data: Omit<BlogPost, 'content'> & { content: string[] }): BlogPost {
@@ -34,6 +37,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['kilometer-to-mile', 'kilogram-to-pound', 'celsius-to-fahrenheit'],
     relatedShopProducts: ['tape-measure', 'kitchen-scale'],
+    inlineLinks: [{ phrase: "1 mile = 1.60934 kilometers", href: "/length/mile-to-kilometer" }, { phrase: "1 pound = 0.453592 kilograms", href: "/weight/pound-to-kilogram" }, { phrase: "1 inch = 2.54 centimeters exactly", href: "/length/inch-to-centimeter" }],
     content: [
       'The metric system (SI) is used by nearly every country except the United States, Liberia, and Myanmar. Imperial units dominate in the US for everyday measurements like miles, pounds, and Fahrenheit. Understanding both is essential for travelers, engineers, and anyone working across borders.',
       'Key Differences: Metric is based on powers of 10 (1000 meters = 1 kilometer). Imperial is based on historical measurements (1 mile = 1760 yards).',
@@ -55,6 +59,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['gram-to-ounce', 'us-cup-to-milliliter'],
     relatedShopProducts: ['digital-kitchen-scale', 'measuring-cup-set'],
+    inlineLinks: [{ phrase: "A cup of flour", href: "/volume/us-cup-to-milliliter" }, { phrase: "measures both grams and ounces", href: "/weight/gram-to-ounce" }],
     content: [
       'Why Do Baking Conversions Matter? Professional bakers use grams because they are precise. A cup of flour can weigh anywhere from 120g (scooped) to 150g (spooned). Grams eliminate that variance.',
       'Quick Reference: All-purpose flour: 1 cup = 128g. Granulated sugar: 1 cup = 201g. Brown sugar (packed): 1 cup = 210g. Butter: 1 cup = 227g. Honey: 1 cup = 340g.',
@@ -75,6 +80,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['celsius-to-fahrenheit'],
     relatedShopProducts: ['thermometer'],
+    inlineLinks: [{ phrase: "convert °C to °F roughly", href: "/temperature/celsius-to-fahrenheit" }, { phrase: "0°C = 32°F (freezing)", href: "/temperature/celsius-to-fahrenheit" }],
     content: [
       'The Quick Mental Trick: To convert °C to °F roughly, multiply by 2 and add 30. Example: 20°C x 2 + 30 = 70°F (actual: 68°F — close!). For exact: multiply by 9/5 and add 32.',
       'Common Temperatures: 0°C = 32°F (freezing). 20°C = 68°F (comfortable room). 37°C = 98.6°F (body temperature).',
@@ -95,6 +101,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['inch-to-centimeter', 'foot-to-meter', 'yard-to-meter'],
     relatedShopProducts: ['tape-measure'],
+    inlineLinks: [{ phrase: "metric and imperial projects", href: "/length/inch-to-centimeter" }, { phrase: "25ft/7.5m", href: "/length/foot-to-meter" }],
     content: [
       'Why Dual-Sided Tape Measures Matter: Working with both metric and imperial projects? A dual-sided tape measure saves time and eliminates conversion errors.',
       'Top Picks: Stanley FatMax 25ft/7.5m — rugged, accurate, long-lasting. Komelon Self-Lock 25ft — easy read, lock mechanism. Milwaukee Magnetic 25ft — magnetic hook, fractional markings.',
@@ -114,6 +121,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['gram-to-ounce', 'kilogram-to-pound'],
     relatedShopProducts: ['digital-kitchen-scale'],
+    inlineLinks: [{ phrase: "grams + ounces", href: "/weight/gram-to-ounce" }],
     content: [
       'What to Look For in a Digital Scale: Dual unit display (grams + ounces). Precision: 0.1g for baking, 1g for cooking. Tare function for zeroing containers. Platform size suitable for bowls. Easy-to-clean surface.',
     ],
@@ -132,6 +140,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['USD-to-CAD', 'EUR-to-USD', 'GBP-to-EUR'],
     relatedShopProducts: ['travel-wallet', 'luggage-scale'],
+    inlineLinks: [{ phrase: "USD to EUR", href: "/currency/USD-to-EUR" }, { phrase: "CAD to USD", href: "/currency/CAD-to-USD" }, { phrase: "GBP to EUR", href: "/currency/GBP-to-EUR" }],
     content: [
       'Before You Travel: Currency Basics. Start by checking live exchange rates with ConvertNow\'s currency converter. Rates change every 60 minutes.',
       'Common Pitfalls to Avoid: Airport exchange booths charge fees up to 15% higher than mid-market rate. Dynamic Currency Conversion (DCC): always pay in the local currency, not your home currency. Use a card with 0% FX fees.',
@@ -153,6 +162,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['kilogram-to-pound', 'gram-to-ounce', 'mile-to-kilometer'],
     relatedShopProducts: ['smart-scale', 'resistance-bands'],
+    inlineLinks: [{ phrase: "recipes call for ounces", href: "/weight/gram-to-ounce" }, { phrase: "1 kg = 2.2 lbs", href: "/weight/kilogram-to-pound" }],
     content: [
       'Body Weight Tracking Across Countries: Your gym might show kg on the scale, but your fitness app tracks in lbs. Convert accurately so your progress chart never lies.',
       'Nutrition Label Conversions: Protein per serving: many labels use grams, but recipes call for ounces. 1 oz of protein = ~28 grams. Carbohydrates: 1 cup of rice = ~195g cooked.',
@@ -174,6 +184,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['gram-to-ounce', 'us-cup-to-milliliter', 'celsius-to-fahrenheit'],
     relatedShopProducts: ['digital-kitchen-scale', 'measuring-cup-set', 'oven-thermometer'],
+    inlineLinks: [{ phrase: "grams to ounces", href: "/weight/gram-to-ounce" }, { phrase: "Fahrenheit to Celsius", href: "/temperature/fahrenheit-to-celsius" }, { phrase: "240 ml", href: "/volume/us-cup-to-milliliter" }],
     content: [
       'If you have ever followed a recipe that uses cups when your ingredients are listed in grams, you already know why a reliable baking conversion chart matters. A single cup of flour can vary by 30 grams or more depending on how it is scooped, packed, or leveled, which is more than enough to turn soft cookies into dry ones or make a cake feel dense instead of light. This guide gives you a practical way to convert cups to grams, grams to ounces, and Fahrenheit to Celsius, plus a fast-reference chart for the ingredients home bakers use most often.',
       'Why does a baking conversion chart matter? Baking is less forgiving than everyday cooking because ratios control texture, structure, and rise. When one source treats 1 cup of flour as 125 grams and another scoop comes out heavier, the difference changes hydration and can affect everything from muffins to sourdough. Professional bakers prefer weight because 120 grams is always 120 grams, while a cup depends on how the ingredient was measured. Not all cups mean the same thing: US standard is 236.59 ml, metric is 250 ml, and UK is 284.13 ml, so international recipes can drift fast unless you work in grams. Use cups for quick kitchen work, but use grams for recipes you care about repeating perfectly.',
@@ -205,6 +216,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['psi-to-bar', 'bar-to-pascal', 'atm-to-psi'],
     relatedShopProducts: ['pressure-gauge', 'digital-pressure-meter'],
+    inlineLinks: [{ phrase: "1 PSI = 0.06895 bar", href: "/pressure/psi-to-bar" }, { phrase: "1 bar = 100,000 pascals (Pa)", href: "/pressure/bar-to-pascal" }, { phrase: "atmospheric pressure is ~1 bar / 14.7 PSI", href: "/pressure/atm-to-psi" }],
     content: [
       'Why Pressure Units Confuse Everyone: Different countries, industries, and even machines use different pressure units. American car tires use PSI. European HVAC systems use bar. Scientific research uses pascals.',
       'The Exact Formula: 1 bar = 14.5038 PSI. 1 PSI = 0.06895 bar. 1 bar = 100,000 pascals (Pa).',
@@ -226,6 +238,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['gram-to-carat', 'ounce-to-gram', 'gram-to-kilogram'],
     relatedShopProducts: ['digital-kitchen-scale', 'jewelry-scale'],
+    inlineLinks: [{ phrase: "gram-to-carat converter", href: "/weight/gram-to-carat" }],
     content: [
       'What Is a Carat? The carat (ct) is a unit of mass used primarily for weighing gemstones and pearls. One metric carat is defined as exactly 200 milligrams, or 0.2 grams. This standard was adopted internationally in 1907 and remains the universal benchmark for gemstone valuation.',
       'Why Carats Matter for Gemstones: Gemstone prices scale exponentially with carat weight. A 2-carat diamond is worth far more than twice the price of a 1-carat diamond because larger stones are exponentially rarer. Accurate conversion between grams and carats is essential for appraisers, jewelers, and buyers to verify the true mass and market value of a gemstone.',
@@ -248,6 +261,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['mile-to-kilometer', 'kilometer-to-mile', 'meter-to-yard'],
     relatedShopProducts: ['gps-running-watch', 'resistance-bands'],
+    inlineLinks: [{ phrase: "26.219 miles", href: "/length/mile-to-kilometer" }, { phrase: "5K = 3.106 miles", href: "/length/kilometer-to-mile" }],
     content: [
       'Why Runners Need Both Units: Most international races use kilometers. The US and UK still use miles for many events. A marathon is 42.195 kilometers, which is exactly 26.219 miles. Half-marathons are 21.0975 km or 13.109 miles. Knowing both units lets you train with any plan, regardless of origin.',
       'Pace Conversion Quick Guide: A 5:00 min/km pace equals roughly 8:03 min/mile. A 4:00 min/km pace equals roughly 6:26 min/mile. Many GPS watches can display both, but understanding the math helps when reviewing training plans or comparing race splits from different countries.',
@@ -269,6 +283,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['celsius-to-fahrenheit', 'fahrenheit-to-celsius'],
     relatedShopProducts: ['oven-thermometer', 'digital-kitchen-scale'],
+    inlineLinks: [{ phrase: "350°F = 175°C", href: "/temperature/fahrenheit-to-celsius" }, { phrase: "(°C × 9/5) + 32", href: "/temperature/celsius-to-fahrenheit" }],
     content: [
       'Why Recipe Temperatures Differ by Region: American recipes use Fahrenheit. European recipes use Celsius. British recipes sometimes list "gas marks." A mismatch can ruin a bake or undercook meat. Knowing the exact conversion ensures consistent results across any cookbook.',
       'Oven Temperature Chart: 275°F = 135°C = Gas Mark 1. 300°F = 150°C = Gas Mark 2. 325°F = 165°C = Gas Mark 3. 350°F = 175°C = Gas Mark 4. 375°F = 190°C = Gas Mark 5. 400°F = 200°C = Gas Mark 6. 425°F = 220°C = Gas Mark 7. 450°F = 230°C = Gas Mark 8.',
@@ -290,6 +305,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['bit-to-byte', 'gigabyte-to-terabyte', 'kilobyte-to-megabyte'],
     relatedShopProducts: ['external-hard-drive', 'usb-flash-drive'],
+    inlineLinks: [{ phrase: "A byte is 8 bits", href: "/digital/bit-to-byte" }, { phrase: "1 MB = 1,024 KB", href: "/digital/kilobyte-to-megabyte" }, { phrase: "1 TB = 1,024 GB", href: "/digital/gigabyte-to-terabyte" }],
     content: [
       'Bits vs Bytes: The Foundation. A bit is the smallest unit — a 0 or 1. A byte is 8 bits. All digital storage is measured in bytes, but internet speeds are measured in bits per second. This causes confusion: a 100 Mbps connection downloads roughly 12.5 MB per second, not 100 MB.',
       'Binary vs Decimal Prefixes: Manufacturers use decimal (base-10): 1 TB = 1,000,000,000,000 bytes. Computers use binary (base-2): 1 TiB = 1,099,511,627,776 bytes. This is why a "1 TB" drive shows ~931 GB in Windows. The gap grows with larger drives: a 2 TB drive shows ~1.81 TB usable.',
@@ -312,6 +328,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['liter-to-us-pint', 'us-pint-to-liter', 'us-gallon-to-liter'],
     relatedShopProducts: ['measuring-cup-set', 'digital-kitchen-scale'],
+    inlineLinks: [{ phrase: "1 US gallon = 3.785 liters", href: "/volume/us-gallon-to-liter" }, { phrase: "1 US pint = 473 ml", href: "/volume/us-pint-to-liter" }],
     content: [
       'Why Brewers Need Precise Volume Conversions: A 5-gallon batch is 18.9 liters, not 20. A British pint is 568 ml, while a US pint is 473 ml. A recipe calling for "1 pint of wort" means different volumes depending on which country it originated from.',
       'Key Conversions for Homebrewing: 1 US gallon = 3.785 liters. 1 Imperial gallon = 4.546 liters. 1 US pint = 473 ml. 1 Imperial pint = 568 ml. 1 US fluid ounce = 29.57 ml. 1 Imperial fluid ounce = 28.41 ml. These differences compound across a full batch.',
@@ -333,6 +350,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['gram-to-ounce', 'us-cup-to-milliliter', 'celsius-to-fahrenheit'],
     relatedShopProducts: ['digital-kitchen-scale', 'measuring-cup-set'],
+    inlineLinks: [{ phrase: "A cup of flour", href: "/volume/us-cup-to-milliliter" }, { phrase: "Converting to Celsius", href: "/temperature/fahrenheit-to-celsius" }],
     content: [
       'Why Baking Is Different from Cooking: Baking is chemistry. Small changes in ratios produce dramatically different textures, rises, and flavors. A cup of flour can vary by 20-30 grams depending on how it is scooped. That difference alone can turn a fluffy cake into a dense brick.',
       'The Case for Weighing Ingredients: Professional bakers weigh everything in grams because weight is absolute. 120 grams of flour is always 120 grams, regardless of how you transfer it. Volume measurements (cups, tablespoons) are convenient but imprecise. Converting recipes to grams is the single best upgrade a home baker can make.',
@@ -354,6 +372,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['sq-foot-to-sq-meter', 'sq-meter-to-sq-foot', 'acre-to-hectare'],
     relatedShopProducts: ['laser-measuring-tool', 'tape-measure'],
+    inlineLinks: [{ phrase: "square feet to square meters conversion", href: "/area/sq-foot-to-sq-meter" }, { phrase: "1 square meter = 10.7639 square feet", href: "/area/sq-meter-to-sq-foot" }, { phrase: "acres to hectares", href: "/area/acre-to-hectare" }],
     content: [
       'Why Real Estate Buyers Need Area Conversions: North American listings advertise living space in square feet, while almost every other country — including the UK, most of Europe, and Asia — lists property size in square meters. If you are comparing a Toronto condo to a Lisbon apartment, or simply trying to understand a floor plan from an international real estate site, you need a reliable square feet to square meters conversion.',
       'The Exact Formula: 1 square foot = 0.092903 square meters exactly, derived from the international foot (1 ft = 0.3048 m) squared. Going the other way, 1 square meter = 10.7639 square feet. A quick mental shortcut: multiply square feet by 0.093 to estimate square meters, or multiply square meters by 10.76 to estimate square feet.',
@@ -379,6 +398,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['kph-to-mph', 'mph-to-kph', 'mps-to-kph'],
     relatedShopProducts: ['dash-cam', 'car-phone-mount'],
+    inlineLinks: [{ phrase: "multiply km/h by 0.62 to estimate mph", href: "/speed/kph-to-mph" }, { phrase: "multiply mph by 1.6 to estimate km/h", href: "/speed/mph-to-kph" }, { phrase: "1 knot = 1.852 km/h", href: "/speed/knot-to-kph" }],
     content: [
       'Why Speed Units Trip Up Travelers: If you learned to drive in the US and rent a car in Europe, Mexico, or almost anywhere else in the world, your instinctive sense of "how fast is 60" no longer applies — road signs are posted in km/h, but your gut feel for speed is calibrated in mph. Misreading a speed limit sign by even one unit system can mean a serious speeding ticket or worse.',
       'The Exact Formula: 1 mph = 1.60934 km/h. 1 km/h = 0.621371 mph. A quick mental shortcut for the highway: multiply km/h by 0.62 to estimate mph, or multiply mph by 1.6 to estimate km/h. This shortcut is close enough for safe driving decisions, though ConvertNow\'s speed converter gives the exact figure when precision matters.',
@@ -404,6 +424,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['mpg-us-to-l-100km', 'l-100km-to-mpg-us', 'mpg-uk-to-l-100km'],
     relatedShopProducts: ['obd2-scanner', 'tire-pressure-gauge'],
+    inlineLinks: [{ phrase: "L/100km = 235.215 ÷ mpg(US)", href: "/fuel/mpg-us-to-l-100km" }, { phrase: "L/100km = 282.481 ÷ mpg(UK)", href: "/fuel/mpg-uk-to-l-100km" }, { phrase: "5.5 L/100km", href: "/fuel/l-100km-to-mpg-us" }],
     content: [
       'Why Fuel Economy Units Confuse Car Shoppers: The US and Canada advertise fuel economy in miles per gallon (mpg), the UK also uses mpg but with a different-sized gallon, and continental Europe uses litres per 100 kilometres (L/100km). Comparing a car review from a European site to a North American one requires more than a simple lookup table.',
       'The Key Insight: MPG and L/100km Are Inversely Related. Higher mpg means better fuel economy, but higher L/100km means worse fuel economy — they move in opposite directions, so you cannot average or scale them linearly. The correct formulas are: L/100km = 235.215 ÷ mpg(US), and L/100km = 282.481 ÷ mpg(UK). The constants differ because the US gallon (3.785 litres) and the Imperial/UK gallon (4.546 litres) are different sizes.',
@@ -429,6 +450,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['kilocalorie-to-kilojoule', 'kilojoule-to-kilocalorie', 'kilowatt-hour-to-joule'],
     relatedShopProducts: ['smart-scale', 'digital-kitchen-scale'],
+    inlineLinks: [{ phrase: "4.184 kilojoules exactly", href: "/energy/kilocalorie-to-kilojoule" }, { phrase: "divide by 4.184", href: "/energy/kilojoule-to-kilocalorie" }, { phrase: "1 kilowatt-hour (the unit on your electricity bill)", href: "/energy/kilowatt-hour-to-joule" }],
     content: [
       'Why Nutrition Labels Differ by Country: US and Canadian nutrition labels list energy in Calories (kcal). Australian, New Zealand, and most European labels list kilojoules (kJ), sometimes alongside Calories and sometimes alone. If you are reading an imported snack package or a fitness app built for a different region, you need to convert between the two.',
       'The Exact Formula: 1 kilocalorie (the dietary "Calorie," capital C) = 4.184 kilojoules exactly. 1 kilojoule = 0.239006 kilocalories. To go from kJ to kcal quickly, divide by roughly 4.2.',
@@ -454,6 +476,7 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['hour-to-minute', 'day-to-hour', 'week-to-day'],
     relatedShopProducts: ['wall-calendar', 'desk-organizer'],
+    inlineLinks: [{ phrase: "exactly 24 hours", href: "/time/day-to-hour" }, { phrase: "40-hour work-week = 5 workdays", href: "/time/week-to-day" }],
     content: [
       'Why Time Conversions Matter for Freelancers and Project Managers: A client contract might specify a budget in hours, your internal project plan tracks progress in days and weeks, and your invoicing software rounds everything to the nearest quarter-day. Small unit mismatches compound quickly across a multi-week project, leading to underbilled hours or blown deadlines.',
       'Calendar Time vs Workday Convention: A calendar day is always exactly 24 hours (1,440 minutes, 86,400 seconds) — that is a fixed unit definition. A "workday," on the other hand, is a business convention, not a unit: most industries treat it as 8 hours, but some companies and countries use 7, 7.5, or even 6-hour workdays. Always confirm which convention a contract means before converting.',

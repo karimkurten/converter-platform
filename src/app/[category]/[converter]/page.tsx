@@ -17,7 +17,8 @@ import {
 } from '@/lib/seo';
 import Breadcrumb from '@/components/layout/Breadcrumb';
 import ConverterEngine from '@/components/converter/ConverterEngine';
-import { RelatedConverters, ConversionTable, FormulaBlock } from '@/components/converter/ConverterWidgets';
+import { RelatedConverters, RelatedConversions, ConversionTable, FormulaBlock } from '@/components/converter/ConverterWidgets';
+import { blogPosts } from '@/lib/blog';
 import ContextualProductWidget from '@/components/affiliate/ContextualProductWidget';
 
 interface Props {
@@ -57,6 +58,25 @@ export default async function ConverterPage({ params }: Props) {
   const fromUnit = category.units.find(u => u.id === converter.from)!;
   const toUnit = category.units.find(u => u.id === converter.to)!;
   const relatedConverters = getRelatedConverters(categorySlug, converterSlug, 8);
+
+  // CN-16: in-content related-conversions block data — reverse pair,
+  // same-category siblings (popular first), and blog guides that discuss
+  // this converter (from each post's declared relatedConverters).
+  const reverseConverter =
+    category.converters.find(c => c.from === converter.to && c.to === converter.from) ?? null;
+  const siblingConverters = (() => {
+    const others = category.converters.filter(
+      c => c.id !== converter.id && c.id !== reverseConverter?.id
+    );
+    return [
+      ...others.filter(c => c.popular),
+      ...others.filter(c => !c.popular),
+    ].slice(0, 8);
+  })();
+  const guidePosts = blogPosts
+    .filter(p => p.relatedConverters?.includes(converter.id))
+    .slice(0, 3)
+    .map(p => ({ slug: p.slug, title: p.title }));
 
   // CN-13: currency pages need a real, dated rate for their static content —
   // or no numeric rate claims at all. Fetch the snapshot server-side (ISR).
@@ -258,6 +278,15 @@ export default async function ConverterPage({ params }: Props) {
                 </div>
               </section>
             </div>
+
+            {/* ─── Related conversions (CN-16) ────────────────── */}
+            <RelatedConversions
+              converter={converter}
+              category={category}
+              reverse={reverseConverter}
+              siblings={siblingConverters}
+              guides={guidePosts}
+            />
           </div>
 
           {/* ─── Sidebar ──────────────────────────────────────────────── */}
