@@ -6,7 +6,7 @@ export const categories = [
   { slug: 'length', label: 'Length', desc: 'Convert meters, kilometers, miles, inches, feet, yards, and more.', examples: ['meter-to-foot', 'kilometer-to-mile'] },
   { slug: 'weight', label: 'Weight', desc: 'Convert kilograms, pounds, ounces, grams, stones, and more.', examples: ['kilogram-to-pound', 'gram-to-ounce'] },
   { slug: 'temperature', label: 'Temperature', desc: 'Convert Celsius, Fahrenheit, Kelvin, and Rankine instantly.', examples: ['celsius-to-fahrenheit', 'fahrenheit-to-celsius'] },
-  { slug: 'currency', label: 'Currency', desc: 'Live exchange rates for USD, EUR, GBP, JPY, CAD, and 100+ currencies.', examples: [] },
+  { slug: 'currency', label: 'Currency', desc: 'Live exchange rates for 40 currencies, including USD, EUR, GBP, JPY, and CAD.', examples: [] },
   { slug: 'volume', label: 'Volume', desc: 'Convert liters, gallons, cups, tablespoons, milliliters, and more.', examples: ['liter-to-gallon', 'cup-to-milliliter'] },
   { slug: 'area', label: 'Area', desc: 'Convert square meters, square feet, acres, hectares, and more.', examples: ['square-meter-to-square-foot'] },
   { slug: 'speed', label: 'Speed', desc: 'Convert km/h, mph, knots, meters per second, and more.', examples: ['kilometer-per-hour-to-mile-per-hour'] },
@@ -32,7 +32,7 @@ export default function SEOContent() {
           <p>
             A unit converter is an online tool that instantly transforms values from one measurement system to another.
             ConvertNow is a <strong>free, fast, and accurate online unit converter</strong> supporting 500+ unit conversions
-            across 13 categories. Whether you need to convert{' '}
+            across 15 categories. Whether you need to convert{' '}
             <Link href="/length/kilometer-to-mile" className="text-brand-500 hover:underline underline-offset-2">kilometers to miles</Link>,{' '}
             <Link href="/weight/kilogram-to-pound" className="text-brand-500 hover:underline underline-offset-2">kilograms to pounds</Link>, or{' '}
             <Link href="/temperature/celsius-to-fahrenheit" className="text-brand-500 hover:underline underline-offset-2">Celsius to Fahrenheit</Link>,
@@ -89,7 +89,7 @@ export default function SEOContent() {
             {[
               '✅ No signup or account required — ever',
               '✅ Minimal, non-intrusive ads — the converter always comes first',
-              '✅ 500+ conversions across 13 categories',
+              '✅ 500+ conversions across 15 categories',
               '✅ Live currency rates updated hourly',
               '✅ Works offline as a Progressive Web App (PWA)',
               '✅ Clean, mobile-first design for on-the-go use',

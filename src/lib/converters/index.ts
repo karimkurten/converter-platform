@@ -278,7 +278,7 @@ export const CATEGORIES: ConverterCategory[] = [
     id: 'currency',
     name: 'Currency',
     slug: 'currency',
-    description: 'Live currency conversion with real-time exchange rates for 40+ currencies.',
+    description: 'Live currency conversion with real-time exchange rates for 40 currencies.',
     icon: '💱',
     color: 'yellow',
     units: CURRENCY_UNITS,

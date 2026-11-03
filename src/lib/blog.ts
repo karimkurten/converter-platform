@@ -283,12 +283,12 @@ export const blogPosts: BlogPost[] = [
     ogImage: 'https://www.convertnow.ca/og-image.png',
     relatedConverters: ['celsius-to-fahrenheit', 'fahrenheit-to-celsius'],
     relatedShopProducts: ['oven-thermometer', 'digital-kitchen-scale'],
-    inlineLinks: [{ phrase: "350°F = 175°C", href: "/temperature/fahrenheit-to-celsius" }, { phrase: "(°C × 9/5) + 32", href: "/temperature/celsius-to-fahrenheit" }],
+    inlineLinks: [{ phrase: "350°F = 177°C", href: "/temperature/fahrenheit-to-celsius" }, { phrase: "(°C × 9/5) + 32", href: "/temperature/celsius-to-fahrenheit" }],
     content: [
       'Why Recipe Temperatures Differ by Region: American recipes use Fahrenheit. European recipes use Celsius. British recipes sometimes list "gas marks." A mismatch can ruin a bake or undercook meat. Knowing the exact conversion ensures consistent results across any cookbook.',
-      'Oven Temperature Chart: 275°F = 135°C = Gas Mark 1. 300°F = 150°C = Gas Mark 2. 325°F = 165°C = Gas Mark 3. 350°F = 175°C = Gas Mark 4. 375°F = 190°C = Gas Mark 5. 400°F = 200°C = Gas Mark 6. 425°F = 220°C = Gas Mark 7. 450°F = 230°C = Gas Mark 8.',
+      'Oven Temperature Chart: 275°F = 135°C = Gas Mark 1. 300°F = 150°C = Gas Mark 2. 325°F = 165°C = Gas Mark 3. 350°F = 177°C = Gas Mark 4. 375°F = 190°C = Gas Mark 5. 400°F = 200°C = Gas Mark 6. 425°F = 220°C = Gas Mark 7. 450°F = 230°C = Gas Mark 8.',
       'Common Mistakes: Using a rough "double and add 30" mental shortcut for baking temperatures — the actual formula is (°C × 9/5) + 32. Trusting your oven dial: most home ovens run 10–25 degrees off, so an oven thermometer is essential. Preheating only until the light turns off: wait an extra 10 minutes for thermal stability.',
-      'Pro Tip for International Recipes: When a recipe says "moderate oven," it usually means 350°F / 175°C. "Hot oven" means 425°F / 220°C. Bookmark ConvertNow\'s temperature converter and keep a printed copy in your kitchen drawer.',
+      'Pro Tip for International Recipes: When a recipe says "moderate oven," it usually means 350°F / 177°C. "Hot oven" means 425°F / 220°C. Bookmark ConvertNow\'s temperature converter and keep a printed copy in your kitchen drawer.',
     ],
   }),
   makePost({
@@ -355,7 +355,7 @@ export const blogPosts: BlogPost[] = [
       'Why Baking Is Different from Cooking: Baking is chemistry. Small changes in ratios produce dramatically different textures, rises, and flavors. A cup of flour can vary by 20-30 grams depending on how it is scooped. That difference alone can turn a fluffy cake into a dense brick.',
       'The Case for Weighing Ingredients: Professional bakers weigh everything in grams because weight is absolute. 120 grams of flour is always 120 grams, regardless of how you transfer it. Volume measurements (cups, tablespoons) are convenient but imprecise. Converting recipes to grams is the single best upgrade a home baker can make.',
       'Where to Start: Pick one recipe you make often. Weigh each ingredient in grams the next time you bake it. Record the gram weights next to the cup measurements in your recipe book. Over time, you will build a personal conversion chart tailored to your technique.',
-      'Oven Temperatures Matter Too: A recipe at 350°F works because the Maillard reaction and protein denaturation happen at precise temperatures. Converting to Celsius? The exact value is 176.67°C, but most ovens use 175°C. Use ConvertNow\'s temperature converter to find the nearest precise setting for your oven.',
+      'Oven Temperatures Matter Too: A recipe at 350°F works because the Maillard reaction and protein denaturation happen at precise temperatures. Converting to Celsius? The exact value is 176.67°C, which standard charts round to 177°C (Gas Mark 4). Use ConvertNow\'s temperature converter to find the nearest precise setting for your oven.',
     ],
   }),
   makePost({

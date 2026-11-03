@@ -392,7 +392,7 @@ function getCrossLinks(catId: string) {
     { name: 'Length', slug: 'length', text: 'Convert metres, miles, inches, and feet', },
     { name: 'Weight', slug: 'weight', text: 'Convert kilograms, pounds, ounces, and grams', },
     { name: 'Temperature', slug: 'temperature', text: 'Convert Celsius, Fahrenheit, and Kelvin', },
-    { name: 'Currency', slug: 'currency', text: 'Live exchange rates for 100+ currencies', },
+    { name: 'Currency', slug: 'currency', text: 'Live exchange rates for 40 currencies', },
     { name: 'Volume', slug: 'volume', text: 'Convert litres, gallons, cups, and fluid ounces', },
     { name: 'Area', slug: 'area', text: 'Convert square metres, acres, and hectares', },
     { name: 'Speed', slug: 'speed', text: 'Convert km/h, mph, knots, and m/s', },
