@@ -68,9 +68,11 @@ export const LENGTH_POPULAR_PAIRS = [
   { from: 'kilometer', to: 'mile' },
   { from: 'meter', to: 'foot' },
   { from: 'centimeter', to: 'inch' },
+  { from: 'centimeter', to: 'foot' },
   { from: 'mile', to: 'kilometer' },
   { from: 'foot', to: 'meter' },
   { from: 'inch', to: 'centimeter' },
+  { from: 'foot', to: 'centimeter' },
   { from: 'yard', to: 'meter' },
   { from: 'nautical-mile', to: 'kilometer' },
 ];

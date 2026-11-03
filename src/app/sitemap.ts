@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { CATEGORIES, getAllConverterPaths } from '@/lib/converters'
+import { CATEGORIES, getAllConverterPaths, HEIGHT_CONVERTERS } from '@/lib/converters'
 import { blogPosts } from '@/lib/blog'
 
 const SITE_URL = 'https://www.convertnow.ca'
@@ -26,11 +26,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   const converterPaths = getAllConverterPaths()
+  const heightIds = new Set(HEIGHT_CONVERTERS.map(c => c.id))
   const converterPages: MetadataRoute.Sitemap = converterPaths
     .map(({ category, converter }) => {
       const cat = CATEGORIES.find(c => c.slug === category)
       const conv = cat?.converters.find(c => c.id === converter)
       if (!conv?.popular) return null
+      // Height pages (Batch F) are emitted separately below — they are
+      // rendered by src/app/length/[heightPage], not the pair route.
+      if (heightIds.has(converter)) return null
       return {
         url: `${SITE_URL}/${category}/${converter}`,
         changeFrequency: 'monthly',
@@ -38,6 +42,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       }
     })
     .filter(Boolean) as MetadataRoute.Sitemap
+
+  // Batch F: height cluster pages (2 converters, chart, specific-value
+  // pages) — all indexable, registered exactly like the pair pages above.
+  const heightPages: MetadataRoute.Sitemap = HEIGHT_CONVERTERS.map(c => ({
+    url: `${SITE_URL}/length/${c.id}`,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
 
   const blogPages: MetadataRoute.Sitemap = blogPosts.map(post => ({
     url: `${SITE_URL}/blog/${post.slug}`,
@@ -50,7 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // each pair, and makeConverters reverses every pair — so converter IDs like
   // USD-to-EUR are generated (and emitted here) twice.
   const seen = new Set<string>()
-  return [...staticPages, ...categoryPages, ...converterPages, ...blogPages].filter(entry => {
+  return [...staticPages, ...categoryPages, ...converterPages, ...heightPages, ...blogPages].filter(entry => {
     if (seen.has(entry.url)) return false
     seen.add(entry.url)
     return true

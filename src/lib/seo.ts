@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { BreadcrumbItem, FAQItem, Converter, ConverterCategory } from '@/types';
+import { HEIGHT_VALUES } from './height';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.convertnow.ca';
 const SITE_NAME = 'ConvertNow';
@@ -132,6 +133,56 @@ export function buildCategoryMetadata(category: ConverterCategory): Metadata {
       `${category.name.toLowerCase()} conversion`,
       `convert ${category.name.toLowerCase()}`,
       ...category.units.slice(0, 6).map(u => u.name.toLowerCase()),
+      'unit converter',
+      'online converter',
+    ],
+  });
+}
+
+// ─── Height Page Metadata (Batch F) ────────────────────────────────────────
+// Hand-written metadata for the height cluster pages rendered by
+// src/app/length/[heightPage]. Titles/descriptions promise only what those
+// pages actually do (converter both directions, fractions, 140–210 cm chart).
+
+const HEIGHT_META: Record<string, { title: string; description: string }> = {
+  'centimeter-to-feet-inches': {
+    title: 'CM to Feet and Inches Converter — Height Converter',
+    description:
+      'Convert centimeters to feet and inches instantly — the height converter with fraction results, worked examples and a full 140–210 cm height chart. Free.',
+  },
+  'feet-inches-to-centimeter': {
+    title: 'Feet and Inches to CM Converter — Height Converter',
+    description:
+      'Convert feet and inches to centimeters instantly — enter a height like 5 ft 9 in and get the exact centimetre equivalent, plus formula and chart. Free.',
+  },
+  'height-chart': {
+    title: 'Height Chart — CM to Feet and Inches (140–210 cm)',
+    description:
+      'Full height conversion chart: every centimetre from 140 to 210 cm in feet and inches, with feet-and-inch fractions and common heights highlighted.',
+  },
+};
+
+for (const cm of HEIGHT_VALUES) {
+  HEIGHT_META[`${cm}-cm-to-feet-inches`] = {
+    title: `${cm} cm in Feet and Inches — Height Converter`,
+    description: `${cm} cm in feet and inches: the exact conversion with the formula, the inches total, and a ${cm - 5}–${cm + 5} cm height chart around it. Free and instant.`,
+  };
+}
+
+export function buildHeightMetadata(converter: Converter): Metadata {
+  const meta = HEIGHT_META[converter.id];
+  return buildMetadata({
+    title: meta?.title ?? converter.title,
+    description: meta?.description ?? converter.description,
+    path: `/length/${converter.id}`,
+    keywords: [
+      'cm to feet and inches',
+      'centimeters to feet inches',
+      'height converter',
+      'cm in feet',
+      'height chart cm to feet',
+      'feet and inches to cm',
+      converter.title.toLowerCase(),
       'unit converter',
       'online converter',
     ],

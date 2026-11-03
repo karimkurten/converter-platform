@@ -15,6 +15,7 @@ import {
   convertPressure, convertEnergy, convertFuel,
 } from './units';
 import { CURRENCIES, POPULAR_CURRENCY_PAIRS } from './currency';
+import { FEET_INCHES_ID, HEIGHT_VALUES, cmToFeetInches } from '../height';
 
 function makeConverters(category: string, pairs: { from: string; to: string }[], units: { id: string; name: string; symbol: string }[]): Converter[] {
   return pairs.map(({ from, to }) => {
@@ -57,6 +58,55 @@ function makeAllConverters(category: string, units: { id: string; name: string; 
   return allPairs;
 }
 
+// ─── Height cluster (Batch F) ─────────────────────────────────────────────
+// Height pages (cm ↔ feet+inches converters, a 140–210 cm chart, and
+// specific-value pages) are registered here so the sitemap, hub ItemList
+// and search index pick them up like any other popular converter — but
+// they are RENDERED by the dedicated route src/app/length/[heightPage],
+// because feet+inches is a compound result the unit-to-unit pair template
+// cannot express. Example figures in the descriptions are computed with
+// the real conversion helpers from ../height, never hand-typed.
+export const HEIGHT_CONVERTERS: Converter[] = [
+  {
+    id: 'centimeter-to-feet-inches',
+    from: 'centimeter',
+    to: FEET_INCHES_ID,
+    category: 'length',
+    title: 'Centimeter to Feet & Inches',
+    description: `Convert centimeters to feet and inches instantly — for example, 175 cm is ${cmToFeetInches(175).display}. With fractions, formula and a full height chart.`,
+    popular: true,
+  },
+  {
+    id: 'feet-inches-to-centimeter',
+    from: FEET_INCHES_ID,
+    to: 'centimeter',
+    category: 'length',
+    title: 'Feet & Inches to Centimeter',
+    description: 'Convert feet and inches to centimeters instantly — enter a height like 5 ft 9 in and get the exact centimetre equivalent, with formula and chart.',
+    popular: true,
+  },
+  {
+    id: 'height-chart',
+    from: 'centimeter',
+    to: FEET_INCHES_ID,
+    category: 'length',
+    title: 'Height Chart (CM to Feet & Inches)',
+    description: 'Full height conversion chart: every centimetre from 140 to 210 cm converted to feet and inches, with common heights highlighted.',
+    popular: true,
+  },
+  ...HEIGHT_VALUES.map(cm => ({
+    id: `${cm}-cm-to-feet-inches`,
+    from: 'centimeter',
+    to: FEET_INCHES_ID,
+    category: 'length',
+    title: `${cm} cm in Feet and Inches`,
+    description: `${cm} cm in feet and inches is ${cmToFeetInches(cm).display} (${cmToFeetInches(cm).symbolDisplay}). Exact conversion, formula and a ${cm - 5}–${cm + 5} cm mini chart.`,
+    popular: true,
+  })),
+];
+
+export const HEIGHT_CONVERTER_IDS = new Set(HEIGHT_CONVERTERS.map(c => c.id));
+
 // Currency units for the registry
 const CURRENCY_UNITS = CURRENCIES.map(c => ({
   id: c.code,
@@ -74,7 +124,7 @@ export const CATEGORIES: ConverterCategory[] = [
     icon: '📏',
     color: 'blue',
     units: LENGTH_UNITS,
-    converters: makeAllConverters('length', LENGTH_UNITS, LENGTH_POPULAR_PAIRS),
+    converters: [...makeAllConverters('length', LENGTH_UNITS, LENGTH_POPULAR_PAIRS), ...HEIGHT_CONVERTERS],
     popular: true,
   },
   {
