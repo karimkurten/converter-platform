@@ -37,7 +37,7 @@ export default function HomePage() {
     },
     {
       q: 'How many unit conversions are supported?',
-      a: 'ConvertNow supports 500+ unit conversions across 13 categories including length, weight, temperature, currency, area, volume, speed, time, digital storage, and more.',
+      a: 'ConvertNow supports 500+ unit conversions across 15 categories including length, weight, temperature, currency, area, volume, speed, time, digital storage, and more.',
     },
     {
       q: 'Are live exchange rates used for currency conversion?',

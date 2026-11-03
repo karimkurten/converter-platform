@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             name: 'ConvertNow',
             url: 'https://www.convertnow.ca',
             logo: 'https://www.convertnow.ca/icons/icon-512.png',
-            description: 'Free, fast, and accurate online unit converter with 500+ conversions across 13 categories.',
+            description: 'Free, fast, and accurate online unit converter with 500+ conversions across 15 categories.',
             contactPoint: {
               '@type': 'ContactPoint',
               email: 'support@convertnow.ca',

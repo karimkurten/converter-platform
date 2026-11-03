@@ -5,7 +5,7 @@ import { CATEGORIES } from '@/lib/converters';
 
 export const metadata: Metadata = buildMetadata({
   title: 'About ConvertNow — Free Online Unit Converter',
-  description: 'Learn about ConvertNow, the fast and free online unit converter supporting 500+ conversions across 13 categories.',
+  description: 'Learn about ConvertNow, the fast and free online unit converter supporting 500+ conversions across 15 categories.',
   path: '/about',
 });
 
@@ -56,7 +56,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">What We Offer</h2>
             <p>
-              ConvertNow supports over 500 unit conversions across 13 categories including length, weight,
+              ConvertNow supports over 500 unit conversions across 15 categories including length, weight,
               temperature, currency, area, volume, speed, time, digital storage, pressure, energy, and fuel
               economy. Every converter shows the formula used, so you always know exactly how the calculation works.
             </p>
