@@ -24,7 +24,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!post) return {};
 
   return buildMetadata({
-    title: `${post.title} | ConvertNow Blog`,
+    // CN-10: keep post titles within ~60 chars so they don't truncate in
+    // search results — drop the "Blog" suffix, then the suffix itself,
+    // as the post title gets longer.
+    title:
+      `${post.title} | ConvertNow Blog`.length <= 60
+        ? `${post.title} | ConvertNow Blog`
+        : `${post.title} | ConvertNow`.length <= 60
+          ? `${post.title} | ConvertNow`
+          : post.title,
     description: post.description,
     path: `/blog/${post.slug}`,
     keywords: post.tags,

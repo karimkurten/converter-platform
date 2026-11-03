@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   title: 'Offline — ConvertNow',
   description: 'You are offline. Please reconnect to access converters.',
   robots: { index: false, follow: false },
+  // CN-04: self-canonical (was inheriting the homepage canonical from the
+  // layout default, which conflicted with the noindex above).
+  alternates: {
+    canonical: 'https://www.convertnow.ca/offline',
+  },
 };
 
 export default function OfflinePage() {

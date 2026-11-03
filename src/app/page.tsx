@@ -9,7 +9,7 @@ import { blogPosts } from '@/lib/blog';
 
 export const metadata: Metadata = buildMetadata({
   title: 'ConvertNow — Free Online Unit Converter | 500+ Conversions',
-  description: 'Free, fast online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency, area, volume, speed, time, and 500+ units instantly. No signup required.',
+  description: 'Free, fast online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency and 500+ units instantly. No signup required.',
   path: '/',
   keywords: [
     'unit converter', 'online converter', 'free converter', 'unit conversion',

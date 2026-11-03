@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CATEGORIES, getCategoryBySlug } from '@/lib/converters';
-import { buildCategoryMetadata, buildBreadcrumbSchema } from '@/lib/seo';
+import { buildCategoryMetadata, buildItemListSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import { generateCategoryHubContent } from '@/lib/categoryContent';
 import Breadcrumb from '@/components/layout/Breadcrumb';
@@ -46,13 +46,23 @@ export default async function CategoryPage({ params }: Props) {
     return acc;
   }, {} as Record<string, { unit: typeof category.units[0]; converters: typeof allConverters }>);
 
+  // CN-06: ItemList of this category's (indexable) converters.
+  const itemListSchema = buildItemListSchema(
+    category.converters
+      .filter(c => c.popular)
+      .map(c => ({ name: c.title, path: `/${category.slug}/${c.id}` }))
+  );
+
   return (
     <>
-      {/* Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbSchema(breadcrumbs)) }}
-      />
+      {/* Schema — BreadcrumbList is emitted by the Breadcrumb component
+          (CN-05: it used to be emitted here as well, duplicating it). */}
+      {itemListSchema.itemListElement.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        />
+      )}
 
       {/* Hero */}
       <div className={`${colors.light} border-b border-gray-100 dark:border-gray-800`}>

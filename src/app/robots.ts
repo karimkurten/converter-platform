@@ -6,7 +6,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/'],
+        // CN-07: /go/ is the affiliate redirect gateway — never indexable.
+        disallow: ['/api/', '/go/'],
       },
       {
         userAgent: 'Googlebot',

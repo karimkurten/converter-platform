@@ -228,6 +228,20 @@ export function buildBreadcrumbSchema(items: BreadcrumbItem[]) {
   };
 }
 
+/** ItemList schema for hub / index pages (CN-06, CN-11b). */
+export function buildItemListSchema(items: { name: string; path: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      url: `${SITE_URL}${item.path}`,
+    })),
+  };
+}
+
 // ─── FAQ Generation ────────────────────────────────────────────────────────────
 // (generateConverterFAQs removed 2026-10-13: superseded by seoContent.faqs used by
 // converter pages for both visible FAQs and FAQPage schema; zero callers remained.)

@@ -172,9 +172,11 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          {/* Demoted from <h1> (CN-01): the page template renders the
+              server-side H1; this is the tool card's visual title. */}
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {fromUnitData?.name} to {toUnitData?.name}
-          </h1>
+          </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             <span aria-hidden="true">{category.icon}</span> {category.name} Converter
           </p>

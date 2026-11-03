@@ -121,6 +121,16 @@ export default async function ConverterPage({ params }: Props) {
           {/* Main column */}
           <div className="lg:col-span-3 space-y-6">
 
+            {/* ─── Page heading (server-rendered H1 — CN-01) ─────── */}
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                {fromUnit.name} to {toUnit.name} Converter
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <span aria-hidden="true">{category.icon}</span> {category.name} Converter · Free, instant results with formula and a full conversion table
+              </p>
+            </div>
+
             {/* ─── Converter Engine ─────────────────────────────── */}
             <Suspense fallback={<div className="converter-card h-64 animate-pulse" />}>
               <ConverterEngine converter={converter} category={category} />

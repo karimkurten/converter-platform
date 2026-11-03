@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllBlogPosts, type BlogPost } from '@/lib/blog';
-import { buildMetadata } from '@/lib/seo';
+import { buildMetadata, buildItemListSchema } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
   title: 'Blog — Conversion Tips, Guides & Tools | ConvertNow.ca',
@@ -21,8 +21,17 @@ export default function BlogPage() {
   const posts = getAllBlogPosts();
   const categories = Array.from(new Set(posts.map(p => p.category)));
 
+  // CN-11b: ItemList of the posts on the blog index.
+  const itemListSchema = buildItemListSchema(
+    posts.map(p => ({ name: p.title, path: `/blog/${p.slug}` }))
+  );
+
   return (
     <div className="container-lg py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       {/* ─── Hero ────────────────────────────────────────────── */}
       <div className="text-center mb-12">
         <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">

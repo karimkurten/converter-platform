@@ -14,10 +14,14 @@ export async function GET(request: NextRequest) {
 
   // No keyword → back to the shop instead of a broken Amazon URL.
   if (!keyword) {
-    return NextResponse.redirect(new URL('/shop', request.url), 302);
+    const res = NextResponse.redirect(new URL('/shop', request.url), 302);
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow'); // CN-07
+    return res;
   }
 
   const country = request.headers.get('x-vercel-ip-country');
   const { url } = getAmazonDestination(country, keyword);
-  return NextResponse.redirect(url, 302);
+  const res = NextResponse.redirect(url, 302);
+  res.headers.set('X-Robots-Tag', 'noindex, nofollow'); // CN-07
+  return res;
 }
