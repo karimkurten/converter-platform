@@ -32,6 +32,8 @@ function getCategoryHistory(catId: string): string {
     energy: `The concept of energy unified heat and mechanical work in the 19th century. Joule established the mechanical equivalent of heat (~1843). The joule (J) is now the SI unit. The calorie lingers in nutrition, the BTU in HVAC, and the kilowatt-hour in electricity billing.`,
     cooking: `Cooking measurements evolved from household improvisations to standardised cups and spoons. A US cup is 240 mL, while a metric cup is 250 mL. The tablespoon varies: 15 mL (US/UK), 20 mL (Australia). Professional kitchens use weight (grams) for precision; home cooks rely on volume, leading to inconsistent results.`,
     fuel: `Fuel economy measurement reflects regional habits. Miles per gallon (mpg) dominates the US and UK, but the two countries use different gallon sizes (US = 3.785 L; imperial = 4.546 L). Most of the world uses litres per 100 kilometres (L/100 km), which inverts the ratio so lower is better — the opposite of mpg.`,
+    power: `Power — the rate of doing work — was formalised when James Watt rated his steam engines against the work of horses in the 1780s, giving us the horsepower: the power to lift 550 pounds one foot in one second. The watt, named for him a century later, became the SI unit. Metric horsepower (PS) was defined separately in continental Europe as 75 kilogram-force metres per second, which is why hp and PS figures for the same engine never quite match.`,
+    torque: `Torque — twisting force — has been understood since Archimedes described leverage. It became a measured engineering quantity with the steam engine and the Prony brake in the 19th century. The newton metre is the SI unit; the foot-pound survives in North American engine ratings and fastener specifications, and the inch-pound covers the small end of the scale.`,
   };
   return map[catId] || 'This measurement category has a rich history tied to trade, science, and everyday life across civilizations.';
 }
@@ -51,6 +53,8 @@ function getWhyItMatters(catId: string): string {
     energy: 'Energy conversion drives utility bills, fitness tracking, and climate policy. A homeowner comparing electricity tariffs must understand kWh vs joules. Food labels mix calories and kilojoules, confusing diet planning.',
     cooking: 'Cooking conversion turns recipes from different countries into edible meals. A US tablespoon (15 mL) vs an Australian tablespoon (20 mL) changes seasoning intensity. Baking requires gram-level precision; volume measures fail for flour density variations.',
     fuel: 'Fuel economy conversion affects vehicle purchase decisions and carbon footprint calculations. A car rated at 25 US mpg equates to 9.4 L/100 km — a figure Europeans instantly understand as efficient or not. Fleet managers compare across regions using consistent units.',
+    power: 'Power conversion shapes car buying, EV comparison, and machinery specification. Electric motors are rated in kilowatts while many buyers still think in horsepower — a 150 kW EV motor is about 201 hp. A generator or compressor specced in the wrong unit is underpowered for the job it was bought to do.',
+    torque: 'Torque conversion prevents mechanical failure. A wheel nut that should be tightened to a foot-pound figure but is set in newton metres instead ends up under-tightened by about 26 %. Engine specs, bicycle components, and industrial fasteners mix N·m, ft·lb, and in·lb across manuals from different countries.',
   };
   return map[catId] || 'Accurate conversion in this category is essential for professionals, students, and everyday decision-making.';
 }
@@ -70,6 +74,8 @@ function getWhoUsesIt(catId: string): string {
     energy: 'Electricians, dietitians, climate scientists, utility managers, and gym users tracking workouts.',
     cooking: 'Home bakers, professional chefs, food bloggers, recipe developers, and culinary students.',
     fuel: 'Fleet managers, car buyers, logistics coordinators, and environmentally conscious drivers comparing efficiency.',
+    power: 'Automotive engineers, EV buyers, electricians, HVAC technicians, and machinery operators.',
+    torque: 'Mechanics, automotive engineers, cyclists, machinists, and anyone using a torque wrench.',
   };
   return map[catId] || 'Professionals, students, hobbyists, and anyone working across international or scientific contexts.';
 }
@@ -89,6 +95,8 @@ function getCommonConfusions(catId: string): string {
     energy: 'Calorie (cal) vs kilocalorie (kcal = Calorie on food labels). A "100-calorie snack" is actually 100 kcal = 100,000 cal. kWh (electricity) is 3.6 MJ.',
     cooking: 'Tablespoon vs teaspoon (3:1 ratio in US). A US tablespoon is 15 mL; Australian is 20 mL. "One cup of flour" varies by 30 g depending on scooping method.',
     fuel: 'US mpg vs UK mpg (different gallon sizes). A 25 US mpg car gets ~30 UK mpg. Also, mpg and L/100 km are inverse — higher mpg means lower L/100 km.',
+    power: 'Mechanical horsepower (hp) vs metric horsepower (PS): 1 hp = 1.014 PS, so a European spec sheet reads slightly higher for the same engine. Also, the kilowatts on an EV badge are power, not stored energy — battery size is kilowatt-hours (kWh).',
+    torque: 'Foot-pounds vs inch-pounds: 12 in·lb = 1 ft·lb, so reading one as the other over-tightens a small fastener twelve-fold. Torque is also not energy, even though the joule shares its dimensions — torque is a turning force, not work already done.',
   };
   return map[catId] || 'Always verify the unit system and direction before converting, especially when switching between metric and imperial measurements.';
 }
@@ -192,6 +200,18 @@ function getUnitTable(catId: string): { name: string; symbol: string; baseEquiv:
       { name: 'Litres per 100 km', symbol: 'L/100km', baseEquiv: 'Base metric', countryUse: 'EU, AU, CA' },
       { name: 'Kilometres per litre', symbol: 'km/L', baseEquiv: '100 / L/100km', countryUse: 'Japan, India' },
     ],
+    power: [
+      { name: 'Watt', symbol: 'W', baseEquiv: 'SI unit', countryUse: 'Worldwide' },
+      { name: 'Kilowatt', symbol: 'kW', baseEquiv: '1,000 W', countryUse: 'EVs, electricity' },
+      { name: 'Horsepower', symbol: 'hp', baseEquiv: '745.7 W', countryUse: 'US/UK engines' },
+      { name: 'Metric Horsepower', symbol: 'PS', baseEquiv: '735.5 W', countryUse: 'European cars' },
+    ],
+    torque: [
+      { name: 'Newton Meter', symbol: 'N·m', baseEquiv: 'SI unit', countryUse: 'Worldwide' },
+      { name: 'Foot-Pound', symbol: 'ft·lb', baseEquiv: '1.356 N·m', countryUse: 'US, automotive' },
+      { name: 'Inch-Pound', symbol: 'in·lb', baseEquiv: '0.113 N·m', countryUse: 'Small fasteners' },
+      { name: 'Kilogram-Force Meter', symbol: 'kgf·m', baseEquiv: '9.807 N·m', countryUse: 'Legacy manuals' },
+    ],
   };
   return map[catId] || [];
 }
@@ -276,6 +296,18 @@ function getQuickRef(catId: string): { from: string; to: string; factor: string 
       { from: '50 UK mpg', to: 'L/100km', factor: '5.6 L/100km' },
       { from: '10 km/L', to: 'L/100km', factor: '10 L/100km' },
     ],
+    power: [
+      { from: '1 hp', to: 'Kilowatts', factor: '0.746 kW' },
+      { from: '100 kW', to: 'Horsepower', factor: '134.1 hp' },
+      { from: '1 PS', to: 'Horsepower', factor: '0.986 hp' },
+      { from: '200 hp', to: 'Kilowatts', factor: '149.1 kW' },
+    ],
+    torque: [
+      { from: '1 ft·lb', to: 'Newton meters', factor: '1.356 N·m' },
+      { from: '100 N·m', to: 'Foot-pounds', factor: '73.8 ft·lb' },
+      { from: '1 in·lb', to: 'Newton meters', factor: '0.113 N·m' },
+      { from: '50 ft·lb', to: 'Newton meters', factor: '67.8 N·m' },
+    ],
   };
   return map[catId] || [];
 }
@@ -338,6 +370,16 @@ function getCategoryFAQs(catId: string): { question: string; answer: string }[] 
       { question: 'What is better: higher mpg or lower L/100 km?', answer: 'Higher mpg means better efficiency. Lower L/100 km means better efficiency. They are inverses. 25 US mpg ≈ 9.4 L/100 km (good). 50 US mpg ≈ 4.7 L/100 km (excellent).' },
       { question: 'Why do US and UK mpg figures differ for the same car?', answer: 'US and UK gallons are different sizes (3.785 L vs 4.546 L). A car gets a higher mpg number in the UK because the gallon is larger, meaning fewer gallons are used per mile.' },
     ],
+    power: [
+      { question: 'How many kilowatts are in a horsepower?', answer: 'One mechanical horsepower is 0.7457 kilowatts (745.699872 watts — it was defined as 550 foot-pounds per second). Multiply hp by 0.7457 to get kW: a 300 hp engine is about 224 kW.' },
+      { question: 'What is the difference between hp and PS?', answer: 'They are two different horsepower definitions. Mechanical horsepower (hp, used in the US and UK) is 745.7 W; metric horsepower (PS, used in continental Europe) is 735.5 W — about 1.4 % smaller, so the same engine shows a slightly higher number in PS.' },
+      { question: 'Why are electric cars rated in kilowatts?', answer: 'The kilowatt is the SI unit of power, and the natural unit for electric motors. Multiply kW by 1.341 to get the horsepower figure most buyers are used to: a 200 kW motor makes about 268 hp.' },
+    ],
+    torque: [
+      { question: 'How do I convert newton meters to foot-pounds?', answer: 'Multiply by 0.7376 (equivalently, divide by 1.3558). A wheel-nut spec of 110 N·m is about 81 ft·lb.' },
+      { question: 'How many inch-pounds are in a foot-pound?', answer: 'Exactly 12 — the inch-pound is one twelfth of a foot-pound. Small fasteners, bicycle parts, and precision assemblies are specced in in·lb because the ft·lb figure would be an awkwardly small fraction.' },
+      { question: 'Is torque the same as power?', answer: 'No. Torque is twisting force (N·m or ft·lb); power is how fast that force does work. An engine reaches peak torque and peak power at different speeds — power is torque multiplied by rotational speed.' },
+    ],
   };
   return map[catId] || [
     { question: `What is the base unit for ${catId}?`, answer: 'See the units table above for the SI base unit and common alternatives.' },
@@ -358,6 +400,8 @@ function getCrossLinks(catId: string) {
     { name: 'Digital Storage', slug: 'digital', text: 'Convert bytes, KB, MB, GB, and TB', },
     { name: 'Pressure', slug: 'pressure', text: 'Convert psi, bar, pascal, and atm', },
     { name: 'Energy', slug: 'energy', text: 'Convert joules, calories, kWh, and BTU', },
+    { name: 'Power', slug: 'power', text: 'Convert horsepower, kilowatts, and watts for engines and EVs', },
+    { name: 'Torque', slug: 'torque', text: 'Convert newton meters, foot-pounds, and inch-pounds', },
     { name: 'Cooking', slug: 'cooking', text: 'Convert cups, spoons, grams, and ounces in recipes', },
     { name: 'Fuel Economy', slug: 'fuel', text: 'Convert MPG and L/100km for vehicle efficiency', },
   ];

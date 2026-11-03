@@ -9,7 +9,11 @@ import {
   getRelatedConverters,
   HEIGHT_CONVERTERS,
   HEIGHT_CONVERTER_IDS,
+  VALUE_PAGE_CONVERTERS,
+  CHART_PAGE_CONVERTERS,
 } from '@/lib/converters';
+import { getValuePageDef, getChartPageDef } from '@/lib/valuePages';
+import { SpecificValuePageView, ChartPageView } from '@/components/converter/SpecialPages';
 import { convertLength } from '@/lib/converters/length';
 import {
   cmToFeetInches,
@@ -19,7 +23,7 @@ import {
   HEIGHT_CHART_MIN,
   HEIGHT_CHART_MAX,
 } from '@/lib/height';
-import { buildHeightMetadata } from '@/lib/seo';
+import { buildHeightMetadata, buildValuePageMetadata, buildChartPageMetadata } from '@/lib/seo';
 import { formatNumber } from '@/lib/utils';
 import { blogPosts } from '@/lib/blog';
 import Breadcrumb from '@/components/layout/Breadcrumb';
@@ -59,7 +63,11 @@ function valueCmOf(id: string): number | null {
 // ─── Static generation ────────────────────────────────────────────────────────
 
 export function generateStaticParams() {
-  return HEIGHT_CONVERTERS.map(c => ({ heightPage: c.id }));
+  // Batch F height pages + Batch H specific-value/chart pages for length.
+  const special = [...VALUE_PAGE_CONVERTERS, ...CHART_PAGE_CONVERTERS].filter(
+    c => c.category === 'length'
+  );
+  return [...HEIGHT_CONVERTERS, ...special].map(c => ({ heightPage: c.id }));
 }
 
 export const dynamicParams = false;
@@ -71,7 +79,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { heightPage } = await params;
   const converter = getConverterBySlug('length', heightPage);
-  if (!converter || !HEIGHT_CONVERTER_IDS.has(heightPage)) return {};
+  if (!converter) return {};
+  if (getValuePageDef(heightPage)) return buildValuePageMetadata(converter);
+  if (getChartPageDef(heightPage)) return buildChartPageMetadata(converter);
+  if (!HEIGHT_CONVERTER_IDS.has(heightPage)) return {};
   return buildHeightMetadata(converter);
 }
 
@@ -301,6 +312,14 @@ const MISTAKES_TEXT =
 
 export default async function HeightPage({ params }: { params: Promise<{ heightPage: string }> }) {
   const { heightPage } = await params;
+  // Batch H: specific-value and chart pages for length share this segment
+  // and render through the shared views in components/converter/SpecialPages.
+  if (getValuePageDef(heightPage)) {
+    return <SpecificValuePageView categorySlug="length" pageId={heightPage} />;
+  }
+  if (getChartPageDef(heightPage)) {
+    return <ChartPageView categorySlug="length" pageId={heightPage} />;
+  }
   const category = getCategoryBySlug('length');
   const converter = getConverterBySlug('length', heightPage);
   const kind = kindOf(heightPage);

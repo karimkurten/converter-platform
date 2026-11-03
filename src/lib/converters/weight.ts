@@ -63,4 +63,11 @@ export const WEIGHT_POPULAR_PAIRS = [
   { from: 'stone', to: 'kilogram' },
   { from: 'metric-ton', to: 'kilogram' },
   { from: 'pound', to: 'ounce' },
+  // Batch H: second-tier pairs (already generated as permutations; promoted
+  // to indexable pages — the body-weight cluster kg→stone matters for
+  // Canadian/UK audiences).
+  { from: 'kilogram', to: 'stone' },
+  { from: 'kilogram', to: 'ounce' },
+  { from: 'gram', to: 'kilogram' },
+  { from: 'pound', to: 'gram' },
 ];

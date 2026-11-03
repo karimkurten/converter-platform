@@ -55,6 +55,12 @@ export const POPULAR_CURRENCY_PAIRS = [
   { from: 'USD', to: 'AUD' },
   { from: 'USD', to: 'INR' },
   { from: 'USD', to: 'CNY' },
+  // Batch H: CAD long tail — the Canadian dollar against the other majors
+  // Canadians actually convert (trips to Europe/UK/Japan). makeConverters
+  // reverses every pair, so each entry adds both directions.
+  { from: 'CAD', to: 'EUR' },
+  { from: 'CAD', to: 'GBP' },
+  { from: 'CAD', to: 'JPY' },
 ];
 
 export function getFlagUrl(countryCode: string): string {

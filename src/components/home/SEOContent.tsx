@@ -15,6 +15,8 @@ export const categories = [
   { slug: 'pressure', label: 'Pressure', desc: 'Convert PSI, bar, pascal, atmospheres, torr, and more.', examples: [] },
   { slug: 'energy', label: 'Energy', desc: 'Convert joules, calories, kilowatt-hours, BTU, and more.', examples: [] },
   { slug: 'fuel', label: 'Fuel Economy', desc: 'Convert MPG, L/100km, km/L for vehicle efficiency.', examples: [] },
+  { slug: 'power', label: 'Power', desc: 'Convert horsepower, kilowatts, watts and metric horsepower (PS).', examples: [] },
+  { slug: 'torque', label: 'Torque', desc: 'Convert newton meters, foot-pounds and inch-pounds.', examples: [] },
   { slug: 'cooking', label: 'Cooking', desc: 'Convert cooking measurements: cups, spoons, grams, ounces.', examples: [] },
 ]
 

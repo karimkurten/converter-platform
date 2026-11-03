@@ -112,4 +112,6 @@ export const TEMPERATURE_POPULAR_PAIRS = [
   { from: 'celsius', to: 'kelvin' },
   { from: 'kelvin', to: 'celsius' },
   { from: 'fahrenheit', to: 'kelvin' },
+  // Batch H: completes the °C/°F/K triangle (already a permutation).
+  { from: 'kelvin', to: 'fahrenheit' },
 ];

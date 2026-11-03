@@ -12,7 +12,9 @@ import {
   runConversion,
   HEIGHT_CONVERTER_IDS,
   COOKING_CONVERTER_IDS,
+  SPECIAL_PAGE_IDS,
 } from '@/lib/converters';
+import { SPECIAL_LINKS_BY_PAIR } from '@/lib/valuePages';
 import {
   buildConverterMetadata,
   buildConverterSchema,
@@ -82,6 +84,12 @@ export default async function ConverterPage({ params }: Props) {
   // grams depends on the ingredient, which this pair template cannot know.
   if (COOKING_CONVERTER_IDS.has(converterSlug)) notFound();
 
+  // Specific-value + chart pages (Batch H) likewise: registered in their
+  // pair's category, rendered by the dedicated special-page routes
+  // (src/app/length/[heightPage], src/app/{weight,temperature,volume}/
+  // [valuePage]) — a single-value answer or a full chart is not a pair page.
+  if (SPECIAL_PAGE_IDS.has(converterSlug)) notFound();
+
   const relatedConverters = getRelatedConverters(categorySlug, converterSlug, 8);
 
   // CN-16: in-content related-conversions block data — reverse pair,
@@ -91,7 +99,7 @@ export default async function ConverterPage({ params }: Props) {
     category.converters.find(c => c.from === converter.to && c.to === converter.from) ?? null;
   const siblingConverters = (() => {
     const others = category.converters.filter(
-      c => c.id !== converter.id && c.id !== reverseConverter?.id && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id)
+      c => c.id !== converter.id && c.id !== reverseConverter?.id && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id) && !SPECIAL_PAGE_IDS.has(c.id)
     );
     return [
       ...others.filter(c => c.popular),
@@ -359,8 +367,8 @@ export default async function ConverterPage({ params }: Props) {
               reverse={reverseConverter}
               siblings={siblingConverters}
               guides={guidePosts}
-              extraLinks={
-                HEIGHT_ANCHOR_PAIRS.has(converter.id)
+              extraLinks={[
+                ...(HEIGHT_ANCHOR_PAIRS.has(converter.id)
                   ? [
                       {
                         href: '/length/centimeter-to-feet-inches',
@@ -371,8 +379,11 @@ export default async function ConverterPage({ params }: Props) {
                         label: 'Height Chart — CM to Feet & Inches (140–210 cm)',
                       },
                     ]
-                  : undefined
-              }
+                  : []),
+                // Batch H: head pairs link to their specific-value pages
+                // and printable chart from the related-conversions block.
+                ...(SPECIAL_LINKS_BY_PAIR[converter.id] ?? []),
+              ]}
             />
           </div>
 

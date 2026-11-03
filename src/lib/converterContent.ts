@@ -93,6 +93,8 @@ function getIndustries(catId: string): string {
     time: 'project management, scheduling, astronomy, and payroll',
     digital: 'IT systems, cloud storage, media production, and web hosting',
     cooking: 'baking, recipe development, nutrition planning, and meal prep',
+    power: 'automotive engineering, electric vehicles, electrical systems, and machinery specification',
+    torque: 'automotive repair, mechanical engineering, manufacturing, and precision assembly',
   };
   return map[catId] || 'science, education, and industry';
 }
@@ -109,6 +111,8 @@ function getMistakeExample(catId: string): string {
     time: 'scheduling a meeting across time zones incorrectly',
     digital: 'choosing a cloud storage plan that is too small for backups',
     cooking: 'failing a recipe because tablespoons and teaspoons were confused',
+    power: 'comparing an EV motor in kilowatts against a gasoline engine in horsepower without converting, and undersizing a generator',
+    torque: 'under-tightening a wheel nut by setting a torque wrench in the wrong unit, and snapping a small bolt',
   };
   return map[catId] || 'producing an incorrect result that affects your project';
 }
@@ -130,6 +134,8 @@ function getCategoryMistakes(catId: string): string {
     energy: 'confusing calories with kilocalories — the "Calories" on food labels are kilocalories — and using the wrong factor for BTU in heating calculations',
     cooking: 'assuming a cup of every ingredient weighs the same — a cup of flour weighs far less than a cup of sugar — and confusing tablespoons with teaspoons',
     fuel: 'treating MPG and L/100km as if a bigger number always means the same thing — they move in opposite directions — and mixing US and UK gallons when comparing MPG figures',
+    power: 'confusing mechanical horsepower (hp) with metric horsepower (PS), which differ by about 1.4%, and confusing power (kW) with energy (kWh) when comparing motors and batteries',
+    torque: 'confusing foot-pounds with inch-pounds — a factor of 12 — and applying a newton-metre spec on a wrench set to foot-pounds, which under-tightens by about 26%',
   };
   return map[catId] || 'using an approximate factor from memory instead of a verified constant';
 }
