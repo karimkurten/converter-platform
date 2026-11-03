@@ -1,6 +1,7 @@
 import type { Converter, ConverterCategory } from '@/types';
 import { CONVERT_FNS } from './converters';
 import { getUnitFact, getCurrencyRegion } from './unitFacts';
+import { getPairDepth } from './converterDepth';
 
 /**
  * Generates unique, SEO-optimized text for any converter page.
@@ -20,17 +21,36 @@ import { getUnitFact, getCurrencyRegion } from './unitFacts';
 
 const TABLE_VALUES = [0.1, 0.25, 0.5, 0.75, 1, 2, 3, 5, 10, 15, 20, 25, 50, 75, 100, 150, 200, 250, 300, 500];
 
+/** One worked example: an input, the exact working, and the computed result. */
+export interface WorkedExample {
+  /** Input with unit, e.g. "70 kg". */
+  input: string;
+  /** Optional factual note about the value (race distance, oven point…). */
+  note?: string;
+  /** The exact working, e.g. "70 kg × 2.20462". */
+  working: string;
+  /** Computed result with unit, e.g. "154.324 lb". */
+  result: string;
+}
+
 export interface ConverterSeoContent {
   title: string;
   metaDescription: string;
   h2s: string[];
   intro: string;
   formulaSection: string;
+  /** Mental-math shortcut line (honest approximation, error stated). */
+  quickEstimate: string | null;
+  /** Intro line for the worked-examples section. */
+  examplesSection: string;
+  examples: WorkedExample[];
   explanationSection: string;
   usageSection: string;
   mistakesSection: string;
   tableSection: string;
-  table: { v: number; r: string }[];
+  /** Header for the optional context column (stones, race distances…). */
+  tableContextHeader: string | null;
+  table: { v: number; r: string; c?: string }[];
   faqs: { q: string; a: string }[];
   relatedConverters: Converter[];
   wordCount: number;
@@ -116,6 +136,61 @@ function getCategoryMistakes(catId: string): string {
 
 type ConvKind = 'linear' | 'affine' | 'inverse' | 'other' | 'currency';
 
+// ── Table context notes (Batch E) ─────────────────────────────────────────
+// Factual reference points only: freezing/boiling, body temperature, standard
+// oven points (Gas Mark equivalents are the standard published ones), and
+// standard race distances. Keyed by the input value as a string.
+const TEMP_CONTEXT: Record<string, Record<string, string>> = {
+  celsius: {
+    '-40': 'Where the °C and °F scales meet',
+    '0': 'Water freezes',
+    '37': 'Average body temperature',
+    '100': 'Water boils at sea level',
+    '180': 'Moderate oven (Gas Mark 4)',
+    '200': 'Moderately hot oven (Gas Mark 6)',
+    '220': 'Hot oven (Gas Mark 7)',
+  },
+  fahrenheit: {
+    '-40': 'Where the °F and °C scales meet',
+    '32': 'Water freezes',
+    '98.6': 'Average body temperature',
+    '212': 'Water boils at sea level',
+    '350': 'Moderate oven',
+    '400': 'Hot oven',
+    '450': 'Very hot oven',
+  },
+  kelvin: {
+    '273.15': 'Water freezes',
+    '373.15': 'Water boils at sea level',
+  },
+};
+
+const RACE_CONTEXT: Record<string, Record<string, string>> = {
+  'kilometer-to-mile': { '5': '5K race', '10': '10K race', '21.0975': 'Half marathon', '42.195': 'Marathon' },
+  'mile-to-kilometer': { '3.1': '5K race', '6.2': '10K race', '13.1': 'Half marathon', '26.2': 'Marathon' },
+};
+
+/** Stones & pounds breakdown of a pounds value (1 stone = 14 lb exactly). */
+function stonesText(lb: number): string | undefined {
+  const stones = Math.floor(lb / 14);
+  if (stones < 1) return undefined;
+  const rem = Math.round((lb - stones * 14) * 10) / 10;
+  return `${stones} st ${String(Number(rem.toFixed(1)))} lb`;
+}
+
+/** Pick up to n values spread across a sorted candidate list. */
+function pickSpread(values: number[], n: number): number[] {
+  if (values.length <= n) return values;
+  const out: number[] = [];
+  for (let i = 0; i < n; i++) out.push(values[Math.round((i * (values.length - 1)) / (n - 1))]);
+  return [...new Set(out)];
+}
+
+/** Display formatting for an example's input value (keeps 21.0975, 98.6…). */
+function fmtInput(v: number): string {
+  return String(Number(v.toPrecision(8)));
+}
+
 export function generateConverterContent(
   converter: Converter,
   category: ConverterCategory,
@@ -126,6 +201,7 @@ export function generateConverterContent(
   const fromFact = getUnitFact(fromU.id);
   const toFact = getUnitFact(toU.id);
   const isCurrency = category.id === 'currency';
+  const depth = getPairDepth(category.id, converter.id);
 
   const fn = CONVERT_FNS[category.id];
   const probe = (v: number): number | null => {
@@ -184,16 +260,52 @@ export function generateConverterContent(
   const inverseExpr = `${toU.symbol} = ${inverseConstStr} ÷ ${fromU.symbol}`;
 
   // ── Conversion table ─────────────────────────────────────────────────────
-  let table: { v: number; r: string }[] = [];
+  // Head pairs (Batch E depth data) get ~50-row tables; everyone else keeps
+  // the standard 20 values. Currency keeps the standard amount ladder and is
+  // always computed from the dated snapshot — never a stored factor.
+  const tableValues = !isCurrency && depth?.tableValues ? depth.tableValues : TABLE_VALUES;
+  let table: { v: number; r: string; c?: string }[] = [];
+  const rawResults: (number | null)[] = [];
   if (kind === 'currency') {
     if (rate !== null) {
-      table = TABLE_VALUES.map(v => ({ v, r: fmt(v * rate) }));
+      table = TABLE_VALUES.map(v => {
+        const r = v * rate;
+        rawResults.push(r);
+        return { v, r: fmt(r) };
+      });
     }
   } else {
-    table = TABLE_VALUES.map(v => {
+    table = tableValues.map(v => {
       const r = at(v);
+      rawResults.push(r);
       return { v, r: r === null ? '—' : fmt(r) };
     });
+  }
+
+  // ── Table context column (Batch E) ───────────────────────────────────────
+  // Stones & pounds for weight results in pounds (or pounds inputs to kg),
+  // standard reference points for temperature, race distances for km ↔ mi.
+  let tableContextHeader: string | null = null;
+  const attachContext = (header: string, contexts: (string | undefined)[], minShare = 0) => {
+    if (contexts.filter(Boolean).length > minShare) {
+      tableContextHeader = header;
+      table = table.map((row, i) => ({ ...row, c: contexts[i] }));
+    }
+  };
+  if (category.id === 'weight' && toU.id === 'pound') {
+    const contexts = rawResults.map(r => (r !== null && r > 0 ? stonesText(r) : undefined));
+    if (contexts.filter(Boolean).length >= Math.ceil(contexts.length / 2)) {
+      attachContext('Also in stones & pounds', contexts);
+    }
+  } else if (category.id === 'weight' && fromU.id === 'pound' && toU.id === 'kilogram') {
+    const contexts = table.map(row => stonesText(row.v));
+    if (contexts.filter(Boolean).length >= Math.ceil(contexts.length / 2)) {
+      attachContext('Pounds in stones & pounds', contexts);
+    }
+  } else if (category.id === 'temperature' && TEMP_CONTEXT[converter.from]) {
+    attachContext('Good to know', table.map(row => TEMP_CONTEXT[converter.from][String(row.v)]));
+  } else if (category.id === 'length' && RACE_CONTEXT[converter.id]) {
+    attachContext('Race distances', table.map(row => RACE_CONTEXT[converter.id][String(row.v)]));
   }
 
   const relatedConverters = category.converters
@@ -255,7 +367,7 @@ export function generateConverterContent(
   } else if (kind === 'currency') {
     tableSection = `We do not publish a static table for ${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()}: the exchange rate changes daily, so printed values would mislead. Use the converter at the top of this page, which fetches current mid-market rates, to convert any amount.`;
   } else {
-    tableSection = `The following table shows twenty common conversion values from ${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()} for fast reference without calculator use.`;
+    tableSection = `The following table shows ${table.length} common conversion values from ${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()} for fast reference without calculator use.`;
   }
 
   // ── FAQs ─────────────────────────────────────────────────
@@ -372,8 +484,103 @@ export function generateConverterContent(
     },
   ];
 
+  // ── Worked examples (Batch E) ────────────────────────────────────────────
+  // Head pairs use their curated value lists; the long tail gets examples
+  // from a magnitude ladder (values whose computed results stay readable),
+  // temperature/fuel fallbacks use the standard reference values. Every
+  // result is computed from the real conversion function — never typed.
+  let exampleValues: number[];
+  if (depth?.exampleValues) {
+    exampleValues = depth.exampleValues;
+  } else if (kind === 'affine') {
+    exampleValues =
+      converter.from === 'celsius' ? [0, 37, 100]
+      : converter.from === 'fahrenheit' ? [32, 98.6, 212]
+      : converter.from === 'kelvin' ? [273.15, 373.15]
+      : [0, 100];
+  } else if (kind === 'inverse') {
+    exampleValues = [5, 10, 20, 40];
+  } else if (kind === 'currency') {
+    exampleValues = [100, 500, 1000];
+  } else {
+    const ladder = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
+    const readable = ladder.filter(v => {
+      const r = at(v);
+      return r !== null && Number.isFinite(r) && r !== 0 && fmt(r) !== '0' && Math.abs(r) >= 0.001;
+    });
+    const humanScale = readable.filter(v => v <= 10000);
+    exampleValues = humanScale.length >= 2 ? pickSpread(humanScale, 4) : pickSpread(readable, 4);
+  }
+
+  const examples: WorkedExample[] = [];
+  for (const v of exampleValues) {
+    const r = kind === 'currency' ? (rate !== null ? v * rate : null) : at(v);
+    if (r === null || !Number.isFinite(r)) continue;
+    let working: string;
+    if (kind === 'linear' || kind === 'currency') {
+      working = `${fmtInput(v)} ${fromU.symbol} × ${rateStr}`;
+    } else if (kind === 'affine') {
+      const mult = slope === 1 ? `${fmtInput(v)} ${fromU.symbol}` : `${fmtInput(v)} ${fromU.symbol} × ${slopeStr}`;
+      working = intercept > 0 ? `${mult} + ${fmtFactor(intercept)}` : intercept < 0 ? `${mult} - ${fmtFactor(-intercept)}` : mult;
+    } else if (kind === 'inverse') {
+      working = `${inverseConstStr} ÷ ${fmtInput(v)} ${fromU.symbol}`;
+    } else {
+      working = `${fmtInput(v)} ${fromU.symbol}`;
+    }
+    examples.push({
+      input: `${fmtInput(v)} ${fromU.symbol}`,
+      note: depth?.exampleNotes?.[String(v)],
+      working,
+      result: `${fmt(r)} ${toU.symbol}`,
+    });
+  }
+
+  const examplesSection =
+    kind === 'currency' && rate !== null
+      ? `Worked at the mid-market rate as of ${opts!.currencyRate!.asOf} (1 ${fromU.name} = ${rateStr} ${toU.name}), each example below uses the exact formula — so you can check the math or adapt it to your own amount.`
+      : 'Each example below is worked with the exact formula, step by step — so you can check the math or adapt it to your own numbers.';
+
+  // ── Mental-math shortcut (Batch E) ───────────────────────────────────────
+  // Overrides in the depth data are hand-checked; the generated fallback
+  // rounds the true factor to 2 significant figures and states the actual
+  // error of that rounding. Nothing here claims more accuracy than it has.
+  const pctStr = (err: number): string => `${err < 10 ? err.toFixed(1) : Math.round(err)}%`;
+  let quickEstimate: string | null = null;
+  if (depth?.estimate) {
+    quickEstimate = depth.estimate;
+  } else if (kind === 'linear' && rate !== null && rate > 0) {
+    if (rate === 1) {
+      quickEstimate = `Quick estimate: the two units are the same size, so the number carries straight across — no math needed.`;
+    } else if (rate > 1) {
+      const est = Number(rate.toPrecision(2));
+      const err = (Math.abs(est - rate) / rate) * 100;
+      quickEstimate =
+        err === 0
+          ? `Quick estimate: multiply ${fromU.name.toLowerCase()} by ${est} — for this pair, the rounded factor is the exact one.`
+          : `Quick estimate: multiply ${fromU.name.toLowerCase()} by ${est} instead of ${rateStr} — within about ${pctStr(err)} of the exact result.`;
+    } else {
+      const estRecip = Number((1 / rate).toPrecision(2));
+      const implied = 1 / estRecip;
+      const err = (Math.abs(implied - rate) / rate) * 100;
+      quickEstimate =
+        err === 0
+          ? `Quick estimate: divide ${fromU.name.toLowerCase()} by ${estRecip} — for this pair, that division is exact.`
+          : `Quick estimate: divide ${fromU.name.toLowerCase()} by ${estRecip} instead of multiplying by ${rateStr} — within about ${pctStr(err)} of the exact result.`;
+    }
+  } else if (kind === 'affine') {
+    quickEstimate = 'Quick estimate: there is no honest shortcut for this pair — the offset between the scales makes rounded mental math misleading, so use the exact formula above.';
+  } else if (kind === 'inverse') {
+    const est = Math.round(inverseConst);
+    const err = (Math.abs(est - inverseConst) / inverseConst) * 100;
+    quickEstimate = `Quick estimate: divide ${est} by your ${fromU.name.toLowerCase()} value instead of ${inverseConstStr} — within about ${pctStr(err)} of the exact result.`;
+  } else if (kind === 'currency') {
+    quickEstimate = `Quick estimate: round today's rate from the converter above to a convenient number and multiply — fine for a rough budget, but use the converter itself for exact amounts.`;
+  }
+
   const wordCount = [
-    intro, formulaSection, explanationSection, usageSection, mistakesSection, tableSection,
+    intro, formulaSection, examplesSection, quickEstimate ?? '', explanationSection,
+    usageSection, mistakesSection, tableSection,
+    ...examples.map(e => `${e.input} ${e.working} ${e.result} ${e.note ?? ''}`),
     ...faqs.map(f => f.q + ' ' + f.a),
   ].join(' ').split(/\s+/).length;
 
@@ -383,6 +590,7 @@ export function generateConverterContent(
     h2s: [
       `How do I convert ${fromU.name} to ${toU.name}?`,
       `What is the formula to convert ${fromU.name} to ${toU.name}?`,
+      `${fromU.name} to ${toU.name} worked examples`,
       `What is the difference between ${fromU.name} and ${toU.name}?`,
       `Why is this conversion useful in real life?`,
       `Common mistakes when converting ${fromU.name} to ${toU.name}`,
@@ -393,10 +601,14 @@ export function generateConverterContent(
     ],
     intro,
     formulaSection,
+    quickEstimate,
+    examplesSection,
+    examples,
     explanationSection,
     usageSection,
     mistakesSection,
     tableSection,
+    tableContextHeader,
     table,
     faqs,
     relatedConverters,

@@ -194,12 +194,54 @@ export default async function ConverterPage({ params }: Props) {
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {seoContent.formulaSection}
                 </p>
+                {seoContent.quickEstimate && (
+                  <p className="mt-4 text-sm leading-relaxed bg-brand-50 dark:bg-brand-950/40 border border-brand-100 dark:border-brand-900 rounded-xl px-4 py-3 text-gray-700 dark:text-gray-300">
+                    <span aria-hidden="true">💡</span> {seoContent.quickEstimate}
+                  </p>
+                )}
               </section>
+
+              {/* Worked examples (Batch E) */}
+              {seoContent.examples.length > 0 && (
+                <section className="card p-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                    {seoContent.h2s[2]}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                    {seoContent.examplesSection}
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full text-sm">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-800/50">
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Value</th>
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Working</th>
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">Result</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {seoContent.examples.map((ex, i) => (
+                          <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
+                            <td className="px-4 py-2 text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                              {ex.input}
+                              {ex.note && (
+                                <span className="block text-xs text-gray-500 dark:text-gray-500">{ex.note}</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{ex.working} =</td>
+                            <td className="px-4 py-2 font-semibold text-brand-600 dark:text-brand-400 whitespace-nowrap">{ex.result}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              )}
 
               {/* Explanation / difference */}
               <section className="card p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {seoContent.h2s[2]}
+                  {seoContent.h2s[3]}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {seoContent.explanationSection}
@@ -209,7 +251,7 @@ export default async function ConverterPage({ params }: Props) {
               {/* Usage / why useful */}
               <section className="card p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {seoContent.h2s[3]}
+                  {seoContent.h2s[4]}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {seoContent.usageSection}
@@ -219,7 +261,7 @@ export default async function ConverterPage({ params }: Props) {
               {/* Mistakes */}
               <section className="card p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {seoContent.h2s[4]}
+                  {seoContent.h2s[5]}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                   {seoContent.mistakesSection}
@@ -229,7 +271,7 @@ export default async function ConverterPage({ params }: Props) {
               {/* Conversion Table (generated) */}
               <section className="card p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {seoContent.h2s[5]}
+                  {seoContent.h2s[6]}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
                   {seoContent.tableSection}
@@ -241,6 +283,9 @@ export default async function ConverterPage({ params }: Props) {
                       <tr className="bg-gray-50 dark:bg-gray-800/50">
                         <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">{fromUnit.name} ({fromUnit.symbol})</th>
                         <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">{toUnit.name} ({toUnit.symbol})</th>
+                        {seoContent.tableContextHeader && (
+                          <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-300">{seoContent.tableContextHeader}</th>
+                        )}
                       </tr>
                     </thead>
                     <tbody>
@@ -248,6 +293,9 @@ export default async function ConverterPage({ params }: Props) {
                         <tr key={i} className="border-t border-gray-100 dark:border-gray-800">
                           <td className="px-4 py-2 text-gray-700 dark:text-gray-300">{row.v}</td>
                           <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.r}</td>
+                          {seoContent.tableContextHeader && (
+                            <td className="px-4 py-2 text-gray-500 dark:text-gray-500">{row.c ?? ''}</td>
+                          )}
                         </tr>
                       ))}
                     </tbody>
@@ -259,7 +307,7 @@ export default async function ConverterPage({ params }: Props) {
               {/* FAQ */}
               <section className="card p-6">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-5">
-                  {seoContent.h2s[6]}
+                  {seoContent.h2s[7]}
                 </h2>
                 <div className="space-y-4">
                   {seoContent.faqs.map((faq, i) => (
