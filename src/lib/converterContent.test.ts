@@ -106,3 +106,153 @@ describe('CN-15: filler facts come from per-unit data', () => {
     expect(c.table.find(r => r.v === 500)?.r).not.toBe('0');
   });
 });
+
+describe('Batch E: worked examples are computed, not typed', () => {
+  it('kg → lb works the searched values with the exact factor', () => {
+    const c = content('weight', 'kilogram-to-pound');
+    const ex70 = c.examples.find(e => e.input === '70 kg');
+    expect(ex70).toBeDefined();
+    expect(ex70!.working).toBe('70 kg × 2.20462');
+    expect(ex70!.result).toBe('154.324 lb'); // 70 × 2.2046226… = 154.32356…
+    expect(c.examples.map(e => e.input)).toEqual(['50 kg', '60 kg', '70 kg', '80 kg', '90 kg', '100 kg']);
+  });
+
+  it('°C → °F examples apply the affine formula (× 1.8 + 32)', () => {
+    const c = content('temperature', 'celsius-to-fahrenheit');
+    const oven = c.examples.find(e => e.input === '180 °C');
+    expect(oven!.working).toBe('180 °C × 1.8 + 32');
+    expect(oven!.result).toBe('356 °F');
+    expect(oven!.note).toBe('A moderate oven');
+    const same = c.examples.find(e => e.input === '-40 °C');
+    expect(same!.result).toBe('-40 °F');
+  });
+
+  it('km → mi examples carry the standard race distances', () => {
+    const c = content('length', 'kilometer-to-mile');
+    const marathon = c.examples.find(e => e.input === '42.195 km');
+    expect(marathon!.note).toBe('Marathon distance');
+    expect(marathon!.result).toBe('26.219 mi'); // 42.195 × 0.621371… = 26.2188…
+  });
+
+  it('fuel examples divide the constant (inverse pair)', () => {
+    const c = content('fuel', 'mpg-us-to-l-100km');
+    const ex = c.examples.find(e => e.input === '10 mpg (US)');
+    expect(ex!.working).toBe('235.215 ÷ 10 mpg (US)');
+    expect(ex!.result).toBe('23.521 L/100km');
+  });
+
+  it('long-tail pairs get ladder examples with correct math', () => {
+    const c = content('length', 'meter-to-yard');
+    expect(c.examples.length).toBeGreaterThanOrEqual(2);
+    const ex = c.examples.find(e => e.input === '100 m');
+    expect(ex!.working).toBe('100 m × 1.09361');
+    expect(ex!.result).toBe('109.361 yd');
+  });
+
+  it('extreme pairs still produce non-zero examples', () => {
+    const c = content('length', 'millimeter-to-mile');
+    expect(c.examples.length).toBeGreaterThanOrEqual(2);
+    for (const e of c.examples) expect(e.result).not.toBe('0 mi');
+  });
+
+  it('currency examples exist only with a dated snapshot, computed from it', () => {
+    const noRate = content('currency', 'USD-to-CAD');
+    expect(noRate.examples).toHaveLength(0);
+    const withRate = content('currency', 'USD-to-CAD', {
+      currencyRate: { rate: 1.36, asOf: '2026-11-02' },
+    });
+    const ex = withRate.examples.find(e => e.input === '100 USD');
+    expect(ex!.working).toBe('100 USD × 1.36');
+    expect(ex!.result).toBe('136 CAD');
+    expect(withRate.examplesSection).toContain('as of 2026-11-02');
+  });
+
+  it('kelvin examples include absolute zero', () => {
+    const c = content('temperature', 'kelvin-to-celsius');
+    const zero = c.examples.find(e => e.input === '0 K');
+    expect(zero!.note).toBe('Absolute zero');
+    expect(zero!.result).toBe('-273.15 °C');
+  });
+});
+
+describe('Batch E: table depth + context columns', () => {
+  it('head pairs get 50-row tables; table prose states the real count', () => {
+    for (const [cat, id] of [
+      ['weight', 'kilogram-to-pound'],
+      ['weight', 'pound-to-kilogram'],
+      ['length', 'centimeter-to-inch'],
+      ['length', 'kilometer-to-mile'],
+      ['temperature', 'celsius-to-fahrenheit'],
+      ['temperature', 'fahrenheit-to-celsius'],
+      ['volume', 'us-gallon-to-liter'],
+    ] as const) {
+      const c = content(cat, id);
+      expect(c.table, `${cat}/${id}`).toHaveLength(50);
+      expect(c.tableSection).toContain('50 common conversion values');
+    }
+    const tail = content('length', 'meter-to-yard');
+    expect(tail.table).toHaveLength(20);
+  });
+
+  it('kg → lb table breaks results into stones & pounds', () => {
+    const c = content('weight', 'kilogram-to-pound');
+    expect(c.tableContextHeader).toBe('Also in stones & pounds');
+    expect(c.table.find(r => r.v === 70)?.c).toBe('11 st 0.3 lb'); // 154.324 lb = 11 st + 0.324 lb
+    expect(c.table.find(r => r.v === 100)?.c).toBe('15 st 10.5 lb'); // 220.462 lb = 15 st + 10.462 lb
+  });
+
+  it('lb → kg table breaks the pounds inputs into stones & pounds', () => {
+    const c = content('weight', 'pound-to-kilogram');
+    expect(c.tableContextHeader).toBe('Pounds in stones & pounds');
+    expect(c.table.find(r => r.v === 150)?.c).toBe('10 st 10 lb');
+    expect(c.table.find(r => r.v === 1)?.c).toBeUndefined();
+  });
+
+  it('°C → °F table annotates standard reference points', () => {
+    const c = content('temperature', 'celsius-to-fahrenheit');
+    expect(c.tableContextHeader).toBe('Good to know');
+    expect(c.table.find(r => r.v === 100)?.c).toBe('Water boils at sea level');
+    expect(c.table.find(r => r.v === 180)?.c).toBe('Moderate oven (Gas Mark 4)');
+    expect(c.table.find(r => r.v === 3)?.c).toBeUndefined();
+  });
+
+  it('km → mi table flags race distances', () => {
+    const c = content('length', 'kilometer-to-mile');
+    expect(c.tableContextHeader).toBe('Race distances');
+    expect(c.table.find(r => r.v === 42.195)?.c).toBe('Marathon');
+    expect(c.table.find(r => r.v === 21.0975)?.c).toBe('Half marathon');
+  });
+
+  it('small-result weight pairs get no stones column', () => {
+    const c = content('weight', 'gram-to-pound');
+    expect(c.tableContextHeader).toBeNull();
+  });
+});
+
+describe('Batch E: mental-math shortcuts are honest', () => {
+  it('head pairs use their checked shortcuts', () => {
+    expect(content('weight', 'kilogram-to-pound').quickEstimate).toContain('multiply kilograms by 2.2');
+    expect(content('weight', 'pound-to-kilogram').quickEstimate).toContain('divide pounds by 2.2');
+    expect(content('temperature', 'celsius-to-fahrenheit').quickEstimate).toContain('double the Celsius value and add 30');
+    expect(content('temperature', 'celsius-to-kelvin').quickEstimate).toContain('add 273.15');
+  });
+
+  it('generated shortcuts state the rounding error of the rounded factor', () => {
+    // meter → yard: exact factor 1.09361, rounded 1.1 → error ≈ 0.58%
+    const c = content('length', 'meter-to-yard');
+    expect(c.quickEstimate).toContain('multiply meter by 1.1');
+    expect(c.quickEstimate).toContain('within about 0.6%');
+  });
+
+  it('inverse pairs estimate with the rounded constant and its error', () => {
+    const c = content('fuel', 'mpg-us-to-l-100km');
+    expect(c.quickEstimate).toContain('divide 235 by');
+    expect(c.quickEstimate).toContain('within about 0.1%');
+  });
+
+  it('currency shortcut never invents a rate', () => {
+    const c = content('currency', 'USD-to-CAD');
+    expect(c.quickEstimate).toContain("round today's rate");
+    expect(c.quickEstimate).not.toMatch(/\d+\.\d+/);
+  });
+});
