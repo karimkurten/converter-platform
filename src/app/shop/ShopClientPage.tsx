@@ -94,11 +94,12 @@ export default function ShopClientPage() {
 
   return (
     <div className="container-lg py-8 lg:py-12">
-      {/* Hero */}
+      {/* Hero — visual headline only; the page H1 is server-rendered in
+          page.tsx (CN-02), so this is a <p> to avoid a duplicate H1. */}
       <div className="text-center mb-10 animate-fade-in">
-        <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
+        <p className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-3">
           🔧 Shop Tools for Every Conversion
-        </h1>
+        </p>
         <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
           Products hand-picked to match exactly what you are converting on ConvertNow.ca
         </p>

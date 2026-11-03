@@ -8,7 +8,8 @@ const PRODUCT_COUNT = getProductCount();
 
 export const metadata: Metadata = {
   title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-  description: `Shop ${PRODUCT_COUNT} hand-picked products matched to your conversions. Measurement tools, kitchen scales, thermometers, laser measures and more — all on Amazon with fast shipping.`,
+  // CN-08: trimmed to ~155 chars, keeping the honest product count.
+  description: `Shop ${PRODUCT_COUNT} hand-picked products matched to your conversions: kitchen scales, tape measures, thermometers, laser measures and more, all on Amazon.`,
   keywords: [
     'measurement tools',
     'kitchen scale metric imperial',
@@ -66,7 +67,9 @@ function buildShopSchema() {
         },
         mainEntity: {
           '@type': 'ItemList',
-          itemListElement: products.slice(0, 10).map((product, i) => ({
+          // CN-09: cover every listed product, not a 10-item sample.
+          // Deliberately NO ratings/reviews — none exist for these listings.
+          itemListElement: products.map((product, i) => ({
             '@type': 'ListItem',
             position: i + 1,
             item: {
@@ -112,6 +115,21 @@ export default function ShopPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      {/* Server-rendered page heading (CN-02): the interactive shop below is
+          a client component behind a Suspense boundary, so without this
+          block the server HTML has no H1 at all. */}
+      <div className="container-lg pt-8 lg:pt-12">
+        <h1 className="text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+          Shop Measurement &amp; Converter Tools
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 max-w-2xl mt-3 leading-relaxed">
+          Hand-picked measurement tools matched to the conversions you run on
+          ConvertNow — kitchen scales for cooking conversions, tape measures
+          for length, thermometers for temperature, and more. Every product
+          links to Amazon; as an Amazon Associate we earn from qualifying
+          purchases at no extra cost to you.
+        </p>
+      </div>
       <Suspense fallback={<div className="min-h-screen" />}>
         <ShopClientPage />
       </Suspense>

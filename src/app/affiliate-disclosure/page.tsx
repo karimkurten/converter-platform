@@ -3,6 +3,10 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Affiliate Disclosure — ConvertNow.ca',
   description: 'ConvertNow.ca participates in the Amazon Associates Program. Learn how affiliate links support our free unit converter.',
+  // CN-03: canonical must point at this page, not the layout default (homepage).
+  alternates: {
+    canonical: 'https://www.convertnow.ca/affiliate-disclosure',
+  },
 };
 
 export default function AffiliateDisclosurePage() {
