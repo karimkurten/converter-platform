@@ -10,13 +10,21 @@ import {
   DIGITAL_UNITS, DIGITAL_POPULAR_PAIRS,
   PRESSURE_UNITS, PRESSURE_POPULAR_PAIRS,
   ENERGY_UNITS, ENERGY_POPULAR_PAIRS,
+  POWER_UNITS, POWER_POPULAR_PAIRS,
+  TORQUE_UNITS, TORQUE_POPULAR_PAIRS,
   FUEL_UNITS, FUEL_POPULAR_PAIRS,
   convertArea, convertVolume, convertSpeed, convertTime, convertDigital,
-  convertPressure, convertEnergy, convertFuel,
+  convertPressure, convertEnergy, convertPower, convertTorque, convertFuel,
 } from './units';
 import { CURRENCIES, POPULAR_CURRENCY_PAIRS } from './currency';
 import { FEET_INCHES_ID, HEIGHT_VALUES, cmToFeetInches } from '../height';
 import { INGREDIENTS, cupsToGrams, gramsToCups, ovenRowFor, OVEN_CHART_ID } from '../cooking';
+import {
+  VALUE_PAGE_DEFS, CHART_PAGE_DEFS,
+  specialUnit, specialResultText,
+} from '../valuePages';
+
+export { VALUE_PAGE_IDS, CHART_PAGE_IDS, SPECIAL_PAGE_IDS } from '../valuePages';
 
 function makeConverters(category: string, pairs: { from: string; to: string }[], units: { id: string; name: string; symbol: string }[]): Converter[] {
   return pairs.map(({ from, to }) => {
@@ -170,6 +178,60 @@ export const COOKING_POPULAR_PAIRS = [
   { from: 'milliliter', to: 'teaspoon' },
 ];
 
+// ─── Specific-value + chart pages (Batch H) ──────────────────────────────
+// "70 kg to lbs" value pages and printable chart pages for the head pairs,
+// defined in src/lib/valuePages. Registered here so the sitemap, hub
+// ItemList and search index pick them up like any other popular converter
+// — but RENDERED by dedicated routes (src/app/weight|temperature|volume/
+// [valuePage] and the length special-pages route), because a page about a
+// single value, or a full chart, is not a unit-to-unit pair page. Example
+// figures in the descriptions are computed with the real conversion
+// functions via ../valuePages, never hand-typed.
+function pluralUnitName(name: string): string {
+  return name === 'Inch' ? 'Inches' : `${name}s`;
+}
+
+export const VALUE_PAGE_CONVERTERS: Converter[] = VALUE_PAGE_DEFS.map(def => {
+  const fromU = specialUnit(def.category, def.from);
+  const toU = specialUnit(def.category, def.to);
+  const result = specialResultText(def.category, def.value, def.from, def.to);
+  return {
+    id: def.id,
+    from: def.from,
+    to: def.to,
+    category: def.category,
+    title:
+      def.category === 'temperature'
+        ? `${def.value} ${fromU.symbol} in ${toU.name}`
+        : `${def.value} ${fromU.symbol} in ${pluralUnitName(toU.name)}`,
+    description:
+      def.category === 'temperature'
+        ? `${def.value} ${fromU.symbol} in ${toU.name} is ${result} ${toU.symbol}. Exact conversion with the formula, a table of nearby values, and the full ${fromU.name} to ${toU.name} converter and chart.`
+        : `${def.value} ${fromU.symbol} in ${pluralUnitName(toU.name).toLowerCase()} is ${result} ${toU.symbol}. Exact conversion with the formula, a table of nearby values, and the full ${fromU.name} to ${toU.name} converter and chart.`,
+    popular: true,
+  };
+});
+
+export const CHART_PAGE_CONVERTERS: Converter[] = CHART_PAGE_DEFS.map(def => {
+  const fromU = specialUnit(def.category, def.from);
+  const toU = specialUnit(def.category, def.to);
+  const first = def.rows[0];
+  const last = def.rows[def.rows.length - 1];
+  return {
+    id: def.id,
+    from: def.from,
+    to: def.to,
+    category: def.category,
+    title: `${fromU.name} to ${toU.name} Chart`,
+    description: `Full ${fromU.name} to ${toU.name} conversion chart: ${first} to ${last} ${fromU.symbol} in one printable table — every value computed with the exact conversion formula.`,
+    popular: true,
+  };
+});
+
+function specialConvertersFor(category: string): Converter[] {
+  return [...VALUE_PAGE_CONVERTERS, ...CHART_PAGE_CONVERTERS].filter(c => c.category === category);
+}
+
 // Currency units for the registry
 const CURRENCY_UNITS = CURRENCIES.map(c => ({
   id: c.code,
@@ -187,7 +249,7 @@ export const CATEGORIES: ConverterCategory[] = [
     icon: '📏',
     color: 'blue',
     units: LENGTH_UNITS,
-    converters: [...makeAllConverters('length', LENGTH_UNITS, LENGTH_POPULAR_PAIRS), ...HEIGHT_CONVERTERS],
+    converters: [...makeAllConverters('length', LENGTH_UNITS, LENGTH_POPULAR_PAIRS), ...HEIGHT_CONVERTERS, ...specialConvertersFor('length')],
     popular: true,
   },
   {
@@ -198,7 +260,7 @@ export const CATEGORIES: ConverterCategory[] = [
     icon: '⚖️',
     color: 'green',
     units: WEIGHT_UNITS,
-    converters: makeAllConverters('weight', WEIGHT_UNITS, WEIGHT_POPULAR_PAIRS),
+    converters: [...makeAllConverters('weight', WEIGHT_UNITS, WEIGHT_POPULAR_PAIRS), ...specialConvertersFor('weight')],
     popular: true,
   },
   {
@@ -209,7 +271,7 @@ export const CATEGORIES: ConverterCategory[] = [
     icon: '🌡️',
     color: 'orange',
     units: TEMPERATURE_UNITS,
-    converters: makeAllConverters('temperature', TEMPERATURE_UNITS, TEMPERATURE_POPULAR_PAIRS),
+    converters: [...makeAllConverters('temperature', TEMPERATURE_UNITS, TEMPERATURE_POPULAR_PAIRS), ...specialConvertersFor('temperature')],
     popular: true,
   },
   {
@@ -241,7 +303,7 @@ export const CATEGORIES: ConverterCategory[] = [
     icon: '🧊',
     color: 'cyan',
     units: VOLUME_UNITS,
-    converters: makeAllConverters('volume', VOLUME_UNITS, VOLUME_POPULAR_PAIRS),
+    converters: [...makeAllConverters('volume', VOLUME_UNITS, VOLUME_POPULAR_PAIRS), ...specialConvertersFor('volume')],
   },
   {
     id: 'speed',
@@ -313,6 +375,26 @@ export const CATEGORIES: ConverterCategory[] = [
     units: FUEL_UNITS,
     converters: makeAllConverters('fuel', FUEL_UNITS, FUEL_POPULAR_PAIRS),
   },
+  {
+    id: 'power',
+    name: 'Power',
+    slug: 'power',
+    description: 'Convert horsepower to kilowatts, watts to horsepower, and metric horsepower (PS) for engines, motors, and EVs.',
+    icon: '🔌',
+    color: 'violet',
+    units: POWER_UNITS,
+    converters: makeAllConverters('power', POWER_UNITS, POWER_POPULAR_PAIRS),
+  },
+  {
+    id: 'torque',
+    name: 'Torque',
+    slug: 'torque',
+    description: 'Convert newton meters to foot-pounds and inch-pounds for engines, fasteners, wrenches, and tools.',
+    icon: '🔧',
+    color: 'red',
+    units: TORQUE_UNITS,
+    converters: makeAllConverters('torque', TORQUE_UNITS, TORQUE_POPULAR_PAIRS),
+  },
 ];
 
 // ─── Centralized convert dispatch ─────────────────────────────────────────────
@@ -330,6 +412,8 @@ export const CONVERT_FNS: Record<string, ConvertFn> = {
   cooking: convertVolume,
   pressure: convertPressure,
   energy: convertEnergy,
+  power: convertPower,
+  torque: convertTorque,
   fuel: convertFuel,
 };
 

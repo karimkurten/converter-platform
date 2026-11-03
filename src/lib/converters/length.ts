@@ -75,4 +75,11 @@ export const LENGTH_POPULAR_PAIRS = [
   { from: 'foot', to: 'centimeter' },
   { from: 'yard', to: 'meter' },
   { from: 'nautical-mile', to: 'kilometer' },
+  // Batch H: second-tier pairs (already generated as permutations; promoted
+  // to indexable pages — mm↔inch and cm→feet appear on generalist sites'
+  // "common conversions" lists).
+  { from: 'millimeter', to: 'inch' },
+  { from: 'inch', to: 'millimeter' },
+  { from: 'foot', to: 'inch' },
+  { from: 'inch', to: 'foot' },
 ];

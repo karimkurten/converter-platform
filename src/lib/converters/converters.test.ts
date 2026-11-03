@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { convertLength } from './length';
 import { convertWeight } from './weight';
 import { convertTemperature } from './temperature';
-import { convertArea, convertVolume, convertSpeed, convertTime, convertDigital, convertPressure, convertEnergy, convertFuel } from './units';
+import { convertArea, convertVolume, convertSpeed, convertTime, convertDigital, convertPressure, convertEnergy, convertFuel, convertPower, convertTorque } from './units';
 import { convertCurrency } from './currency';
 import { runConversion, isPopularPath, getCategoryBySlug, getConverterBySlug, searchConverters } from './index';
 
@@ -243,5 +243,90 @@ describe('temperature: reaumur formulas', () => {
     const r = convertTemperature(491.67, 'rankine', 'reaumur');
     expect(r.value).toBeCloseTo(0, 6);
     expect(r.formula).toContain('× 4/9');
+  });
+});
+
+describe('power conversion (watts basis) — Batch H', () => {
+  it('1 hp = 745.699872 W (550 ft·lbf/s by definition)', () => {
+    expect(convertPower(1, 'horsepower', 'watt').value).toBeCloseTo(745.699872, 6);
+  });
+  it('hp → kW ≈ 0.7457', () => {
+    expect(convertPower(1, 'horsepower', 'kilowatt').value).toBeCloseTo(0.7457, 4);
+  });
+  it('100 kW ≈ 134.102 hp', () => {
+    expect(convertPower(100, 'kilowatt', 'horsepower').value).toBeCloseTo(134.102, 3);
+  });
+  it('1 PS (metric horsepower) = 735.49875 W', () => {
+    expect(convertPower(1, 'metric-horsepower', 'watt').value).toBeCloseTo(735.49875, 5);
+  });
+  it('hp↔kW pairs are registered popular both ways and dispatch via runConversion', () => {
+    expect(getConverterBySlug('power', 'horsepower-to-kilowatt')?.popular).toBe(true);
+    expect(getConverterBySlug('power', 'kilowatt-to-horsepower')?.popular).toBe(true);
+    expect(runConversion('power', 1, 'horsepower', 'kilowatt')!.value).toBeCloseTo(0.7457, 4);
+  });
+});
+
+describe('torque conversion (newton-meter basis) — Batch H', () => {
+  it('1 ft·lb = 1.355818 N·m', () => {
+    expect(convertTorque(1, 'foot-pound', 'newton-meter').value).toBeCloseTo(1.355818, 6);
+  });
+  it('12 in·lb = 1 ft·lb exactly', () => {
+    expect(convertTorque(12, 'inch-pound', 'foot-pound').value).toBeCloseTo(1, 9);
+  });
+  it('100 N·m ≈ 73.756 ft·lb', () => {
+    expect(convertTorque(100, 'newton-meter', 'foot-pound').value).toBeCloseTo(73.756, 3);
+  });
+  it('torque pairs are registered popular', () => {
+    expect(getConverterBySlug('torque', 'newton-meter-to-foot-pound')?.popular).toBe(true);
+    expect(getConverterBySlug('torque', 'foot-pound-to-newton-meter')?.popular).toBe(true);
+    expect(getConverterBySlug('torque', 'inch-pound-to-newton-meter')?.popular).toBe(true);
+  });
+});
+
+describe('pressure: kilopascal — Batch H', () => {
+  it('1 kPa = 1000 Pa', () => {
+    expect(convertPressure(1, 'kilopascal', 'pascal').value).toBe(1000);
+  });
+  it('100 kPa ≈ 14.5038 psi', () => {
+    expect(convertPressure(100, 'kilopascal', 'psi').value).toBeCloseTo(14.5038, 4);
+  });
+  it('kPa↔psi pairs are registered popular both ways', () => {
+    expect(getConverterBySlug('pressure', 'kilopascal-to-psi')?.popular).toBe(true);
+    expect(getConverterBySlug('pressure', 'psi-to-kilopascal')?.popular).toBe(true);
+  });
+});
+
+describe('CAD currency pairs — Batch H', () => {
+  it.each(['CAD-to-EUR', 'EUR-to-CAD', 'CAD-to-GBP', 'GBP-to-CAD', 'CAD-to-JPY', 'JPY-to-CAD'])(
+    '%s is registered popular',
+    id => {
+      expect(getConverterBySlug('currency', id)?.popular).toBe(true);
+    }
+  );
+  it('converts CAD→EUR via per-USD rates (the Batch A snapshot machinery)', () => {
+    const r = convertCurrency(100, 'CAD', 'EUR', { USD: 1, CAD: 1.4, EUR: 0.92 });
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.value).toBeCloseTo(65.7142857, 5);
+  });
+});
+
+describe('promoted second-tier pairs — Batch H', () => {
+  it.each([
+    ['length', 'millimeter-to-inch'],
+    ['length', 'inch-to-millimeter'],
+    ['length', 'foot-to-inch'],
+    ['length', 'inch-to-foot'],
+    ['weight', 'kilogram-to-stone'],
+    ['weight', 'kilogram-to-ounce'],
+    ['weight', 'gram-to-kilogram'],
+    ['weight', 'pound-to-gram'],
+    ['temperature', 'kelvin-to-fahrenheit'],
+    ['volume', 'liter-to-uk-gallon'],
+    ['volume', 'uk-gallon-to-liter'],
+  ])('%s/%s is promoted to popular (indexable)', (cat, id) => {
+    expect(getConverterBySlug(cat, id)?.popular).toBe(true);
+  });
+  it('centimeter-to-foot was already popular and stays popular (Batch F anchor)', () => {
+    expect(getConverterBySlug('length', 'centimeter-to-foot')?.popular).toBe(true);
   });
 });

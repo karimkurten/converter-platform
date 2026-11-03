@@ -87,6 +87,11 @@ export const VOLUME_POPULAR_PAIRS = [
   { from: 'milliliter', to: 'us-fluid-oz' },
   { from: 'cubic-foot', to: 'liter' },
   { from: 'us-cup', to: 'milliliter' },
+  // Batch H: imperial (UK) gallon pairs — older Canadian recipes and trades
+  // still reference the imperial gallon, and Canada sold fuel in imperial
+  // gallons before metrication.
+  { from: 'liter', to: 'uk-gallon' },
+  { from: 'uk-gallon', to: 'liter' },
 ];
 
 // ─── SPEED ────────────────────────────────────────────────────────────────────
@@ -215,6 +220,7 @@ export const DIGITAL_POPULAR_PAIRS = [
 // All in pascals
 export const PRESSURE_UNITS: Unit[] = [
   { id: 'pascal', name: 'Pascal', symbol: 'Pa' },
+  { id: 'kilopascal', name: 'Kilopascal', symbol: 'kPa' },
   { id: 'bar', name: 'Bar', symbol: 'bar' },
   { id: 'psi', name: 'PSI', symbol: 'psi' },
   { id: 'atm', name: 'Atmosphere', symbol: 'atm' },
@@ -223,6 +229,7 @@ export const PRESSURE_UNITS: Unit[] = [
 
 const PRESSURE_TO_PASCALS: Record<string, number> = {
   pascal: 1,
+  kilopascal: 1000,
   bar: 100000,
   psi: 6894.757293168361,             // exact (lbf/in²)
   atm: 101325,                        // exact
@@ -239,6 +246,9 @@ export const PRESSURE_POPULAR_PAIRS = [
   { from: 'atm', to: 'psi' },
   { from: 'bar', to: 'pascal' },
   { from: 'atm', to: 'pascal' },
+  // Batch H: kPa is the Canadian standard for tire pressure and weather.
+  { from: 'kilopascal', to: 'psi' },
+  { from: 'psi', to: 'kilopascal' },
 ];
 
 // ─── ENERGY ───────────────────────────────────────────────────────────────────
@@ -271,6 +281,57 @@ export const ENERGY_POPULAR_PAIRS = [
   { from: 'kilowatt-hour', to: 'joule' },
   { from: 'btu', to: 'joule' },
   { from: 'calorie', to: 'joule' },
+];
+
+// ─── POWER (Batch H) ──────────────────────────────────────────────────────────
+// All in watts
+export const POWER_UNITS: Unit[] = [
+  { id: 'watt', name: 'Watt', symbol: 'W', aliases: ['watts'] },
+  { id: 'kilowatt', name: 'Kilowatt', symbol: 'kW', aliases: ['kilowatts'] },
+  { id: 'horsepower', name: 'Horsepower', symbol: 'hp', aliases: ['mechanical horsepower'] },
+  { id: 'metric-horsepower', name: 'Metric Horsepower', symbol: 'PS', aliases: ['ps', 'cv', 'pferdestärke'] },
+];
+
+const POWER_TO_WATTS: Record<string, number> = {
+  watt: 1,
+  kilowatt: 1000,
+  horsepower: 745.6998715822702,      // exact: 550 ft·lbf/s
+  'metric-horsepower': 735.49875,     // exact: 75 kgf·m/s
+};
+
+export function convertPower(value: number, from: string, to: string): ConversionResult {
+  return convertSimple(value, from, to, POWER_TO_WATTS, POWER_UNITS);
+}
+
+export const POWER_POPULAR_PAIRS = [
+  { from: 'horsepower', to: 'kilowatt' },
+  { from: 'kilowatt', to: 'horsepower' },
+];
+
+// ─── TORQUE (Batch H) ─────────────────────────────────────────────────────────
+// All in newton metres
+export const TORQUE_UNITS: Unit[] = [
+  { id: 'newton-meter', name: 'Newton Meter', symbol: 'N·m', aliases: ['newton metre', 'nm'] },
+  { id: 'foot-pound', name: 'Foot-Pound', symbol: 'ft·lb', aliases: ['foot pound', 'ft-lb', 'ft lb'] },
+  { id: 'inch-pound', name: 'Inch-Pound', symbol: 'in·lb', aliases: ['inch pound', 'in-lb', 'in lb'] },
+  { id: 'kilogram-force-meter', name: 'Kilogram-Force Meter', symbol: 'kgf·m', aliases: ['kilogram meter', 'kg·m'] },
+];
+
+const TORQUE_TO_NEWTON_METERS: Record<string, number> = {
+  'newton-meter': 1,
+  'foot-pound': 1.3558179483314004,   // exact: lbf (4.4482216152605 N) × ft (0.3048 m)
+  'inch-pound': 0.1129848290276167,   // foot-pound ÷ 12
+  'kilogram-force-meter': 9.80665,    // exact: standard gravity × 1 m
+};
+
+export function convertTorque(value: number, from: string, to: string): ConversionResult {
+  return convertSimple(value, from, to, TORQUE_TO_NEWTON_METERS, TORQUE_UNITS);
+}
+
+export const TORQUE_POPULAR_PAIRS = [
+  { from: 'newton-meter', to: 'foot-pound' },
+  { from: 'foot-pound', to: 'newton-meter' },
+  { from: 'inch-pound', to: 'newton-meter' },
 ];
 
 // ─── FUEL ECONOMY ─────────────────────────────────────────────────────────────

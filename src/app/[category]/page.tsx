@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CATEGORIES, getCategoryBySlug, HEIGHT_CONVERTERS, HEIGHT_CONVERTER_IDS, COOKING_CONVERTERS, COOKING_CONVERTER_IDS } from '@/lib/converters';
+import { CATEGORIES, getCategoryBySlug, HEIGHT_CONVERTERS, HEIGHT_CONVERTER_IDS, COOKING_CONVERTERS, COOKING_CONVERTER_IDS, SPECIAL_PAGE_IDS, VALUE_PAGE_CONVERTERS, CHART_PAGE_CONVERTERS } from '@/lib/converters';
+import { getValuePageDef, getChartPageDef, specialResultText, chartRows } from '@/lib/valuePages';
 import { cmToFeetInches } from '@/lib/height';
 import { getIngredient, cupsToGrams, fmtGrams, ovenRowFor } from '@/lib/cooking';
 import { buildCategoryMetadata, buildItemListSchema } from '@/lib/seo';
@@ -38,9 +39,11 @@ export default async function CategoryPage({ params }: Props) {
   // from the pair grids (their "to" is the compound feet+inches form).
   // Cooking cluster pages (Batch G) get the same treatment on the cooking
   // hub — their "conversion" depends on the ingredient, not a unit pair.
-  const popularConverters = category.converters.filter(c => c.popular && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id));
+  // Specific-value + chart pages (Batch H) likewise get their own section.
+  const popularConverters = category.converters.filter(c => c.popular && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id) && !SPECIAL_PAGE_IDS.has(c.id));
   const allConverters = category.converters;
-  const unitConverters = allConverters.filter(c => !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id));
+  const unitConverters = allConverters.filter(c => !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id) && !SPECIAL_PAGE_IDS.has(c.id));
+  const specialPages = [...VALUE_PAGE_CONVERTERS, ...CHART_PAGE_CONVERTERS].filter(c => c.category === category.slug);
 
   const breadcrumbs = [
     { label: 'Home', href: '/' },
@@ -216,6 +219,52 @@ export default async function CategoryPage({ params }: Props) {
                         {conv.id === 'oven-temperature-chart' && (
                           <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             180 °C = {ovenRowFor(180)?.fahrenheit} °F · gas mark {ovenRowFor(180)?.gasMark}
+                          </div>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Specific values & charts (Batch H) — categories with special pages */}
+            {specialPages.length > 0 && (
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <span className="text-lg">🔢</span> Popular Values &amp; Conversion Charts
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-2xl">
+                  Direct answers for individual values, and the full printable charts for this
+                  category&apos;s main conversions — every figure computed with the exact
+                  conversion formula.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {specialPages.map(conv => {
+                    const vdef = getValuePageDef(conv.id);
+                    const cdef = getChartPageDef(conv.id);
+                    const fromUnit = category.units.find(u => u.id === conv.from);
+                    const toUnit = category.units.find(u => u.id === conv.to);
+                    return (
+                      <Link
+                        key={conv.id}
+                        href={`/${category.slug}/${conv.id}`}
+                        className="card p-4 hover:scale-[1.02] transition-transform group"
+                      >
+                        <div className={`text-xs font-semibold ${colors.text} mb-2`}>
+                          {cdef ? '📊 Full chart' : `${fromUnit?.symbol} → ${toUnit?.symbol}`}
+                        </div>
+                        <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-500 transition-colors">
+                          {conv.title}
+                        </div>
+                        {vdef && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            = {specialResultText(vdef.category, vdef.value, vdef.from, vdef.to)} {toUnit?.symbol}
+                          </div>
+                        )}
+                        {cdef && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {chartRows(cdef).length} rows · printable
                           </div>
                         )}
                       </Link>

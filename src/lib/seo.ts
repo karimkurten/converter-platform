@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import type { BreadcrumbItem, FAQItem, Converter, ConverterCategory } from '@/types';
 import { HEIGHT_VALUES } from './height';
 import { INGREDIENTS, OVEN_CHART_ID } from './cooking';
+import { getValuePageDef, getChartPageDef, specialUnit } from './valuePages';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.convertnow.ca';
 const SITE_NAME = 'ConvertNow';
@@ -246,6 +247,54 @@ export function buildCookingMetadata(converter: Converter): Metadata {
   });
 }
 
+// ─── Specific-Value + Chart Page Metadata (Batch H) ─────────────────────
+// Metadata for the "70 kg to lbs" value pages and the printable chart
+// pages rendered by the dedicated routes. Descriptions reuse the registry
+// descriptions, whose figures are computed with the real conversion
+// functions in src/lib/valuePages — never hand-typed results.
+
+export function buildValuePageMetadata(converter: Converter): Metadata {
+  const def = getValuePageDef(converter.id);
+  if (!def) return buildMetadata({ title: converter.title, description: converter.description, path: `/${converter.category}/${converter.id}` });
+  const fromU = specialUnit(def.category, def.from);
+  const toU = specialUnit(def.category, def.to);
+  return buildMetadata({
+    title: `${converter.title} — ${fromU.name} to ${toU.name} Conversion`,
+    description: converter.description,
+    path: `/${def.category}/${converter.id}`,
+    keywords: [
+      `${def.value} ${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()}`,
+      `${def.value} ${fromU.symbol} to ${toU.symbol}`,
+      `how much is ${def.value} ${fromU.symbol} in ${toU.symbol}`,
+      `${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()}`,
+      `${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()} chart`,
+      'unit converter',
+      'online converter',
+    ],
+  });
+}
+
+export function buildChartPageMetadata(converter: Converter): Metadata {
+  const def = getChartPageDef(converter.id);
+  if (!def) return buildMetadata({ title: converter.title, description: converter.description, path: `/${converter.category}/${converter.id}` });
+  const fromU = specialUnit(def.category, def.from);
+  const toU = specialUnit(def.category, def.to);
+  return buildMetadata({
+    title: `${fromU.name} to ${toU.name} Chart — Printable Conversion Table`,
+    description: converter.description,
+    path: `/${def.category}/${converter.id}`,
+    keywords: [
+      `${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()} chart`,
+      `${fromU.symbol} to ${toU.symbol} chart`,
+      `${fromU.name.toLowerCase()} ${toU.name.toLowerCase()} conversion table`,
+      'printable conversion chart',
+      `${fromU.name.toLowerCase()} to ${toU.name.toLowerCase()}`,
+      'unit converter',
+      'online converter',
+    ],
+  });
+}
+
 // ─── JSON-LD Schema ────────────────────────────────────────────────────────────
 
 export function buildWebApplicationSchema() {
@@ -263,12 +312,13 @@ export function buildWebApplicationSchema() {
       price: '0',
       priceCurrency: 'USD',
     },
-    description: 'Free online unit converter supporting 500+ conversions across 13 categories: length, weight, temperature, currency, area, volume, speed, time, digital storage, pressure, energy, fuel economy, and cooking measurements.',
+    description: 'Free online unit converter supporting 500+ conversions across 15 categories: length, weight, temperature, currency, area, volume, speed, time, digital storage, pressure, energy, power, torque, fuel economy, and cooking measurements.',
     featureList: [
       'Length converter', 'Weight & mass converter', 'Temperature converter',
       'Live currency converter', 'Area converter', 'Volume converter',
       'Speed converter', 'Time converter', 'Digital storage converter',
-      'Pressure converter', 'Energy converter', 'Fuel economy converter',
+      'Pressure converter', 'Energy converter', 'Power converter',
+      'Torque converter', 'Fuel economy converter',
       'Cooking measurement converter', 'Works offline as a PWA',
     ],
   };

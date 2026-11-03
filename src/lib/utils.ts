@@ -186,4 +186,16 @@ export const CATEGORY_COLORS: Record<string, { bg: string; text: string; border:
     border: 'border-sky-200',
     light: 'bg-sky-50 dark:bg-sky-950',
   },
+  violet: {
+    bg: 'bg-violet-600',
+    text: 'text-violet-600',
+    border: 'border-violet-200',
+    light: 'bg-violet-50 dark:bg-violet-950',
+  },
+  red: {
+    bg: 'bg-red-600',
+    text: 'text-red-600',
+    border: 'border-red-200',
+    light: 'bg-red-50 dark:bg-red-950',
+  },
 };

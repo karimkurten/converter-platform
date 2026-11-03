@@ -164,10 +164,38 @@ const UNIT_FACTS: Record<string, UnitFact> = {
 
   // ── Pressure ────────────────────────────────────────────────────────────
   pascal: { system: 'SI (metric)', regions: 'science, engineering and weather reports worldwide' },
+  kilopascal: { system: 'SI (metric)', regions: 'Canada and most countries worldwide — tire pressure, weather and engineering' },
   bar: { system: 'Metric', regions: 'Europe and industry worldwide (weather, diving, machinery)' },
   psi: US_CUSTOMARY,
   atm: WORLDWIDE_SCIENCE,
   torr: { system: 'Scientific', regions: 'medicine, vacuum technology and laboratories worldwide' },
+
+  // ── Power (Batch H) ─────────────────────────────────────────────────────
+  watt: { system: 'SI (metric)', regions: 'science, engineering and electrical ratings worldwide' },
+  kilowatt: { system: 'SI (metric)', regions: 'electricity, engines and EV motor ratings worldwide' },
+  horsepower: {
+    system: 'Imperial / US Customary',
+    regions: 'the United States and car markets worldwide, for engine and motor ratings',
+  },
+  'metric-horsepower': {
+    system: 'Metric (continental European)',
+    regions: 'continental Europe, for car engine ratings (PS/CV)',
+  },
+
+  // ── Torque (Batch H) ────────────────────────────────────────────────────
+  'newton-meter': { system: 'SI (metric)', regions: 'engineering, automotive and science worldwide' },
+  'foot-pound': {
+    system: 'Imperial / US Customary',
+    regions: 'the United States and Canada, for engine torque and fastener specs',
+  },
+  'inch-pound': {
+    system: 'Imperial / US Customary',
+    regions: 'the United States, for small fasteners, bicycles and precision assemblies',
+  },
+  'kilogram-force-meter': {
+    system: 'Metric (gravitational, legacy)',
+    regions: 'older European and Japanese manuals and machinery specs',
+  },
 
   // ── Energy ──────────────────────────────────────────────────────────────
   joule: { system: 'SI (metric)', regions: 'science and engineering worldwide' },

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { CATEGORIES, getAllConverterPaths, HEIGHT_CONVERTERS, COOKING_CONVERTERS, COOKING_CONVERTER_IDS } from '@/lib/converters'
+import { CATEGORIES, getAllConverterPaths, HEIGHT_CONVERTERS, COOKING_CONVERTERS, COOKING_CONVERTER_IDS, SPECIAL_PAGE_IDS, VALUE_PAGE_CONVERTERS, CHART_PAGE_CONVERTERS } from '@/lib/converters'
 import { blogPosts } from '@/lib/blog'
 
 const SITE_URL = 'https://www.convertnow.ca'
@@ -38,6 +38,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // Cooking cluster pages (Batch G) likewise — rendered by
       // src/app/cooking/[cookingPage] and emitted separately below.
       if (COOKING_CONVERTER_IDS.has(converter)) return null
+      // Specific-value + chart pages (Batch H) likewise — rendered by the
+      // dedicated special-page routes and emitted separately below.
+      if (SPECIAL_PAGE_IDS.has(converter)) return null
       return {
         url: `${SITE_URL}/${category}/${converter}`,
         changeFrequency: 'monthly',
@@ -63,6 +66,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
+  // Batch H: specific-value pages ("70 kg to lbs") and printable chart
+  // pages — all indexable, registered exactly like the pair pages above.
+  const specialPages: MetadataRoute.Sitemap = [...VALUE_PAGE_CONVERTERS, ...CHART_PAGE_CONVERTERS].map(c => ({
+    url: `${SITE_URL}/${c.category}/${c.id}`,
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
   const blogPages: MetadataRoute.Sitemap = blogPosts.map(post => ({
     url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: post.updatedAt,
@@ -74,7 +85,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // each pair, and makeConverters reverses every pair — so converter IDs like
   // USD-to-EUR are generated (and emitted here) twice.
   const seen = new Set<string>()
-  return [...staticPages, ...categoryPages, ...converterPages, ...heightPages, ...cookingPages, ...blogPages].filter(entry => {
+  return [...staticPages, ...categoryPages, ...converterPages, ...heightPages, ...cookingPages, ...specialPages, ...blogPages].filter(entry => {
     if (seen.has(entry.url)) return false
     seen.add(entry.url)
     return true
