@@ -8,8 +8,8 @@ import SEOContent from '@/components/home/SEOContent';
 import { blogPosts } from '@/lib/blog';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'ConvertNow — Free Online Unit Converter | 500+ Conversions',
-  description: 'Free, fast online unit converter at ConvertNow.ca. Convert length, weight, temperature, currency and 500+ units instantly. No signup required.',
+  title: 'ConvertNow: Free Online Unit Converter — 500+ Conversions',
+  description: 'Convert length, weight, temperature, currency and 500+ units free — instant results, exact formulas and live exchange rates. No signup.',
   path: '/',
   keywords: [
     'unit converter', 'online converter', 'free converter', 'unit conversion',

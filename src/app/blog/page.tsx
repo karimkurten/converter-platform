@@ -4,8 +4,8 @@ import { getAllBlogPosts, type BlogPost } from '@/lib/blog';
 import { buildMetadata, buildItemListSchema } from '@/lib/seo';
 
 export const metadata: Metadata = buildMetadata({
-  title: 'Blog — Conversion Tips, Guides & Tools | ConvertNow.ca',
-  description: 'Free conversion guides, calculator tips, and measurement tool reviews. Learn how to convert metric to imperial, bake with precision, and choose the best tools.',
+  title: 'ConvertNow Blog — Conversion Guides, Tips & Charts',
+  description: 'Practical conversion guides: grams-to-cups baking charts, driving-abroad speed limits, travel currency tips and more — from the ConvertNow team.',
   path: '/blog',
   keywords: [
     'unit conversion blog',

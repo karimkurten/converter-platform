@@ -89,10 +89,43 @@ export function buildConverterMetadata(
 
 // ─── Category Page Metadata ────────────────────────────────────────────────────
 
+// Batch C (CTR package, CTR_PROPOSALS.md): hand-written title/description for
+// the five highest-traffic hubs, replacing the generic template below.
+// Titles are the pre-suffix text — buildMetadata appends " | ConvertNow".
+// Factual adjustments vs the proposals, verified against the live catalog:
+//  - currency: the site lists 40 currencies (not "100+"); rates are the
+//    mid-market snapshot refreshed hourly (Batch A), so it says so.
+//  - cooking: this hub converts kitchen volumes only (cups/tbsp/tsp/fl oz ↔
+//    ml/L) — there is no cups-to-grams or oven-temperature converter here
+//    yet, so the copy promises only what the hub actually does.
+const CATEGORY_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
+  length: {
+    title: 'Length Converter: Meters to Feet, Miles to Km',
+    description: 'Convert meters to feet, kilometers to miles, inches to cm and more — instant results with formulas and full conversion tables. Free, no signup.',
+  },
+  weight: {
+    title: 'Weight Converter: Kg to Lbs, Grams to Ounces',
+    description: 'Convert kilograms to pounds, grams to ounces, stones to kg and more with instant results, formulas and reference tables. Free and accurate.',
+  },
+  temperature: {
+    title: 'Celsius to Fahrenheit Converter — °C, °F, Kelvin',
+    description: 'Convert Celsius to Fahrenheit, Fahrenheit to Celsius and Kelvin instantly — with the exact formula, worked examples and a full temperature table.',
+  },
+  currency: {
+    title: 'Live Currency Converter — USD to CAD, EUR, GBP',
+    description: 'Convert USD to CAD, EUR to USD, GBP and more — 40 currencies with mid-market exchange rates updated hourly. Instant, free, no signup.',
+  },
+  cooking: {
+    title: 'Cooking Converter: Cups to mL, Tbsp to mL',
+    description: 'Convert cups to milliliters, tablespoons to ml, teaspoons and fluid ounces for any recipe — instant results with full conversion tables. Free.',
+  },
+};
+
 export function buildCategoryMetadata(category: ConverterCategory): Metadata {
+  const override = CATEGORY_SEO_OVERRIDES[category.slug];
   return buildMetadata({
-    title: `${category.name} Converter`,
-    description: `Free online ${category.name.toLowerCase()} converter. Convert between ${category.units.slice(0, 5).map(u => u.name).join(', ')}, and more. Instant results with formulas.`,
+    title: override?.title ?? `${category.name} Converter`,
+    description: override?.description ?? `Free online ${category.name.toLowerCase()} converter. Convert between ${category.units.slice(0, 5).map(u => u.name).join(', ')}, and more. Instant results with formulas.`,
     path: `/${category.slug}`,
     keywords: [
       `${category.name.toLowerCase()} converter`,

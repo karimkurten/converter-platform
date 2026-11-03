@@ -1,15 +1,18 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { getProductCount, getProductsByCategory } from '@/lib/shopProducts';
+import { getProductsByCategory } from '@/lib/shopProducts';
 import { amazonUrlToGoUrl } from '@/lib/amazonRedirect';
 import ShopClientPage from './ShopClientPage';
 
-const PRODUCT_COUNT = getProductCount();
+// Batch C (CTR package, CTR_PROPOSALS.md): product-led title/description.
+// The proposal replaces the CN-08 Batch B text in the search snippet (the
+// full 106-product list itself is unchanged, in the body and JSON-LD).
+const SHOP_TITLE = 'Kitchen Scales, Tape Measures & More — Shop | ConvertNow';
+const SHOP_DESCRIPTION = 'Hand-picked kitchen scales, tape measures and thermometers matched to the conversions you run. Shop via Amazon — we earn a small commission.';
 
 export const metadata: Metadata = {
-  title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-  // CN-08: trimmed to ~155 chars, keeping the honest product count.
-  description: `Shop ${PRODUCT_COUNT} hand-picked products matched to your conversions: kitchen scales, tape measures, thermometers, laser measures and more, all on Amazon.`,
+  title: SHOP_TITLE,
+  description: SHOP_DESCRIPTION,
   keywords: [
     'measurement tools',
     'kitchen scale metric imperial',
@@ -22,8 +25,8 @@ export const metadata: Metadata = {
     'amazon measurement tools'
   ],
   openGraph: {
-    title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-    description: 'Hand-picked measurement tools matched to your conversions. Ships worldwide.',
+    title: SHOP_TITLE,
+    description: SHOP_DESCRIPTION,
     url: 'https://www.convertnow.ca/shop',
     siteName: 'ConvertNow',
     images: [{ url: 'https://www.convertnow.ca/og-image.png', width: 1200, height: 630, alt: 'ConvertNow Shop' }],
@@ -31,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-    description: 'Hand-picked measurement tools matched to your conversions.',
+    title: SHOP_TITLE,
+    description: SHOP_DESCRIPTION,
     images: ['https://www.convertnow.ca/og-image.png'],
   },
   alternates: {
@@ -53,8 +56,8 @@ function buildShopSchema() {
     '@graph': [
       {
         '@type': 'CollectionPage',
-        name: 'Shop Measurement & Converter Tools | ConvertNow.ca',
-        description: 'Hand-picked measurement tools matched to your conversions.',
+        name: SHOP_TITLE,
+        description: SHOP_DESCRIPTION,
         url: 'https://www.convertnow.ca/shop',
         brand: {
           '@type': 'Brand',
