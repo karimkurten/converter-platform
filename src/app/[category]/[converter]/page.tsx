@@ -11,6 +11,7 @@ import {
   getRelatedConverters,
   runConversion,
   HEIGHT_CONVERTER_IDS,
+  COOKING_CONVERTER_IDS,
 } from '@/lib/converters';
 import {
   buildConverterMetadata,
@@ -76,6 +77,11 @@ export default async function ConverterPage({ params }: Props) {
   // the compound feet+inches result (and 'feet-inches' is not a real unit).
   if (HEIGHT_CONVERTER_IDS.has(converterSlug)) notFound();
 
+  // Cooking cluster pages (Batch G) likewise: registered in the cooking
+  // category, rendered by src/app/cooking/[cookingPage] — a cup's weight in
+  // grams depends on the ingredient, which this pair template cannot know.
+  if (COOKING_CONVERTER_IDS.has(converterSlug)) notFound();
+
   const relatedConverters = getRelatedConverters(categorySlug, converterSlug, 8);
 
   // CN-16: in-content related-conversions block data — reverse pair,
@@ -85,7 +91,7 @@ export default async function ConverterPage({ params }: Props) {
     category.converters.find(c => c.from === converter.to && c.to === converter.from) ?? null;
   const siblingConverters = (() => {
     const others = category.converters.filter(
-      c => c.id !== converter.id && c.id !== reverseConverter?.id && !HEIGHT_CONVERTER_IDS.has(c.id)
+      c => c.id !== converter.id && c.id !== reverseConverter?.id && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id)
     );
     return [
       ...others.filter(c => c.popular),
