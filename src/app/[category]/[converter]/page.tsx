@@ -1,4 +1,5 @@
 import { generateConverterContent } from '@/lib/converterContent';
+import { getCurrencyRateSnapshot, convertCurrency } from '@/lib/converters/currency';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
@@ -57,8 +58,19 @@ export default async function ConverterPage({ params }: Props) {
   const toUnit = category.units.find(u => u.id === converter.to)!;
   const relatedConverters = getRelatedConverters(categorySlug, converterSlug, 8);
 
+  // CN-13: currency pages need a real, dated rate for their static content —
+  // or no numeric rate claims at all. Fetch the snapshot server-side (ISR).
+  let currencyRate: { rate: number; asOf: string } | undefined;
+  if (category.id === 'currency') {
+    const snapshot = await getCurrencyRateSnapshot();
+    if (snapshot) {
+      const pair = convertCurrency(1, converter.from, converter.to, snapshot.rates);
+      if (pair.ok) currencyRate = { rate: pair.value, asOf: snapshot.asOf };
+    }
+  }
+
   // Generate unique SEO content for this converter
-  const seoContent = generateConverterContent(converter, category);
+  const seoContent = generateConverterContent(converter, category, { currencyRate });
 
   // Calculate 1-unit example for FAQs / schema (skip for currency – needs live rates)
   let exampleResult = 1;
@@ -192,6 +204,7 @@ export default async function ConverterPage({ params }: Props) {
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
                   {seoContent.tableSection}
                 </p>
+                {seoContent.table.length > 0 && (
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm">
                     <thead>
@@ -210,6 +223,7 @@ export default async function ConverterPage({ params }: Props) {
                     </tbody>
                   </table>
                 </div>
+                )}
               </section>
 
               {/* FAQ */}
