@@ -69,6 +69,66 @@ export type CurrencyConvertResult =
   | { ok: true; value: number }
   | { ok: false; error: 'unknown-currency' | 'no-rates' };
 
+// ─── Server-side rate snapshot (for SEO content on currency pages) ───────────
+// Same upstream providers as /api/currency. Called only from server
+// components at render/ISR time — never from client code.
+
+const RATE_API_URLS = [
+  'https://api.exchangerate-api.com/v4/latest/USD',
+  'https://open.er-api.com/v6/latest/USD',
+];
+
+export interface CurrencyRateSnapshot {
+  /** Rates quoted per 1 USD (USD = 1), same shape as convertCurrency expects. */
+  rates: Record<string, number>;
+  /** ISO date (YYYY-MM-DD) the rates were published for, from the provider. */
+  asOf: string;
+}
+
+function extractAsOf(data: Record<string, unknown>): string | null {
+  if (typeof data.date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data.date)) {
+    return data.date.slice(0, 10);
+  }
+  const unix = data.time_last_update_unix;
+  if (typeof unix === 'number' && Number.isFinite(unix)) {
+    return new Date(unix * 1000).toISOString().slice(0, 10);
+  }
+  if (typeof data.time_last_update_utc === 'string') {
+    const d = new Date(data.time_last_update_utc);
+    if (!Number.isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  }
+  return null;
+}
+
+/**
+ * Fetch a dated mid-market rate snapshot for server-rendered content.
+ * Returns null when rates are unavailable — callers must then omit any
+ * numeric rate claims rather than publishing a placeholder factor.
+ */
+export async function getCurrencyRateSnapshot(): Promise<CurrencyRateSnapshot | null> {
+  for (const url of RATE_API_URLS) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      const res = await fetch(url, {
+        next: { revalidate: 3600 },
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (!res.ok) continue;
+      const data = (await res.json()) as Record<string, unknown>;
+      const rates = (data.rates || data.conversion_rates) as Record<string, number> | undefined;
+      if (!rates || typeof rates !== 'object' || Object.keys(rates).length === 0) continue;
+      const asOf = extractAsOf(data);
+      if (!asOf) continue;
+      return { rates, asOf };
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 /**
  * Live conversion using rates fetched from /api/currency.
  * Rates are quoted per 1 USD (USD = 1).
