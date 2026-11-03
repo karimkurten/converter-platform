@@ -10,6 +10,7 @@ import {
   getConverterBySlug,
   getRelatedConverters,
   runConversion,
+  HEIGHT_CONVERTER_IDS,
 } from '@/lib/converters';
 import {
   buildConverterMetadata,
@@ -20,6 +21,17 @@ import ConverterEngine from '@/components/converter/ConverterEngine';
 import { RelatedConverters, RelatedConversions, ConversionTable, FormulaBlock } from '@/components/converter/ConverterWidgets';
 import { blogPosts } from '@/lib/blog';
 import ContextualProductWidget from '@/components/affiliate/ContextualProductWidget';
+
+// Length pairs whose searchers are usually converting a height — their
+// related-conversions blocks link into the Batch F height cluster.
+const HEIGHT_ANCHOR_PAIRS = new Set([
+  'centimeter-to-inch',
+  'inch-to-centimeter',
+  'centimeter-to-foot',
+  'foot-to-centimeter',
+  'meter-to-foot',
+  'foot-to-meter',
+]);
 
 interface Props {
   params: Promise<{ category: string; converter: string }>;
@@ -57,6 +69,13 @@ export default async function ConverterPage({ params }: Props) {
 
   const fromUnit = category.units.find(u => u.id === converter.from)!;
   const toUnit = category.units.find(u => u.id === converter.to)!;
+
+  // Height cluster pages (Batch F) are registered in the length category for
+  // the sitemap/ItemList/search, but they are rendered by the dedicated
+  // route src/app/length/[heightPage] — this pair template cannot express
+  // the compound feet+inches result (and 'feet-inches' is not a real unit).
+  if (HEIGHT_CONVERTER_IDS.has(converterSlug)) notFound();
+
   const relatedConverters = getRelatedConverters(categorySlug, converterSlug, 8);
 
   // CN-16: in-content related-conversions block data — reverse pair,
@@ -66,7 +85,7 @@ export default async function ConverterPage({ params }: Props) {
     category.converters.find(c => c.from === converter.to && c.to === converter.from) ?? null;
   const siblingConverters = (() => {
     const others = category.converters.filter(
-      c => c.id !== converter.id && c.id !== reverseConverter?.id
+      c => c.id !== converter.id && c.id !== reverseConverter?.id && !HEIGHT_CONVERTER_IDS.has(c.id)
     );
     return [
       ...others.filter(c => c.popular),
@@ -334,6 +353,20 @@ export default async function ConverterPage({ params }: Props) {
               reverse={reverseConverter}
               siblings={siblingConverters}
               guides={guidePosts}
+              extraLinks={
+                HEIGHT_ANCHOR_PAIRS.has(converter.id)
+                  ? [
+                      {
+                        href: '/length/centimeter-to-feet-inches',
+                        label: 'Height Converter — CM to Feet & Inches',
+                      },
+                      {
+                        href: '/length/height-chart',
+                        label: 'Height Chart — CM to Feet & Inches (140–210 cm)',
+                      },
+                    ]
+                  : undefined
+              }
             />
           </div>
 

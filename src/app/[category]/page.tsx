@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CATEGORIES, getCategoryBySlug } from '@/lib/converters';
+import { CATEGORIES, getCategoryBySlug, HEIGHT_CONVERTERS, HEIGHT_CONVERTER_IDS } from '@/lib/converters';
+import { cmToFeetInches } from '@/lib/height';
 import { buildCategoryMetadata, buildItemListSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import { generateCategoryHubContent } from '@/lib/categoryContent';
@@ -31,8 +32,12 @@ export default async function CategoryPage({ params }: Props) {
   const hub = generateCategoryHubContent(category);
 
   const colors = CATEGORY_COLORS[category.color] || CATEGORY_COLORS.blue;
-  const popularConverters = category.converters.filter(c => c.popular);
+  // Height cluster pages (Batch F) are registered in this category but are
+  // not unit pairs: they get their own hub section below and are excluded
+  // from the pair grids (their "to" is the compound feet+inches form).
+  const popularConverters = category.converters.filter(c => c.popular && !HEIGHT_CONVERTER_IDS.has(c.id));
   const allConverters = category.converters;
+  const unitConverters = allConverters.filter(c => !HEIGHT_CONVERTER_IDS.has(c.id));
 
   const breadcrumbs = [
     { label: 'Home', href: '/' },
@@ -41,7 +46,7 @@ export default async function CategoryPage({ params }: Props) {
 
   // Group converters by "from" unit for better organization
   const grouped = category.units.reduce((acc, unit) => {
-    const convs = allConverters.filter(c => c.from === unit.id);
+    const convs = unitConverters.filter(c => c.from === unit.id);
     if (convs.length > 0) acc[unit.id] = { unit, converters: convs };
     return acc;
   }, {} as Record<string, { unit: typeof category.units[0]; converters: typeof allConverters }>);
@@ -124,6 +129,44 @@ export default async function CategoryPage({ params }: Props) {
                       </Link>
                     );
                   })}
+                </div>
+              </section>
+            )}
+
+            {/* Height conversions (Batch F) — length hub only */}
+            {category.slug === 'length' && (
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <span className="text-lg">🧍</span> Height Conversions — CM to Feet &amp; Inches
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-2xl">
+                  Converting a person&apos;s height? These pages answer in feet and inches — the way
+                  heights are actually stated — with fraction results and a full 140–210 cm chart.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {HEIGHT_CONVERTERS.map(conv => (
+                    <Link
+                      key={conv.id}
+                      href={`/length/${conv.id}`}
+                      className="card p-4 hover:scale-[1.02] transition-transform group"
+                    >
+                      <div className={`text-xs font-semibold ${colors.text} mb-2`}>
+                        {conv.id === 'feet-inches-to-centimeter'
+                          ? 'ft + in → cm'
+                          : conv.id === 'height-chart'
+                            ? '140–210 cm chart'
+                            : 'cm → ft + in'}
+                      </div>
+                      <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-500 transition-colors">
+                        {conv.title}
+                      </div>
+                      {/^\d+-cm-to-feet-inches$/.test(conv.id) && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          = {cmToFeetInches(parseInt(conv.id, 10)).display}
+                        </div>
+                      )}
+                    </Link>
+                  ))}
                 </div>
               </section>
             )}

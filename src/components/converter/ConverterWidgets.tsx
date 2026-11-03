@@ -129,9 +129,11 @@ interface RelatedConversionsProps {
   reverse: Converter | null;
   siblings: Converter[];
   guides: { slug: string; title: string }[];
+  /** Extra in-content links rendered in the grid (label + href). */
+  extraLinks?: { href: string; label: string }[];
 }
 
-export function RelatedConversions({ converter, category, reverse, siblings, guides }: RelatedConversionsProps) {
+export function RelatedConversions({ converter, category, reverse, siblings, guides, extraLinks }: RelatedConversionsProps) {
   const unitName = (id: string) => category.units.find(u => u.id === id)?.name ?? id;
   const fromName = unitName(converter.from);
   const toName = unitName(converter.to);
@@ -155,7 +157,7 @@ export function RelatedConversions({ converter, category, reverse, siblings, gui
         </p>
       )}
 
-      {siblings.length > 0 && (
+      {(siblings.length > 0 || (extraLinks && extraLinks.length > 0)) && (
         <>
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
             More {category.name} Conversions
@@ -168,6 +170,15 @@ export function RelatedConversions({ converter, category, reverse, siblings, gui
                 className="px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-brand-950 border border-transparent hover:border-brand-100 dark:hover:border-brand-900 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-all"
               >
                 {unitName(conv.from)} to {unitName(conv.to)}
+              </Link>
+            ))}
+            {extraLinks?.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-brand-950 border border-transparent hover:border-brand-100 dark:hover:border-brand-900 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-all"
+              >
+                {link.label}
               </Link>
             ))}
           </div>

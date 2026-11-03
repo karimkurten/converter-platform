@@ -108,6 +108,40 @@ export const PAIR_DEPTH: Record<string, PairDepth> = {
       'Quick estimate: divide feet by 3.3 — within about 0.6% of the exact figure in metres.',
   },
 
+  // ─── Height cluster anchors (Batch F) ─────────────────────────────────
+  // The cm ↔ feet+inches height pages are the natural home for height
+  // lookups starting from these pairs, so their depth data points there.
+  'length/centimeter-to-foot': {
+    exampleValues: [160, 165, 170, 175, 180, 190],
+    exampleNotes: {
+      '160': 'A height — see the CM to Feet & Inches converter for the feet-and-inches form',
+      '175': 'A height — see the CM to Feet & Inches converter for the feet-and-inches form',
+      '180': 'A height — see the CM to Feet & Inches converter for the feet-and-inches form',
+    },
+    tableValues: tv([...seq(100, 210, 5), ...seq(1, 20, 1), 25, 30, 40, 50, 60, 70, 80, 90, 250, 300, 500, 1000]),
+    estimate:
+      'Quick estimate: divide centimetres by 30 — within about 1.6% of the exact figure in feet.',
+  },
+  'length/foot-to-centimeter': {
+    exampleValues: [5, 5.5, 6, 6.5],
+    exampleNotes: { '5.5': '5 feet 6 inches' },
+    tableValues: tv([...seq(1, 20, 1), ...seq(25, 100, 5), 110, 120, 150, 200, 250, 300, 500, 1000]),
+    estimate:
+      'Quick estimate: multiply feet by 30 — within about 1.6% of the exact figure in centimetres.',
+  },
+  'length/foot-to-inch': {
+    exampleValues: [5, 5.5, 6],
+    exampleNotes: { '5.5': '5 feet 6 inches' },
+    estimate:
+      'Quick estimate: multiply feet by 12 — for this pair the factor is exact (1 foot is exactly 12 inches).',
+  },
+  'length/inch-to-foot': {
+    exampleValues: [60, 66, 72],
+    exampleNotes: { '60': '5 feet', '66': '5 feet 6 inches', '72': '6 feet' },
+    estimate:
+      'Quick estimate: divide inches by 12 — for this pair the factor is exact (12 inches make exactly 1 foot).',
+  },
+
   // ─── Temperature ─────────────────────────────────────────────────────────
   'temperature/celsius-to-fahrenheit': {
     exampleValues: [-40, 0, 20, 37, 100, 180, 200],
