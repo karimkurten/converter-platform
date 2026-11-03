@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { getBlogPostBySlug, getRelatedBlogPosts, getAllBlogPosts } from '@/lib/blog';
 import { getCategoryForConverterId, getConverterBySlug } from '@/lib/converters';
@@ -9,6 +10,40 @@ import BlogProductLink from '@/components/affiliate/BlogProductLink';
 // Matches "Product link: https://..." at the end of a blog paragraph so the
 // raw URL can be rendered as a clickable, geo-localized affiliate link.
 const PRODUCT_LINK_RE = /^([\s\S]*?)\s*Product link:\s*(https?:\/\/\S+)\s*$/;
+
+// CN-16: wrap the first occurrence of each of the post's declared inline-link
+// phrases in a real in-body link to the converter the prose discusses.
+// `used` is shared across the post's paragraphs so each phrase links once.
+function linkifyParagraph(
+  para: string,
+  links: { phrase: string; href: string }[],
+  used: Set<string>,
+  keyPrefix: string
+): ReactNode[] {
+  let best: { idx: number; phrase: string; href: string } | null = null;
+  for (const link of links) {
+    if (used.has(link.phrase)) continue;
+    const idx = para.indexOf(link.phrase);
+    if (idx >= 0 && (best === null || idx < best.idx)) {
+      best = { idx, phrase: link.phrase, href: link.href };
+    }
+  }
+  if (!best) return [para];
+  used.add(best.phrase);
+  const before = para.slice(0, best.idx);
+  const after = para.slice(best.idx + best.phrase.length);
+  return [
+    before,
+    <Link
+      key={`${keyPrefix}-${best.phrase}`}
+      href={best.href}
+      className="cn-inline-link text-brand-600 dark:text-brand-400 font-medium underline decoration-brand-300 underline-offset-2 hover:text-brand-500"
+    >
+      {best.phrase}
+    </Link>,
+    ...linkifyParagraph(after, links, used, keyPrefix),
+  ];
+}
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -46,6 +81,8 @@ export default async function BlogPostPage({ params }: Props) {
   if (!post) notFound();
 
   const related = getRelatedBlogPosts(slug);
+  // CN-16: tracks which inline-link phrases have been linked in this post.
+  const usedInlinePhrases = new Set<string>();
 
   // JSON-LD Article schema
   const articleSchema = {
@@ -171,7 +208,9 @@ export default async function BlogPostPage({ params }: Props) {
             }
             return (
               <p key={i} className="mb-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-                {para}
+                {post.inlineLinks && post.inlineLinks.length > 0
+                  ? linkifyParagraph(para, post.inlineLinks, usedInlinePhrases, `p${i}`)
+                  : para}
               </p>
             );
           })}
