@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { BreadcrumbItem, FAQItem, Converter, ConverterCategory } from '@/types';
 import { HEIGHT_VALUES } from './height';
+import { INGREDIENTS, OVEN_CHART_ID } from './cooking';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.convertnow.ca';
 const SITE_NAME = 'ConvertNow';
@@ -96,9 +97,12 @@ export function buildConverterMetadata(
 // Factual adjustments vs the proposals, verified against the live catalog:
 //  - currency: the site lists 40 currencies (not "100+"); rates are the
 //    mid-market snapshot refreshed hourly (Batch A), so it says so.
-//  - cooking: this hub converts kitchen volumes only (cups/tbsp/tsp/fl oz ↔
-//    ml/L) — there is no cups-to-grams or oven-temperature converter here
-//    yet, so the copy promises only what the hub actually does.
+//  - cooking (Batch G): the Batch C copy promised only volumes, because
+//    the hub had no cups-to-grams or oven-temperature pages yet. Batch G
+//    built them, so the original CTR_PROPOSALS.md cooking copy now goes in
+//    — every claim in it is true of the hub as of Batch G: cups to grams
+//    (ingredient pages), tablespoons to ml (popular pairs), oven
+//    temperatures in °F/°C/gas mark (the oven chart) and ingredient tables.
 const CATEGORY_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
   length: {
     title: 'Length Converter: Meters to Feet, Miles to Km',
@@ -117,8 +121,8 @@ const CATEGORY_SEO_OVERRIDES: Record<string, { title: string; description: strin
     description: 'Convert USD to CAD, EUR to USD, GBP and more — 40 currencies with mid-market exchange rates updated hourly. Instant, free, no signup.',
   },
   cooking: {
-    title: 'Cooking Converter: Cups to mL, Tbsp to mL',
-    description: 'Convert cups to milliliters, tablespoons to ml, teaspoons and fluid ounces for any recipe — instant results with full conversion tables. Free.',
+    title: 'Cooking Converter: Cups to Grams, Tbsp & Oven Temps',
+    description: 'Convert cups to grams, tablespoons to ml and oven temperatures (°F, °C, gas mark) for any recipe. Ingredient tables included. Free.',
   },
 };
 
@@ -182,6 +186,59 @@ export function buildHeightMetadata(converter: Converter): Metadata {
       'cm in feet',
       'height chart cm to feet',
       'feet and inches to cm',
+      converter.title.toLowerCase(),
+      'unit converter',
+      'online converter',
+    ],
+  });
+}
+
+// ─── Cooking Page Metadata (Batch G) ─────────────────────────────────────
+// Hand-written metadata for the cooking cluster pages rendered by
+// src/app/cooking/[cookingPage]. Titles/descriptions promise only what
+// those pages actually do (ingredient cups↔grams with King Arthur Baking
+// chart weights, the oven chart with exact °F). Ingredient figures in the
+// descriptions come from INGREDIENTS — the same data the pages compute
+// from — never hand-typed results.
+
+const COOKING_META: Record<string, { title: string; description: string }> = {
+  'cups-to-grams': {
+    title: 'Cups to Grams Converter — Baking Ingredients',
+    description:
+      'Convert cups to grams for flour, sugar, butter, cocoa and more baking ingredients — weights from the King Arthur Baking chart, with a full table for every ingredient. Free.',
+  },
+  'grams-to-cups': {
+    title: 'Grams to Cups Converter — Baking Ingredients',
+    description:
+      'Convert grams to cups for flour, sugar, butter, cocoa and more baking ingredients — weights from the King Arthur Baking chart, with a full table for every ingredient. Free.',
+  },
+  [OVEN_CHART_ID]: {
+    title: 'Oven Temperature Chart — °C to °F & Gas Mark',
+    description:
+      'Oven temperature conversion chart: Celsius, Fahrenheit and gas mark side by side from 110 °C to 240 °C, with exact Fahrenheit conversions (180 °C = 356 °F, gas mark 4).',
+  },
+};
+
+for (const ing of INGREDIENTS) {
+  COOKING_META[`${ing.id}-cups-to-grams`] = {
+    title: `${ing.name}: Cups to Grams & Grams to Cups`,
+    description: `1 cup of ${ing.name.toLowerCase()} = ${ing.gramsPerCup} g. Convert cups to grams and grams to cups for ${ing.name.toLowerCase()} with full tables — King Arthur Baking chart weights, approximate as all cup weights are.`,
+  };
+}
+
+export function buildCookingMetadata(converter: Converter): Metadata {
+  const meta = COOKING_META[converter.id];
+  return buildMetadata({
+    title: meta?.title ?? converter.title,
+    description: meta?.description ?? converter.description,
+    path: `/cooking/${converter.id}`,
+    keywords: [
+      'cups to grams',
+      'grams to cups',
+      'baking conversion',
+      'how many grams in a cup',
+      'oven temperature chart',
+      'gas mark to celsius',
       converter.title.toLowerCase(),
       'unit converter',
       'online converter',

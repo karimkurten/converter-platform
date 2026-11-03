@@ -16,6 +16,7 @@ import {
 } from './units';
 import { CURRENCIES, POPULAR_CURRENCY_PAIRS } from './currency';
 import { FEET_INCHES_ID, HEIGHT_VALUES, cmToFeetInches } from '../height';
+import { INGREDIENTS, cupsToGrams, gramsToCups, ovenRowFor, OVEN_CHART_ID } from '../cooking';
 
 function makeConverters(category: string, pairs: { from: string; to: string }[], units: { id: string; name: string; symbol: string }[]): Converter[] {
   return pairs.map(({ from, to }) => {
@@ -106,6 +107,68 @@ export const HEIGHT_CONVERTERS: Converter[] = [
 ];
 
 export const HEIGHT_CONVERTER_IDS = new Set(HEIGHT_CONVERTERS.map(c => c.id));
+
+// ─── Cooking cluster (Batch G) ────────────────────────────────────────────
+// Ingredient cups↔grams pages, the reverse converter and the oven chart
+// are registered here so the sitemap, hub ItemList and search index pick
+// them up like any other popular converter — but they are RENDERED by the
+// dedicated route src/app/cooking/[cookingPage], because a cup of flour
+// and a cup of sugar weigh different amounts: grams-per-cup depends on the
+// ingredient (King Arthur Baking chart weights, src/lib/cooking), which
+// the unit-to-unit pair template cannot express. Example figures in the
+// descriptions are computed with the real helpers from ../cooking.
+export const COOKING_CONVERTERS: Converter[] = [
+  {
+    id: 'cups-to-grams',
+    from: 'cup',
+    to: 'gram',
+    category: 'cooking',
+    title: 'Cups to Grams Converter',
+    description: `Convert cups to grams for ${INGREDIENTS.length} baking ingredients — for example, 1 cup of all-purpose flour is ${cupsToGrams('flour', 1)} g. King Arthur Baking chart weights, full tables for every ingredient.`,
+    popular: true,
+  },
+  {
+    id: 'grams-to-cups',
+    from: 'gram',
+    to: 'cup',
+    category: 'cooking',
+    title: 'Grams to Cups Converter',
+    description: `Convert grams to cups for ${INGREDIENTS.length} baking ingredients — for example, ${cupsToGrams('flour', 1)} g of all-purpose flour is ${gramsToCups('flour', 120)} cup. King Arthur Baking chart weights, full tables for every ingredient.`,
+    popular: true,
+  },
+  {
+    id: OVEN_CHART_ID,
+    from: 'celsius',
+    to: 'fahrenheit',
+    category: 'cooking',
+    title: 'Oven Temperature Chart (°C, °F, Gas Mark)',
+    description: `Oven temperatures in Celsius, Fahrenheit and gas mark side by side — for example, 180 °C is ${ovenRowFor(180)?.fahrenheit} °F, gas mark ${ovenRowFor(180)?.gasMark}. Fahrenheit figures are exact conversions, not rounded chart values.`,
+    popular: true,
+  },
+  ...INGREDIENTS.map(ing => ({
+    id: `${ing.id}-cups-to-grams`,
+    from: 'cup',
+    to: 'gram',
+    category: 'cooking',
+    title: `${ing.name} — Cups to Grams`,
+    description: `${ing.name}: 1 cup = ${ing.gramsPerCup} g. Convert cups to grams and grams to cups for ${ing.name.toLowerCase()} with full tables — King Arthur Baking chart weights.`,
+    popular: true,
+  })),
+];
+
+export const COOKING_CONVERTER_IDS = new Set(COOKING_CONVERTERS.map(c => c.id));
+
+// Existing cooking pair pages promoted to popular (indexable, in the
+// sitemap) as the cooking cluster's volume anchors — Batch F did the same
+// for centimeter↔foot. The pages already exist; only their status changes.
+export const COOKING_POPULAR_PAIRS = [
+  { from: 'us-cup', to: 'milliliter' },
+  { from: 'milliliter', to: 'us-cup' },
+  { from: 'tablespoon', to: 'milliliter' },
+  { from: 'milliliter', to: 'tablespoon' },
+  { from: 'teaspoon', to: 'milliliter' },
+  { from: 'milliliter', to: 'teaspoon' },
+];
 
 // Currency units for the registry
 const CURRENCY_UNITS = CURRENCIES.map(c => ({
@@ -234,11 +297,11 @@ export const CATEGORIES: ConverterCategory[] = [
     id: 'cooking',
     name: 'Cooking',
     slug: 'cooking',
-    description: 'Convert cooking measurements: cups, tablespoons, teaspoons, and more.',
+    description: 'Convert cooking measurements: cups to grams by ingredient, cups, tablespoons, teaspoons, oven temperatures, and more.',
     icon: '🍳',
     color: 'amber',
     units: VOLUME_UNITS.filter(u => ['us-cup', 'tablespoon', 'teaspoon', 'us-fluid-oz', 'us-pint', 'liter', 'milliliter'].includes(u.id)),
-    converters: makeAllConverters('cooking', VOLUME_UNITS.filter(u => ['us-cup', 'tablespoon', 'teaspoon', 'us-fluid-oz', 'us-pint', 'liter', 'milliliter'].includes(u.id)), []),
+    converters: [...makeAllConverters('cooking', VOLUME_UNITS.filter(u => ['us-cup', 'tablespoon', 'teaspoon', 'us-fluid-oz', 'us-pint', 'liter', 'milliliter'].includes(u.id)), COOKING_POPULAR_PAIRS), ...COOKING_CONVERTERS],
   },
   {
     id: 'fuel',

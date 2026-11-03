@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { CATEGORIES, getCategoryBySlug, HEIGHT_CONVERTERS, HEIGHT_CONVERTER_IDS } from '@/lib/converters';
+import { CATEGORIES, getCategoryBySlug, HEIGHT_CONVERTERS, HEIGHT_CONVERTER_IDS, COOKING_CONVERTERS, COOKING_CONVERTER_IDS } from '@/lib/converters';
 import { cmToFeetInches } from '@/lib/height';
+import { getIngredient, cupsToGrams, fmtGrams, ovenRowFor } from '@/lib/cooking';
 import { buildCategoryMetadata, buildItemListSchema } from '@/lib/seo';
 import { CATEGORY_COLORS } from '@/lib/utils';
 import { generateCategoryHubContent } from '@/lib/categoryContent';
@@ -35,9 +36,11 @@ export default async function CategoryPage({ params }: Props) {
   // Height cluster pages (Batch F) are registered in this category but are
   // not unit pairs: they get their own hub section below and are excluded
   // from the pair grids (their "to" is the compound feet+inches form).
-  const popularConverters = category.converters.filter(c => c.popular && !HEIGHT_CONVERTER_IDS.has(c.id));
+  // Cooking cluster pages (Batch G) get the same treatment on the cooking
+  // hub — their "conversion" depends on the ingredient, not a unit pair.
+  const popularConverters = category.converters.filter(c => c.popular && !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id));
   const allConverters = category.converters;
-  const unitConverters = allConverters.filter(c => !HEIGHT_CONVERTER_IDS.has(c.id));
+  const unitConverters = allConverters.filter(c => !HEIGHT_CONVERTER_IDS.has(c.id) && !COOKING_CONVERTER_IDS.has(c.id));
 
   const breadcrumbs = [
     { label: 'Home', href: '/' },
@@ -167,6 +170,57 @@ export default async function CategoryPage({ params }: Props) {
                       )}
                     </Link>
                   ))}
+                </div>
+              </section>
+            )}
+
+            {/* Cooking cluster (Batch G) — cooking hub only */}
+            {category.slug === 'cooking' && (
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <span className="text-lg">⚖️</span> Baking Conversions — Cups to Grams &amp; Oven Temperatures
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-2xl">
+                  A cup is a volume, but recipes bake by weight — and every ingredient weighs
+                  differently. These pages convert cups to grams ingredient by ingredient, using
+                  the King Arthur Baking chart weights, and put oven temperatures in °C, °F and
+                  gas mark side by side.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {COOKING_CONVERTERS.map(conv => {
+                    const ingId = conv.id.replace(/-cups-to-grams$/, '');
+                    const ing = conv.id.endsWith('-cups-to-grams') ? getIngredient(ingId) : undefined;
+                    return (
+                      <Link
+                        key={conv.id}
+                        href={`/cooking/${conv.id}`}
+                        className="card p-4 hover:scale-[1.02] transition-transform group"
+                      >
+                        <div className={`text-xs font-semibold ${colors.text} mb-2`}>
+                          {conv.id === 'cups-to-grams'
+                            ? 'cups → g'
+                            : conv.id === 'grams-to-cups'
+                              ? 'g → cups'
+                              : conv.id === 'oven-temperature-chart'
+                                ? '°C · °F · gas mark'
+                                : 'cups ↔ g'}
+                        </div>
+                        <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 group-hover:text-brand-500 transition-colors">
+                          {conv.title}
+                        </div>
+                        {ing && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            1 cup = {fmtGrams(cupsToGrams(ing.id, 1) ?? 0)} g
+                          </div>
+                        )}
+                        {conv.id === 'oven-temperature-chart' && (
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            180 °C = {ovenRowFor(180)?.fahrenheit} °F · gas mark {ovenRowFor(180)?.gasMark}
+                          </div>
+                        )}
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}
