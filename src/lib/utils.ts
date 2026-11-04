@@ -18,6 +18,23 @@ export function formatNumber(value: number, precision: number = 6): string {
   return str;
 }
 
+/**
+ * Keep a decimal amount field's raw string editable without letting the
+ * browser's number-input implementation rewrite or hide intermediate states.
+ * A decimal comma is normalised to a point (common on Canadian/French iOS
+ * keyboards); only digits, one decimal separator and an optional leading
+ * minus survive. Empty and partial states ('', '-', '.') pass through so the
+ * caller's existing parse/validation behaviour decides what they mean.
+ */
+export function sanitizeDecimalInput(rawValue: string): string {
+  const normalized = rawValue.replace(/,/g, '.');
+  const negative = normalized.trimStart().startsWith('-');
+  const unsigned = normalized.replace(/[^0-9.]/g, '');
+  const [whole, ...fraction] = unsigned.split('.');
+  const body = fraction.length > 0 ? `${whole}.${fraction.join('')}` : whole;
+  return `${negative ? '-' : ''}${body}`;
+}
+
 // ─── URL helpers ───────────────────────────────────────────────────────────────
 
 export function slugify(text: string): string {

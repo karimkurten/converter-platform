@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { cmToFeetInches, feetInchesToCm } from '@/lib/height';
-import { formatNumber } from '@/lib/utils';
+import { formatNumber, sanitizeDecimalInput } from '@/lib/utils';
 
 /**
  * Interactive height converter (Batch F). Two modes in one card:
@@ -65,14 +65,12 @@ export default function HeightEngine({ mode, defaultCm = 175 }: HeightEngineProp
             <div className="flex gap-3">
               <input
                 id="height-cm"
-                type="number"
+                type="text"
                 value={cm}
-                onChange={e => setCm(e.target.value)}
+                onChange={e => setCm(sanitizeDecimalInput(e.target.value))}
                 className="input-field text-xl font-bold"
                 placeholder="e.g. 175"
                 aria-label="Height in centimeters"
-                step="any"
-                min="0"
                 inputMode="decimal"
               />
               <span className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold flex items-center">
@@ -106,14 +104,12 @@ export default function HeightEngine({ mode, defaultCm = 175 }: HeightEngineProp
               </label>
               <input
                 id="height-feet"
-                type="number"
+                type="text"
                 value={feet}
-                onChange={e => setFeet(e.target.value)}
+                onChange={e => setFeet(sanitizeDecimalInput(e.target.value))}
                 className="input-field text-xl font-bold"
                 placeholder="5"
                 aria-label="Feet"
-                step="1"
-                min="0"
                 inputMode="numeric"
               />
             </div>
@@ -123,15 +119,12 @@ export default function HeightEngine({ mode, defaultCm = 175 }: HeightEngineProp
               </label>
               <input
                 id="height-inches"
-                type="number"
+                type="text"
                 value={inches}
-                onChange={e => setInches(e.target.value)}
+                onChange={e => setInches(sanitizeDecimalInput(e.target.value))}
                 className="input-field text-xl font-bold"
                 placeholder="9"
                 aria-label="Inches"
-                step="any"
-                min="0"
-                max="11.99"
                 inputMode="decimal"
               />
             </div>

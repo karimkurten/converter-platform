@@ -9,6 +9,7 @@ import {
   fmtGrams,
   fmtCups,
 } from '@/lib/cooking';
+import { sanitizeDecimalInput } from '@/lib/utils';
 
 /**
  * Interactive ingredient converter (Batch G). Two modes in one card:
@@ -94,14 +95,12 @@ export default function CookingEngine({
           <div className="flex gap-3">
             <input
               id="cooking-amount"
-              type="number"
+              type="text"
               value={amount}
-              onChange={e => setAmount(e.target.value)}
+              onChange={e => setAmount(sanitizeDecimalInput(e.target.value))}
               className="input-field text-xl font-bold"
               placeholder={mode === 'cups' ? 'e.g. 2.5' : 'e.g. 250'}
               aria-label={mode === 'cups' ? 'Amount in cups' : 'Amount in grams'}
-              step="any"
-              min="0"
               inputMode="decimal"
             />
             <span className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-semibold flex items-center">
