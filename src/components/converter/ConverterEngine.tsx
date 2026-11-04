@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { ConverterCategory, Converter, ConversionResult } from '@/types';
 import { runConversion, isPopularPath, getConverterBySlug } from '@/lib/converters';
 import { convertCurrency } from '@/lib/converters/currency';
-import { copyToClipboard, addRecentConverter, toggleFavoriteConverter, getFavoriteConverters, formatNumber } from '@/lib/utils';
+import { copyToClipboard, addRecentConverter, toggleFavoriteConverter, getFavoriteConverters, formatNumber, sanitizeDecimalInput } from '@/lib/utils';
 import { Analytics } from '@/lib/analytics';
 
 interface ConverterEngineProps {
@@ -217,25 +217,32 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
             From
           </label>
           <div className="flex gap-3">
-            <div className="flex-1">
+            {/* Proportional split (CN fix K): the amount keeps a fixed 1.3
+                share of the row and the select 1 share, both from a 0 basis.
+                Before, the select's flex basis was its longest option's
+                max-content (~264px on mobile for currency), so on a ~313px
+                card it never entered the shrink phase and the flex-1 amount
+                wrapper received only the ~37px leftover — a ~3px content
+                box once .input-field's px-4 padding was subtracted, in
+                which no digit could render. */}
+            <div className="flex-[1.3] min-w-0">
               <input
                 id="from-value"
-                type="number"
+                type="text"
                 value={fromValue}
-                onChange={e => setFromValue(e.target.value)}
+                onChange={e => setFromValue(sanitizeDecimalInput(e.target.value))}
                 className={`input-field text-xl font-bold ${error ? 'border-red-400 focus:ring-red-400' : ''}`}
                 placeholder="Enter value..."
                 aria-label={`Value in ${fromUnitData?.name}`}
                 aria-invalid={!!error}
                 aria-describedby={error ? 'from-value-error' : undefined}
-                step="any"
                 inputMode="decimal"
               />
             </div>
             <select
               value={fromUnit}
               onChange={e => handleFromUnitChange(e.target.value)}
-              className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500 min-w-0 cursor-pointer transition-colors"
+              className="flex-1 min-w-0 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer transition-colors"
               aria-label="From unit"
             >
               {category.units.map(unit => (
@@ -266,15 +273,15 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
             To
           </label>
           <div className="flex gap-3">
-            <div ref={resultRef} className="flex-1 px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors" aria-live="polite" aria-atomic="true">
-              <span className={`text-xl font-bold ${toValue ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400'}`}>
+            <div ref={resultRef} className="flex-[1.3] min-w-0 px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors" aria-live="polite" aria-atomic="true">
+              <span className={`block truncate text-xl font-bold ${toValue ? 'text-brand-600 dark:text-brand-400' : 'text-gray-400'}`}>
                 {toValue || '—'}
               </span>
             </div>
             <select
               value={toUnit}
               onChange={e => handleToUnitChange(e.target.value)}
-              className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500 min-w-0 cursor-pointer transition-colors"
+              className="flex-1 min-w-0 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500 cursor-pointer transition-colors"
               aria-label="To unit"
             >
               {category.units.map(unit => (
@@ -290,15 +297,15 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
       {/* Result display */}
       {toValue && fromValue && (
         <div className="mt-5 p-4 rounded-xl bg-brand-50 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900 animate-fade-in">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-sm text-brand-700 dark:text-brand-300 font-medium">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 basis-44">
+              <p className="text-sm text-brand-700 dark:text-brand-300 font-medium break-words">
                 <span className="font-bold">{fromValue} {fromUnitData?.symbol}</span>
                 {' = '}
                 <span className="font-bold text-lg">{toValue} {toUnitData?.symbol}</span>
               </p>
               {formula && (
-                <p className="text-xs text-brand-600/70 dark:text-brand-400/70 mt-1 font-mono">
+                <p className="text-xs text-brand-600/70 dark:text-brand-400/70 mt-1 font-mono break-words">
                   {formula}
                 </p>
               )}
