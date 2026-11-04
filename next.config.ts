@@ -103,12 +103,35 @@ const nextConfig: NextConfig = {
 
   // Redirects for SEO
   async redirects() {
+    // Legacy hub URLs from the pre-Next.js site structure. Google still has
+    // these indexed (GSC baseline 2026-11-03) but they 404 today — send each
+    // to its modern hub with a permanent (308) redirect. Trailing-slash forms
+    // (/length-converter/) are normalized to the bare path by Next.js before
+    // config redirects run, so they reach the hub in one extra 308 hop.
+    const legacyHubs: Array<[string, string]> = [
+      ['/length-converter', '/length'],
+      ['/temperature-converter', '/temperature'],
+      ['/mass-converter', '/weight'],
+      ['/area-converter', '/area'],
+      ['/time-converter', '/time'],
+      ['/pressure-converter', '/pressure'],
+      ['/volume-converter', '/volume'],
+      ['/currency-converter', '/currency'],
+      ['/speed-converter', '/speed'],
+    ];
+    const legacyHubRedirects = legacyHubs.map(([source, destination]) => ({
+      source,
+      destination,
+      permanent: true,
+    }));
+
     return [
       {
         source: '/converter/:path*',
         destination: '/:path*',
         permanent: true,
       },
+      ...legacyHubRedirects,
       {
         // Apex domain → www canonical host (apex DNS points to Vercel)
         source: '/:path*',
