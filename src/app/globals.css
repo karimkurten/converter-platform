@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 /* ─── CSS Custom Properties ──────────────────────────────────────────────────── */
-/* --font-outfit and --font-jetbrains are supplied by next/font (see layout.tsx) */
+/* --font-inter, --font-outfit and --font-jetbrains are supplied by next/font (see layout.tsx) */
 :root {
   /* Brand */
-  --brand-50: #f0f7ff;
-  --brand-100: #e0effe;
-  --brand-500: #0c8ee7;
-  --brand-600: #006fc5;
-  --brand-700: #0058a0;
+  --brand-50: #eef6ff;
+  --brand-100: #dcebfd;
+  --brand-500: #1e6fe8;
+  --brand-600: #1559c7;
+  --brand-700: #0f4c9c;
 
   /* Surfaces */
   --surface-bg: #ffffff;
-  --surface-subtle: #f8fafc;
-  --surface-muted: #f1f5f9;
-  --surface-border: #e2e8f0;
+  --surface-subtle: #f5f8fd;
+  --surface-muted: #e9eff9;
+  --surface-border: #d7e1f0;
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-primary: #101a2e;
+  --text-secondary: #42557a;
+  --text-muted: #59708f;
 
   /* Shadows */
   --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
@@ -29,13 +29,15 @@
 }
 
 .dark {
-  --surface-bg: #0a0f1e;
-  --surface-subtle: #0f1629;
-  --surface-muted: #151e33;
-  --surface-border: #1e2d4a;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #475569;
+  --surface-bg: #0a1120;
+  --surface-subtle: #0d1526;
+  --surface-muted: #16233c;
+  --surface-border: #22345a;
+  --text-primary: #e9eff9;
+  --text-secondary: #b9c9e2;
+  --text-muted: #90a7cb;
+  --shadow-card: 0 1px 3px rgba(1,4,12,0.5), 0 1px 2px rgba(1,4,12,0.4);
+  --shadow-card-hover: 0 6px 20px rgba(1,4,12,0.55), 0 2px 8px rgba(1,4,12,0.4);
 }
 
 /* ─── Base ────────────────────────────────────────────────────────────────────── */
@@ -45,7 +47,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-outfit);
+  font-family: var(--font-inter), var(--font-outfit), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -55,7 +57,7 @@ body {
 @layer base {
   h1 { @apply text-3xl font-bold tracking-tight lg:text-4xl; }
   h2 { @apply text-2xl font-semibold tracking-tight; }
-  h3 { @apply text-xl font-semibold; }
+  h3 { @apply text-xl font-semibold tracking-tight; }
   h4 { @apply text-lg font-medium; }
 }
 
@@ -76,7 +78,7 @@ body {
   /* Input */
   .input-field {
     @apply w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700
-           bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
            text-lg font-medium
            focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
            transition-all duration-200
@@ -105,10 +107,17 @@ body {
            transition-colors duration-150;
   }
 
-  /* Converter card */
+  /* Converter card — hero element: soft brand glow, subtle top-light
+     gradient in dark mode (Midnight Pro) */
   .converter-card {
     @apply card p-6 lg:p-8;
-    box-shadow: 0 8px 32px rgba(12,142,231,0.08), 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 8px 32px rgba(30,111,232,0.10), 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .dark .converter-card {
+    background-image: linear-gradient(165deg, rgba(91,151,245,0.10), rgba(91,151,245,0.02) 45%, rgba(91,151,245,0) 70%);
+    border-color: rgba(144,167,203,0.22);
+    box-shadow: 0 0 0 1px rgba(91,151,245,0.06), 0 16px 44px rgba(1,4,12,0.55), 0 4px 14px rgba(1,4,12,0.4);
   }
 
   /* Badge */
@@ -173,7 +182,7 @@ body {
 }
 
 @keyframes resultGlow {
-  0% { background-color: rgba(12, 142, 231, 0.15); }
+  0% { background-color: rgba(30, 111, 232, 0.16); }
   100% { background-color: transparent; }
 }
 
@@ -185,7 +194,7 @@ body {
 }
 
 .ad-label {
-  @apply text-xs text-gray-400 dark:text-gray-600 text-center mb-1 uppercase tracking-wider font-medium;
+  @apply text-xs text-gray-400 dark:text-gray-400 text-center mb-1 uppercase tracking-wider font-medium;
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────────── */
@@ -198,14 +207,14 @@ body {
 /* ─── Selection ───────────────────────────────────────────────────────────────── */
 
 ::selection {
-  background-color: rgba(12, 142, 231, 0.2);
+  background-color: rgba(30, 111, 232, 0.25);
   color: inherit;
 }
 
 /* ─── Focus visible ───────────────────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid #0c8ee7;
+  outline: 2px solid #1e6fe8;
   outline-offset: 2px;
   border-radius: 4px;
 }

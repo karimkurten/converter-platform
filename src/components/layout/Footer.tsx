@@ -20,7 +20,7 @@ export default function Footer() {
               Free online unit converter. Fast, accurate, and works offline.
             </p>
             <div className="mt-4">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 font-medium uppercase tracking-wide">Follow Us</p>
+              <p className="text-xs text-gray-400 dark:text-gray-400 mb-2 font-medium uppercase tracking-wide">Follow Us</p>
               <div className="flex items-center gap-3">
                 <a
                   href="https://www.facebook.com/ConvertNow.ca/"

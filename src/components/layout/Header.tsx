@@ -105,7 +105,7 @@ export default function Header() {
             <Link
               href="/"
               aria-label="View all converter categories"
-              className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               All →
             </Link>
@@ -166,7 +166,7 @@ export default function Header() {
                               <span className="text-lg flex-shrink-0">{result.icon}</span>
                               <div className="min-w-0">
                                 <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{result.title}</div>
-                                <div className="text-xs text-gray-500 dark:text-gray-500">{result.category}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400">{result.category}</div>
                               </div>
                               <ArrowRightIcon className="w-3 h-3 text-gray-400 ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </Link>

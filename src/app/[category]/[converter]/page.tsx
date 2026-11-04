@@ -258,7 +258,7 @@ export default async function ConverterPage({ params }: Props) {
                             <td className="px-4 py-2 text-gray-700 dark:text-gray-300 whitespace-nowrap">
                               {ex.input}
                               {ex.note && (
-                                <span className="block text-xs text-gray-500 dark:text-gray-500">{ex.note}</span>
+                                <span className="block text-xs text-gray-500 dark:text-gray-400">{ex.note}</span>
                               )}
                             </td>
                             <td className="px-4 py-2 text-gray-600 dark:text-gray-400 whitespace-nowrap">{ex.working} =</td>
@@ -327,7 +327,7 @@ export default async function ConverterPage({ params }: Props) {
                           <td className="px-4 py-2 text-gray-700 dark:text-gray-300">{row.v}</td>
                           <td className="px-4 py-2 text-gray-600 dark:text-gray-400">{row.r}</td>
                           {seoContent.tableContextHeader && (
-                            <td className="px-4 py-2 text-gray-500 dark:text-gray-500">{row.c ?? ''}</td>
+                            <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{row.c ?? ''}</td>
                           )}
                         </tr>
                       ))}

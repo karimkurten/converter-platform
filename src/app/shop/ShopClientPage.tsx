@@ -103,7 +103,7 @@ export default function ShopClientPage() {
         <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
           Products hand-picked to match exactly what you are converting on ConvertNow.ca
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">
+        <p className="text-xs text-gray-400 dark:text-gray-400 mt-3">
           Affiliate Disclosure: As an Amazon Associate, ConvertNow.ca earns from qualifying purchases...
         </p>
 
@@ -217,7 +217,7 @@ export default function ShopClientPage() {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-        <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-4">
+        <p className="text-[11px] text-gray-400 dark:text-gray-400 mt-4">
           *Estimated price ranges — check the current price on Amazon.
         </p>
       </div>
@@ -273,7 +273,7 @@ function SubCategoryCard({ sub, isActive, onClick, amazonUrl }: {
       <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">{sub.label.split(' ')[0]}</div>
       <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">{sub.label.replace(/^\S+\s/, '')}</h3>
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{sub.count} products</p>
-      <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{descriptions[sub.id] || 'Conversion tools'}</p>
+      <p className="text-xs text-gray-400 dark:text-gray-400 mb-3">{descriptions[sub.id] || 'Conversion tools'}</p>
       {hasProducts ? (
         <button onClick={onClick} className={`inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
           isActive ? 'bg-brand-500 text-white' : 'bg-brand-100 dark:bg-brand-900 text-brand-700 dark:text-brand-300 hover:bg-brand-200'
@@ -312,7 +312,7 @@ function ProductCard({ product }: { product: ShopProduct }) {
           <li key={i} className="flex items-start gap-1.5 text-[11px] text-gray-500 dark:text-gray-400"><span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>{feat}</li>
         ))}
       </ul>
-      <p className="text-[10px] text-gray-400 dark:text-gray-500 mb-3">{product.globalDemand}</p>
+      <p className="text-[10px] text-gray-400 dark:text-gray-400 mb-3">{product.globalDemand}</p>
       <AmazonButton baseUrl={product.amazonUrl} productId={product.id} variant="card" />
     </div>
   );

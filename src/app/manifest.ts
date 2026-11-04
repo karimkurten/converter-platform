@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: 'https://www.convertnow.ca/',
     display: 'standalone',
     background_color: '#ffffff',
-    theme_color: '#0c8ee7',
+    theme_color: '#1e6fe8',
     orientation: 'portrait-primary',
     categories: ['utilities', 'productivity'],
     icons: [

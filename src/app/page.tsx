@@ -157,7 +157,7 @@ export default function HomePage() {
                   <h3 className={`font-semibold text-sm text-gray-900 dark:text-white group-hover:${colors.text} transition-colors`}>
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                  <p className="text-xs text-gray-400 dark:text-gray-400 mt-1">
                     {cat.units.length} units
                   </p>
                 </Link>
@@ -191,7 +191,7 @@ export default function HomePage() {
                 <h3 className="font-semibold text-sm text-gray-900 dark:text-white group-hover:text-brand-500 transition-colors line-clamp-2 flex-1">
                   {post.title}
                 </h3>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-gray-400 dark:text-gray-400 mt-2 line-clamp-2 leading-relaxed">
                   {post.description}
                 </p>
                 <div className="flex items-center gap-2 mt-3 text-[11px] text-gray-400">

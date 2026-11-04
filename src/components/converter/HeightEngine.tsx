@@ -91,7 +91,7 @@ export default function HeightEngine({ mode, defaultCm = 175 }: HeightEngineProp
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-gray-400 dark:text-gray-500">Enter a height in centimetres to see it in feet and inches.</p>
+              <p className="text-sm text-gray-400 dark:text-gray-400">Enter a height in centimetres to see it in feet and inches.</p>
             )}
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function HeightEngine({ mode, defaultCm = 175 }: HeightEngineProp
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-gray-400 dark:text-gray-500" role={invalidFtin ? 'alert' : undefined}>
+              <p className="text-sm text-gray-400 dark:text-gray-400" role={invalidFtin ? 'alert' : undefined}>
                 {invalidFtin
                   ? 'Enter feet (0 or more) and inches below 12 — for example 5 ft 9 in.'
                   : 'Enter a height in feet and inches to see it in centimetres.'}

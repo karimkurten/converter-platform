@@ -95,7 +95,7 @@ function BlogCard({ post }: { post: BlogPost }) {
       </p>
 
       {/* Meta */}
-      <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-500">
+      <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-400">
         <span>{post.readTime} read</span>
         <span>·</span>
         <span>{new Date(post.publishedAt).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}</span>

@@ -351,7 +351,7 @@ export default function ConverterEngine({ converter, category }: ConverterEngine
 
       {/* Currency live rate note */}
       {category.id === 'currency' && (
-        <p className="mt-3 text-xs text-gray-400 dark:text-gray-500" aria-live="polite">
+        <p className="mt-3 text-xs text-gray-400 dark:text-gray-400" aria-live="polite">
           {ratesLoading ? 'Loading exchange rates…' : liveRates ? '✓ Live exchange rates' : '⚠ Live rates unavailable. Please try again later.'}
         </p>
       )}
