@@ -137,7 +137,7 @@ export default function CookingEngine({
               ) : null}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 dark:text-gray-500">
+            <p className="text-sm text-gray-400 dark:text-gray-400">
               {mode === 'cups'
                 ? 'Enter an amount in cups to see its weight in grams.'
                 : 'Enter a weight in grams to see it in cups.'}

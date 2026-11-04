@@ -748,7 +748,7 @@ export function ChartPageView({
                   </table>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">
+              <p className="mt-4 text-xs text-gray-400 dark:text-gray-400">
                 {def.pairId === 'celsius-to-fahrenheit'
                   ? 'Formula: °F = °C × 9/5 + 32. Values computed exactly; the scales meet at −40.'
                   : `Formula: ${toU.name} = ${fromU.name} × ${formatNumber(convertSpecial(def.category, 1, def.from, def.to).value, 6)}. Values computed exactly, shown to six significant figures.`}{' '}

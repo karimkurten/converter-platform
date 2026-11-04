@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Outfit, JetBrains_Mono } from 'next/font/google';
+import { Inter, Outfit, JetBrains_Mono } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import Script from 'next/script';
 import Header from '@/components/layout/Header';
@@ -7,6 +7,12 @@ import Footer from '@/components/layout/Footer';
 import CookieConsent from '@/components/CookieConsent';
 import { buildMetadata } from '@/lib/seo';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -33,11 +39,11 @@ const ADSENSE_ID = process.env.NEXT_PUBLIC_ADSENSE_ID || 'ca-pub-799953293587227
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${outfit.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}>
       <head>
         {/* PWA manifest is auto-injected by Next.js from app/manifest.ts */}
-        <meta name="theme-color" content="#0c8ee7" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#072849" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#1e6fe8" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0a1120" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
 
         {/* Organization + WebSite Schema (plain script so it's present in the initial server-rendered HTML, not deferred like next/script) */}
@@ -90,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </Script>
         )} */}
       </head>
-      <body className="font-sans antialiased bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+      <body className="font-sans antialiased bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="flex flex-col min-h-screen">
             <Header />

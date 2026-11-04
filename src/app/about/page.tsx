@@ -78,7 +78,7 @@ export default function AboutPage() {
               live exchange rates refreshed hourly, with a cached fallback so the converter keeps working even
               if the rate feed is briefly unavailable.
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Conversion factors and category content on this page were last reviewed in {lastReviewed}.
               Spotted an outdated figure? <Link href="/contact" className="text-brand-500 hover:underline">Let us know</Link> and we&apos;ll correct it.
             </p>
