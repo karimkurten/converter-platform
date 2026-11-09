@@ -125,6 +125,20 @@ const nextConfig: NextConfig = {
       permanent: true,
     }));
 
+    // Pair-level URLs under the legacy hubs (e.g.
+    // /length-converter/meter-to-foot) 404 as well — GSC flagged the family
+    // on 2026-11-09. Map the whole remainder of the path onto the modern
+    // category with the same 308 permanence. These sit after the exact hub
+    // rules above, so the bare hub path keeps matching its exact rule; the
+    // wildcard covers one or more further segments. A legacy pair that has
+    // no modern equivalent lands on a modern 404, which is still the honest
+    // answer for a page that never existed in the current structure.
+    const legacyPairRedirects = legacyHubs.map(([source, destination]) => ({
+      source: `${source}/:path*`,
+      destination: `${destination}/:path*`,
+      permanent: true,
+    }));
+
     return [
       {
         source: '/converter/:path*',
@@ -132,6 +146,7 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       ...legacyHubRedirects,
+      ...legacyPairRedirects,
       {
         // Apex domain → www canonical host (apex DNS points to Vercel)
         source: '/:path*',
